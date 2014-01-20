@@ -17,15 +17,46 @@ FP.app = (function(window){
 		$bigVideoWrapper = $('#big-video-wrap'),
 		$sectionContainer = $(".body"),
 		$window = $(window),
-		BV = new $.BigVideo({});
+		BV = new $.BigVideo({
+			controls: false,
+			doLoop: false				
+		}),
+		videoPlaylist = ['vids/tapas.mp4'];
 
 	function init(){
-		stroll.bind('#link-list');
+
 		initVideo();
 		playVideo("#intro");
 		bindScrollButtons();
 		adjustImagePositioning();
 		bindWindowResize();
+
+		$('.link-list a').click(function(e){
+			$(this).addClass("active");
+			var href = $(this).attr("href");
+			setTimeout(function(){
+				scrollToDiv("1",href);
+			},200);
+
+			e.preventDefault();
+		});
+
+		$('.button--play').click(function(e){
+			BV.remove();
+			yacine = new $.BigVideo({
+				controls: false,
+				doLoop: false				
+			});
+
+			yacine.init();
+
+			yacine.show(videoPlaylist,{
+				ambient: false
+			});
+
+			e.preventDefault();
+		});
+
 	}
 
 	function initVideo(){
@@ -34,7 +65,8 @@ FP.app = (function(window){
 	}
 
 	function playVideo(target){
-		BV.show($(target).attr("data-video"),{
+		var videoToPlay = $(target).attr("data-video");
+		BV.show(videoToPlay,{
 			ambient:true
 		});
 		$(target).find(".full-screen-image").fadeOut();
@@ -54,14 +86,14 @@ FP.app = (function(window){
 
 			if((href === "#one" && direction === "1") || (href === "#intro")){
 				if(href === "#one"){
-					$("h1.mega").addClass("animated fadeOutUp");
+					$("#intro h1.mega").addClass("animated fadeOutUp");
 					$('#btn-intro i').addClass("animated fadeOutDown");
 					setTimeout(function(){
 						scrollToDiv(direction,href);
 					},600);
 				} else {
 					console.log("up");
-					$("h1.mega").removeClass("animated fadeOutUp");
+					$("#intro h1.mega").removeClass("animated fadeOutUp");
 					$('#btn-intro i').removeClass("animated fadeOutDown");		
 					scrollToDiv(direction,href);			
 				}

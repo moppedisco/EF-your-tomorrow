@@ -1681,6 +1681,22 @@ body {
   width: 100%;
   color: #fff;
 }
+h1 input[type="text"] {
+  display: inline-block;
+  background: none;
+  border: none;
+  box-shadow: none;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0;
+  width: 200px;
+  border-bottom: 8px solid #fff;
+  color: #fff;
+}
+h2 small {
+  display: block;
+  font-size: 19px;
+}
 .vert-align {
   display: table;
   width: 100%;
@@ -1700,6 +1716,7 @@ body {
   height: auto;
   width: auto;
   z-index: 1;
+  top: 0;
 }
 hr.short {
   border: 0;
@@ -1767,6 +1784,7 @@ hr.short {
   -moz-transition: background 0.3s, color 0.3s, box-shadow 0.3s;
   transition: background 0.3s, color 0.3s, box-shadow 0.3s;
 }
+.button--play:hover .icon--circle,
 .icon--circle:hover {
   background: none;
   color: #fff;
@@ -1799,6 +1817,27 @@ hr.short {
 }
 .icon--up:before {
   content: "";
+}
+.icon--play {
+  vertical-align: top;
+}
+.icon--play:before {
+  content: "▶";
+  text-indent: 4px;
+}
+.button--play:hover {
+  cursor: pointer;
+}
+.button--play {
+  text-decoration: none;
+}
+.button--play span {
+  padding: 8px;
+  display: inline-block;
+  font-size: 25px;
+  font-family: georgia;
+  font-style: italic;
+  margin: 0 12px;
 }
 .icon--circle:after {
   display: none;
@@ -1866,7 +1905,7 @@ hr.short {
   content: "";
   width: 40px;
   display: block;
-  margin: 15px auto;
+  margin: 0 auto;
   height: 1px;
   background: #fff;
 }
@@ -1878,6 +1917,12 @@ hr.short {
   text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   display: inline-block;
+}
+.link-list a span {
+  padding: 15px 0;
+}
+.link-list a span:before {
+  padding: 15px 0;
 }
 .link-list.ef1 a {
   overflow: hidden;
@@ -1893,11 +1938,20 @@ hr.short {
 .link-list.ef1 a span::before {
   position: absolute;
   top: 100%;
-  content: attr(data-hover);
+  content: "✓";
+  font-family: "entypo";
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
+  text-align: center;
+  width: 100%;
+  font-size: 43px;
+  line-height: 85%;
 }
+.link-list.ef1 a.active span::before {
+  color: #5DDB5D;
+}
+.link-list.ef1 a.active span,
 .link-list.ef1 a:hover span,
 .link-list.ef1 a:focus span {
   -webkit-transform: translateY(-100%);
