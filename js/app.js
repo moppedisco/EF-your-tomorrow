@@ -25,26 +25,32 @@ FP.app = (function(window){
 
 	function init(){
 
-// Create the loader and queue our 3 images. Images will not 
-// begin downloading until we tell the loader to start. 
-var loader = new PxLoader(), 
-    vid1 = loader.addVideo('vids/baseball.mp4'), 
-    vid2 = loader.addVideo('vids/flipflops.mp4'), 
-    vid3 = loader.addVideo('vids/surfsunset.mp4'),
-    vid4 = loader.addVideo('vids/tapas.mp4'), 
-    vid5 = loader.addVideo('vids/surf.mp4'); 
- 
-// callback that will be run once images are ready 
-loader.addCompletionListener(function() { 
-	console.log("LOADED");
-}); 
- 
-// begin downloading images 
-loader.start(); 
+		// Create the loader and queue our 3 images. Images will not 
+		// begin downloading until we tell the loader to start. 
+		var loader = new PxLoader(), 
+		    vid1 = loader.addVideo('vids/baseball.mp4'), 
+		    vid2 = loader.addVideo('vids/flipflops.mp4'), 
+		    vid3 = loader.addVideo('vids/surfsunset.mp4'),
+		    vid4 = loader.addVideo('vids/tapas.mp4'), 
+		    vid5 = loader.addVideo('vids/surf.mp4'); 
 
-		initVideo();
-		playVideo("#intro");
-		bindScrollButtons();
+		// callback that runs every time an image loads 
+		loader.addProgressListener(function(e) { 
+		     // the event provides stats on the number of completed items 
+		    console.log(e.completedCount + ' / ' + e.totalCount); 
+		}); 
+
+		// callback that will be run once images are ready 
+		loader.addCompletionListener(function() { 
+			console.log("LOADED");
+			initVideo();
+			playVideo("#intro");
+			bindScrollButtons();	
+		}); 
+		 
+		// begin downloading images 
+		loader.start(); 
+
 		adjustImagePositioning();
 		bindWindowResize();
 
