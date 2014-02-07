@@ -1718,6 +1718,7 @@ h2 small {
   vertical-align: middle;
   text-align: center;
 }
+#mainVideo,
 .full-screen-image {
   position: absolute;
   min-width: 100%;

@@ -13,15 +13,16 @@
 FP.app = (function(window){
 
 	var directionPosition = 0,
-		$bigImage = $(".full-screen-image"),
-		$bigVideoWrapper = $('#big-video-wrap'),
+		$fullScreenImage = $(".full-screen-image"),
+		fullScreenVideo = "#mainVideo",
 		$sectionContainer = $(".body"),
 		$window = $(window),
-		BV = new $.BigVideo({
-			controls: false,
-			doLoop: false				
-		}),
-		videoPlaylist = ['vids/tapas.mp4'];
+		myPlayer,
+		// BV = new $.BigVideo({
+		// 	controls: false,
+		// 	doLoop: false				
+		// }),
+		mediaAspect = 16/9;
 
 	function init(){
 
@@ -34,11 +35,11 @@ FP.app = (function(window){
 		    vid4 = loader.addVideo('vids/tapas.mp4'), 
 		    vid5 = loader.addVideo('vids/surf.mp4'); 
 
-		// callback that runs every time an image loads 
-		loader.addProgressListener(function(e) { 
-		     // the event provides stats on the number of completed items 
-		    console.log(e.completedCount + ' / ' + e.totalCount); 
-		}); 
+			// callback that runs every time an image loads 
+			loader.addProgressListener(function(e) { 
+			     // the event provides stats on the number of completed items 
+			    console.log(e.completedCount + ' / ' + e.totalCount); 
+			}); 
 
 		// callback that will be run once images are ready 
 		loader.addCompletionListener(function() { 
@@ -51,22 +52,29 @@ FP.app = (function(window){
 		// begin downloading images 
 		loader.start(); 
 
-		adjustImagePositioning();
+		adjustImagePositioning($fullScreenImage);
 		bindWindowResize();
 
 	}
 
 	function initVideo(){
-		BV = new $.BigVideo({});
-		BV.init();
+
+		videojs("mainVideo").ready(function(){
+			myPlayer = this;
+			myPlayer.loop(true);
+			console.log(myPlayer);
+		});
+		updateSize(fullScreenVideo);
 	}
 
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
-		BV.show(videoToPlay,{
-			ambient:true
-		});
+		myPlayer.src(videoToPlay);
+		// BV.show(videoToPlay,{
+		// 	ambient:true
+		// });
 		$(target).find(".full-screen-image").fadeOut();
+		myPlayer.play();
 	}
 
 	function resetSection(){
@@ -111,17 +119,17 @@ FP.app = (function(window){
 		});
 
 		$('.button--play').click(function(e){
-			BV.remove();
-			yacine = new $.BigVideo({
-				controls: false,
-				doLoop: false				
-			});
+			// BV.remove();
+			// yacine = new $.BigVideo({
+			// 	controls: false,
+			// 	doLoop: false				
+			// });
 
-			yacine.init();
+			// yacine.init();
 
-			yacine.show(videoPlaylist,{
-				ambient: false
-			});
+			// yacine.show(videoPlaylist,{
+			// 	ambient: false
+			// });
 
 			e.preventDefault();
 		});	
@@ -130,7 +138,8 @@ FP.app = (function(window){
 
 	function bindWindowResize(){
 		$( window ).resize(function() {
-			adjustImagePositioning();
+			adjustImagePositioning($fullScreenImage);
+			updateSize(fullScreenVideo);
 		});
 	}
 
@@ -142,7 +151,7 @@ FP.app = (function(window){
 			move = "-100%";
 		}
 
-		$('#big-video-wrap').transition({ 
+		$('#mainVideo').transition({ 
 			y: move,
 			easing: 'easeInOutExpo',
 			duration: 800
@@ -164,13 +173,13 @@ FP.app = (function(window){
 			duration: 800
 		},function(){
 			$(target).addClass("active");
-			$('#big-video-wrap').removeAttr("style");
+			$('#mainVideo').css({"transform":"translate(0, 0)"});
 			playVideo(target);
 		});
 	}
 
-	function adjustImagePositioning() {
-		$bigImage.each(function(){
+	function adjustImagePositioning(element) {
+		element.each(function(){
 			var $img = $(this),
 				img = new Image();
 	 
@@ -202,6 +211,39 @@ FP.app = (function(window){
 	 
 		});
 	 
+	}
+
+	function updateSize(element) {
+		var windowW = $(window).width();
+		var windowH = $(window).height();
+		var windowAspect = windowW/windowH;
+		if (windowAspect < mediaAspect) {
+			// taller
+			myPlayer
+				.width(windowH*mediaAspect)
+				.height(windowH);
+			$(element)
+				.css('top',0)
+				.css('left',-(windowH*mediaAspect-windowW)/2)
+				.css('height',windowH);
+			$(element+'_html5_api').css('width',windowH*mediaAspect);
+			$(element+'_flash_api')
+				.css('width',windowH*mediaAspect)
+				.css('height',windowH);
+		} else {
+			// wider
+			myPlayer
+				.width(windowW)
+				.height(windowW/mediaAspect);
+			$(element)
+				.css('top',-(windowW/mediaAspect-windowH)/2)
+				.css('left',0)
+				.css('height',windowW/mediaAspect);
+			$(element+'_html5_api').css('width','100%');
+			$(element+'_flash_api')
+				.css('width',windowW)
+				.css('height',windowW/mediaAspect);
+		}
 	}
 
 	return {
