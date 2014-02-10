@@ -1,8 +1,11 @@
 {
-  "name": "EF-your-tomorrow",
-  "version": "0.1.0",
-  "devDependencies": {
-    "grunt": "~0.4.2",
-    "grunt-es6-module-transpiler": "~0.6.0"
+  "name": "ef_your_tomorrow",
+  "version": "0.0.1",
+  "dependencies": {
+    "grunt-cli": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-watch": "latest"
   }
 }

@@ -51,7 +51,6 @@ FP.app = (function(window){
 		 
 		// begin downloading images 
 		loader.start(); 
-
 		adjustImagePositioning($fullScreenImage);
 		bindWindowResize();
 
@@ -66,6 +65,7 @@ FP.app = (function(window){
 		});
 		updateSize(fullScreenVideo);
 	}
+
 
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
