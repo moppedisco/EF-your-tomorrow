@@ -14,7 +14,6 @@ module.exports = function(grunt) {
           'js/plugins/PxLoader.js',
           'js/plugins/PxLoaderVideo.js',
           'js/plugins/video.js',
-          //'js/plugins/mediaelement.js',
           'js/plugins/jquery.transit.min.js',
           'js/app.js'
         ],
