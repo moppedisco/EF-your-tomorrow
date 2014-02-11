@@ -42,6 +42,7 @@ FP.app = (function(window){
 		loader.addCompletionListener(function() { 
 			console.log("LOADED");
 
+			$(".section-intro").addClass("active");
 			initVideo();
 			playVideo("#intro");
 
@@ -83,6 +84,11 @@ FP.app = (function(window){
 		$(".full-screen-section").removeClass("active");	
 	}
 
+	function animatedIntroSection(){
+		$(".section-intro__title,.section-intro__desc").addClass("animated fadeOutUp");
+		$('#section-intro__btn').addClass("animated fadeOutDown");		
+	}
+
 	function bindScrollButtons(){
 		$('.innerLink').click(function(e){		
 			var direction = $(this).attr("data-direction");
@@ -92,16 +98,10 @@ FP.app = (function(window){
 
 			if((href === "#one" && direction === "1") || (href === "#intro")){
 				if(href === "#one"){
-					$("#intro h1.mega").addClass("animated fadeOutUp");
-					$('#btn-intro i').addClass("animated fadeOutDown");
+					animatedIntroSection();
 					setTimeout(function(){
 						scrollToDiv(direction,href);
 					},600);
-				} else {
-					console.log("up");
-					$("#intro h1.mega").removeClass("animated fadeOutUp");
-					$('#btn-intro i').removeClass("animated fadeOutDown");		
-					scrollToDiv(direction,href);			
 				}
 			} else {
 				scrollToDiv(direction,href);

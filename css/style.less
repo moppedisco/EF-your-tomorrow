@@ -120,9 +120,36 @@ hr.short {
 
 }
 
-.section-intro {
-	//background: #fec56d;
+
+.section-intro__desc {
+	font-family: Georgia;
+	font-size: 22px;
+	font-style: italic;
+	margin-left: auto;
+	margin-right: auto;
+	width: 60%;
 }
+
+.section-intro--content {
+	opacity: 0;
+	display: none;
+	-webkit-transition: opacity 0.4s;
+	-moz-transition: opacity 0.4s;
+	-ms-transition: opacity 0.4s;
+	-o-transition: opacity 0.4s;
+	transition: opacity 0.4s;
+}
+
+.section-intro.active .section-intro--content {
+	display: block;
+	opacity: 1;
+}
+
+.section-intro.active .section-intro--loader {
+	opacity: 0;
+}
+
+
 
 .section-one {
 

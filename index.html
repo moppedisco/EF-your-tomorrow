@@ -19,12 +19,20 @@
 	<a href="#last"><span>Last</span></a>
 </nav>
 <main class="body" style="position: relative; z-index:3;">
-	<section id="intro" data-video="vids/baseball.mp4" class="full-screen-section section-intro active">
+	<section id="intro" data-video="vids/baseball.mp4" class="full-screen-section section-intro">
 		<div class="vert-align">
 			<div class="vert-align__inner">
-				<h1 class="mega">Make your tomorrow</h1>
-				<hr>
-				<a id="btn-intro" href="#one" class="innerLink" data-direction="1"><i class="icon icon--button icon--circle icon--down">&#59236;</i></a>
+				<div class="section-intro--loader">
+					<small>Loading...</small>
+					<div class="section-intro__loadbar"></div>
+				</div>				
+				<div class="section-intro--content">
+					<h1 class="mega section-intro__title">Make your tomorrow</h1>
+					<p class="section-intro__desc">Go abroad. Learn a language. Change your life.</p>
+					<a id="section-intro__btn" href="#one" class="innerLink" data-direction="1">
+						<i class="icon icon--button icon--circle icon--down">&#59236;</i>
+					</a>
+				</div>
 			</div>
 		</div>
 		<img class="full-screen-image" src="img/baseball.jpg" />
