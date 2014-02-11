@@ -18,11 +18,8 @@ FP.app = (function(window){
 		$sectionContainer = $(".body"),
 		$window = $(window),
 		myPlayer,
-		// BV = new $.BigVideo({
-		// 	controls: false,
-		// 	doLoop: false				
-		// }),
-		mediaAspect = 16/9;
+		mediaAspect = 16/9,
+		selectedVideos = ["vids/tapas.mp4","vids/flipflops.mp4","vids/baseball.mp4"];
 
 	function init(){
 
@@ -35,21 +32,20 @@ FP.app = (function(window){
 		    vid4 = loader.addVideo('vids/tapas.mp4'), 
 		    vid5 = loader.addVideo('vids/surf.mp4'); 
 
-			// callback that runs every time an image loads 
+			// callback that runs every time a video loads 
 			loader.addProgressListener(function(e) { 
 			     // the event provides stats on the number of completed items 
 			    console.log(e.completedCount + ' / ' + e.totalCount); 
 			}); 
 
-		// callback that will be run once images are ready 
+		// callback that will be run once video are ready 
 		loader.addCompletionListener(function() { 
 			console.log("LOADED");
 			initVideo();
 			playVideo("#intro");
 			bindScrollButtons();	
 		}); 
-		 
-		// begin downloading images 
+
 		loader.start(); 
 		adjustImagePositioning($fullScreenImage);
 		bindWindowResize();
@@ -70,9 +66,6 @@ FP.app = (function(window){
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
 		myPlayer.src(videoToPlay);
-		// BV.show(videoToPlay,{
-		// 	ambient:true
-		// });
 		$(target).find(".full-screen-image").fadeOut();
 		myPlayer.play();
 	}
@@ -119,18 +112,15 @@ FP.app = (function(window){
 		});
 
 		$('.button--play').click(function(e){
-			// BV.remove();
-			// yacine = new $.BigVideo({
-			// 	controls: false,
-			// 	doLoop: false				
-			// });
-
-			// yacine.init();
-
-			// yacine.show(videoPlaylist,{
-			// 	ambient: false
-			// });
-
+			$(".full-screen-section.active .mega").addClass("animated fadeOutUp");
+			$('.full-screen-section.active .button--play').addClass("animated fadeOutDown");
+			setTimeout(function(){
+				$("#mainVideo").fadeOut(800,function(){
+					console.log("asdasd");
+					resetAmbientPlayer();
+					loadPlaylist();
+				});
+			},1200);			
 			e.preventDefault();
 		});	
 
@@ -141,6 +131,30 @@ FP.app = (function(window){
 			adjustImagePositioning($fullScreenImage);
 			updateSize(fullScreenVideo);
 		});
+	}
+
+	var count = 0;
+	function loadPlaylist(){
+		$("#mainVideo").show();
+		$("#mainVideo video").bind("ended", function() {
+			if(count < selectedVideos.length){
+				playPlaylist(count);		
+			} else {
+				alert("your selected videos has been played");
+			}
+		});			
+		playPlaylist(count)
+	}
+
+	function playPlaylist(index){
+		myPlayer.src(selectedVideos[index]);
+		myPlayer.play();
+		count++;
+	}
+
+	function resetAmbientPlayer(){
+		myPlayer.loop(false);
+		myPlayer.src('');
 	}
 
 	function moveBGvideo(direction){
