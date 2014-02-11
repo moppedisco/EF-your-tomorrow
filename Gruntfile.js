@@ -5,11 +5,16 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
       build: {
+        options: {
+          beautify: true,
+          mangle: false
+        },              
         src: [
           'js/jquery.js', 
           'js/plugins/PxLoader.js',
           'js/plugins/PxLoaderVideo.js',
           'js/plugins/video.js',
+          //'js/plugins/mediaelement.js',
           'js/plugins/jquery.transit.min.js',
           'js/app.js'
         ],
