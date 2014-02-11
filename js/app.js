@@ -41,8 +41,10 @@ FP.app = (function(window){
 		// callback that will be run once video are ready 
 		loader.addCompletionListener(function() { 
 			console.log("LOADED");
+
 			initVideo();
 			playVideo("#intro");
+
 			bindScrollButtons();	
 		}); 
 
@@ -59,19 +61,25 @@ FP.app = (function(window){
 			myPlayer.loop(true);
 			console.log(myPlayer);
 		});
+
 		updateSize(fullScreenVideo);
+
 	}
 
 
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
 		myPlayer.src(videoToPlay);
-		$(target).find(".full-screen-image").fadeOut();
+		if(Modernizr.video){ // Only fadeout images if browser supports video element
+			$(target).find(".full-screen-image").fadeOut();
+		}
 		myPlayer.play();
 	}
 
 	function resetSection(){
-		$(".full-screen-section:not(.active)").find(".full-screen-image").show();
+		if(Modernizr.video){ // Only fadeout images if browser supports video element
+			$(".full-screen-section:not(.active)").find(".full-screen-image").show();
+		}
 		$(".full-screen-section").removeClass("active");	
 	}
 
@@ -140,7 +148,7 @@ FP.app = (function(window){
 			if(count < selectedVideos.length){
 				playPlaylist(count);		
 			} else {
-				alert("your selected videos has been played");
+
 			}
 		});			
 		playPlaylist(count)

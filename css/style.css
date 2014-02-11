@@ -1707,6 +1707,7 @@ h2 small {
   width: auto;
   z-index: 1;
   top: 0;
+  left: 0;
 }
 hr.short {
   border: 0;
