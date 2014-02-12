@@ -23,8 +23,6 @@ FP.app = (function(window){
 
 	function init(){
 
-		// Create the loader and queue our 3 images. Images will not 
-		// begin downloading until we tell the loader to start. 
 		var loader = new PxLoader(), 
 		    vid1 = loader.addVideo('vids/baseball.mp4'), 
 		    vid2 = loader.addVideo('vids/flipflops.mp4'), 
@@ -36,6 +34,7 @@ FP.app = (function(window){
 			loader.addProgressListener(function(e) { 
 			     // the event provides stats on the number of completed items 
 			    console.log(e.completedCount + ' / ' + e.totalCount); 
+			    $(".section-intro__loadbar").text("Loading video " + e.completedCount + " of 5");
 			}); 
 
 		// callback that will be run once video are ready 
@@ -81,7 +80,7 @@ FP.app = (function(window){
 		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			$(".full-screen-section:not(.active)").find(".full-screen-image").show();
 		}
-		$(".full-screen-section").removeClass("active");	
+		//$(".full-screen-section").removeClass("active");	
 	}
 
 	function animatedIntroSection(){
@@ -194,6 +193,7 @@ FP.app = (function(window){
 			easing: 'easeInOutExpo',
 			duration: 800
 		},function(){
+			$(".full-screen-section").removeClass("active");
 			$(target).addClass("active");
 			$('#mainVideo').css({"transform":"translate(0, 0)"});
 			playVideo(target);
