@@ -13,6 +13,7 @@
 FP.app = (function(window){
 
 	var directionPosition = 0,
+		scrollDirection = 1, // down, -1 is up
 		$fullScreenImage = $(".full-screen-image"),
 		fullScreenVideo = "#mainVideo",
 		$sectionContainer = $(".body"),
@@ -80,7 +81,6 @@ FP.app = (function(window){
 		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			$(".full-screen-section:not(.active)").find(".full-screen-image").show();
 		}
-		//$(".full-screen-section").removeClass("active");	
 	}
 
 	function animatedIntroSection(){
@@ -89,30 +89,29 @@ FP.app = (function(window){
 	}
 
 	function bindScrollButtons(){
-		$('.innerLink').click(function(e){		
-			var direction = $(this).attr("data-direction");
-				href = $(this).attr('href');
+
+		// Intro button
+		$('#section-intro__btn').click(function(e){		
+			var target = $(this).attr('href');
 			
 			resetSection();
 
-			if((href === "#one" && direction === "1") || (href === "#intro")){
-				if(href === "#one"){
-					animatedIntroSection();
-					setTimeout(function(){
-						scrollToDiv(direction,href);
-					},600);
-				}
-			} else {
-				scrollToDiv(direction,href);
-			}
+			animatedIntroSection();
+			setTimeout(function(){
+				moveBGvideo(scrollDirection);
+				scrollToDiv(scrollDirection,target);
+			},600);
+
 			e.preventDefault();
 		});		
 	
 		$('.link-list a').click(function(e){
 			$(this).addClass("active");
-			var href = $(this).attr("href");
+			var target = $(this).attr("href");
+
 			setTimeout(function(){
-				scrollToDiv("1",href);
+				moveBGvideo(scrollDirection);
+				scrollToDiv(scrollDirection,target);
 			},200);
 
 			e.preventDefault();
@@ -121,10 +120,16 @@ FP.app = (function(window){
 		$('.button--play').click(function(e){
 			$(".full-screen-section.active .mega").addClass("animated fadeOutUp");
 			$('.full-screen-section.active .button--play').addClass("animated fadeOutDown");
+
 			setTimeout(function(){
-				$("#mainVideo").fadeOut(1300,function(){
+				$(".full-screen-section").removeClass("active");
+				$("#last").addClass("active");				
+				scrollToDiv(scrollDirection,'#last');
+				$("#mainVideo").fadeOut(1500,function(){
 					resetAmbientPlayer();
-					loadPlaylist();
+					setTimeout(function(){
+						loadPlaylist();
+					},1000);					
 				});
 			},1200);			
 			e.preventDefault();
@@ -132,35 +137,20 @@ FP.app = (function(window){
 
 	}
 
-	function bindWindowResize(){
-		$( window ).resize(function() {
-			adjustImagePositioning($fullScreenImage);
-			updateSize(fullScreenVideo);
+	function scrollToDiv(direction, target){
+
+		directionPosition = directionPosition - 100;
+
+		$sectionContainer.transition({ 
+			y: directionPosition+'%',
+			easing: 'easeInOutExpo',
+			duration: 800
+		},function(){
+			$(".full-screen-section").removeClass("active");
+			$(target).addClass("active");
+			$('#mainVideo').css({"transform":"translate(0, 0)"});
+			playVideo(target);
 		});
-	}
-
-	var count = 0;
-	function loadPlaylist(){
-		$("#mainVideo").show();
-		$("#mainVideo video").bind("ended", function() {
-			if(count < selectedVideos.length){
-				playPlaylist(count);		
-			} else {
-
-			}
-		});			
-		playPlaylist(count)
-	}
-
-	function playPlaylist(index){
-		myPlayer.src(selectedVideos[index]);
-		myPlayer.play();
-		count++;
-	}
-
-	function resetAmbientPlayer(){
-		myPlayer.loop(false);
-		myPlayer.src('');
 	}
 
 	function moveBGvideo(direction){
@@ -178,26 +168,41 @@ FP.app = (function(window){
 		});
 	}
 
-	function scrollToDiv(direction,target){
-		if(direction === "1"){
-			directionPosition = directionPosition - 100;
-		} else {
-			directionPosition = directionPosition + 100;
-		}
-
-		moveBGvideo(direction);
-
-		$sectionContainer.transition({ 
-			y: directionPosition+'%',
-			easing: 'easeInOutExpo',
-			duration: 800
-		},function(){
-			$(".full-screen-section").removeClass("active");
-			$(target).addClass("active");
-			$('#mainVideo').css({"transform":"translate(0, 0)"});
-			playVideo(target);
+	function bindWindowResize(){
+		$( window ).resize(function() {
+			adjustImagePositioning($fullScreenImage);
+			updateSize(fullScreenVideo);
 		});
 	}
+
+	var count = 0;
+	function loadPlaylist(){
+		$("#mainVideo").show();
+		$("#mainVideo video").bind("ended", function() {
+			if(count < selectedVideos.length){
+				playPlaylist(count);
+			} else {
+				console.log("ENDED");	
+				$(".section-last h1").addClass("animated fadeInDown");
+				$(".section-last h2").addClass("animated fadeInUp");
+
+			}
+		});			
+		playPlaylist(count)
+	}
+
+	function playPlaylist(index){
+		myPlayer.src(selectedVideos[index]);		
+		myPlayer.play();
+		count++;
+	}
+
+	function resetAmbientPlayer(){
+		myPlayer.loop(false);
+		myPlayer.src('');
+	}
+
+
 
 	function adjustImagePositioning(element) {
 		element.each(function(){
