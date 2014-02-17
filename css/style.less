@@ -173,23 +173,29 @@ hr.short {
 	opacity: 1;
 }
 
+.section-intro--loader {
+	position: relative;
+	top: 90px;
+}
+
 .section-intro.active .section-intro--loader {
 	opacity: 0;
 }
 
-
-
-.section-one {
-
+.section-intro .full-screen-image {
+	opacity: 0.5;
+	-webkit-transition: opacity 1.4s;
+	-moz-transition: opacity 1.4s;
+	-ms-transition: opacity 1.4s;
+	-o-transition: opacity 1.4s;
+	transition: opacity 1.4s;	
 }
 
-.section-two {
-
+.section-intro.active .full-screen-image {
+	opacity: 1;
 }
 
-.section-three {
 
-}
 
 .section-last {
 	background: #f68076;

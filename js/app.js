@@ -122,8 +122,7 @@ FP.app = (function(window){
 			$(".full-screen-section.active .mega").addClass("animated fadeOutUp");
 			$('.full-screen-section.active .button--play').addClass("animated fadeOutDown");
 			setTimeout(function(){
-				$("#mainVideo").fadeOut(800,function(){
-					console.log("asdasd");
+				$("#mainVideo").fadeOut(1300,function(){
 					resetAmbientPlayer();
 					loadPlaylist();
 				});
