@@ -46,12 +46,12 @@ FP.app = (function(window){
 			playVideo("#intro");
 
 			bindScrollButtons();	
+			bindWindowResize();
+
 		}); 
 
-		loader.start(); 
 		adjustImagePositioning($fullScreenImage);
-		bindWindowResize();
-
+		loader.start(); 
 	}
 
 	function initVideo(){

@@ -157,10 +157,11 @@ audio:not([controls]) {
 html {
   font-family: sans-serif;
   /* 1 */
+
   -webkit-text-size-adjust: 100%;
-  /* 2 */
   -ms-text-size-adjust: 100%;
   /* 2 */
+
 }
 /*
  * Remove default margin.
@@ -315,8 +316,10 @@ fieldset {
 legend {
   border: 0;
   /* 1 */
+
   padding: 0;
   /* 2 */
+
 }
 /*
  * 1. Correct font family not being inherited in all browsers.
@@ -329,10 +332,13 @@ select,
 textarea {
   font-family: inherit;
   /* 1 */
+
   font-size: 100%;
   /* 2 */
+
   margin: 0;
   /* 3 */
+
 }
 /*
  * Address Firefox 4+ setting `line-height` on `input` using `!important` in
@@ -365,8 +371,10 @@ input[type="reset"],
 input[type="submit"] {
   -webkit-appearance: button;
   /* 2 */
+
   cursor: pointer;
   /* 3 */
+
 }
 /*
  * Re-set default cursor for disabled elements.
@@ -383,8 +391,10 @@ input[type="checkbox"],
 input[type="radio"] {
   box-sizing: border-box;
   /* 1 */
+
   padding: 0;
   /* 2 */
+
 }
 /*
  * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
@@ -394,9 +404,11 @@ input[type="radio"] {
 input[type="search"] {
   -webkit-appearance: textfield;
   /* 1 */
+
   -moz-box-sizing: content-box;
   -webkit-box-sizing: content-box;
   /* 2 */
+
   box-sizing: content-box;
 }
 /*
@@ -422,8 +434,10 @@ input::-moz-focus-inner {
 textarea {
   overflow: auto;
   /* 1 */
+
   vertical-align: top;
   /* 2 */
+
 }
 /* ==========================================================================
    Tables
@@ -439,7 +453,7 @@ table {
     $MAIN
 \*------------------------------------*/
 html {
-  font: 0.875em / 1.7142857142857142 Arial, sans-serif;
+  font: 1.125em / 1.3333333333333333 Arial, sans-serif;
   overflow-y: scroll;
   min-height: 100%;
 }
@@ -588,7 +602,7 @@ figure,
 pre,
 .media {
   margin-bottom: 24px;
-  margin-bottom: 1.71428571rem;
+  margin-bottom: 1.3333333333333333rem;
 }
 /**
  * `hr` elements only take up a few pixels, so we need to give them special
@@ -596,7 +610,7 @@ pre,
  */
 hr {
   margin-bottom: 22px;
-  margin-bottom: 1.57142857rem;
+  margin-bottom: 1.2222222222222223rem;
 }
 /*------------------------------------*\
     $HEADINGS
@@ -604,68 +618,68 @@ hr {
 h1,
 .alpha {
   font-size: 42px;
-  font-size: 3rem;
-  line-height: 1.14285714;
+  font-size: 2.3333333333333335rem;
+  line-height: 1.1428571428571428;
   font-family: 'Roboto Condensed', sans-serif;
 }
 h2,
 .beta {
   font-size: 35px;
-  font-size: 2.5rem;
-  line-height: 1.37142857;
+  font-size: 1.9444444444444444rem;
+  line-height: 1.3714285714285714;
   font-family: 'Roboto Condensed', sans-serif;
 }
 h3,
 .gamma {
   font-size: 20px;
-  font-size: 1.42857143rem;
+  font-size: 1.1111111111111112rem;
   line-height: 1.2;
   font-family: 'Roboto Condensed', sans-serif;
 }
 h4,
 .delta {
   font-size: 18px;
-  font-size: 1.28571429rem;
-  line-height: 1.33333333;
+  font-size: 1rem;
+  line-height: 1.3333333333333333;
   font-family: 'Roboto Condensed', sans-serif;
 }
 h5,
 .epsilon {
   font-size: 16px;
-  font-size: 1.14285714rem;
+  font-size: 0.8888888888888888rem;
   line-height: 1.5;
   font-family: 'Roboto Condensed', sans-serif;
 }
 h6,
 .zeta {
   font-size: 14px;
-  font-size: 1rem;
-  line-height: 1.71428571;
+  font-size: 0.7777777777777778rem;
+  line-height: 1.7142857142857142;
   font-family: 'Roboto Condensed', sans-serif;
 }
 .giga {
   font-size: 96px;
-  font-size: 6.85714286rem;
+  font-size: 5.333333333333333rem;
   line-height: 96px;
 }
 .mega {
   font-size: 60px;
-  font-size: 4.28571429rem;
+  font-size: 3.3333333333333335rem;
   line-height: 60px;
 }
 .kilo {
   font-size: 48px;
-  font-size: 3.42857143rem;
+  font-size: 2.6666666666666665rem;
   line-height: 48px;
 }
 .milli {
   font-size: 12px;
-  font-size: 0.85714286rem;
+  font-size: 0.6666666666666666rem;
   line-height: 12px;
 }
 .micro {
   font-size: 10px;
-  font-size: 0.71428571rem;
+  font-size: 0.5555555555555556rem;
   line-height: 10px;
 }
 /*------------------------------------*\
@@ -697,7 +711,7 @@ ul,
 ol,
 dd {
   margin-left: 48px;
-  margin-left: 3.42857143rem;
+  margin-left: 2.6666666666666665rem;
 }
 /**
  * Objects and abstractions
@@ -725,6 +739,7 @@ dd {
 .button:hover {
   text-decoration: none;
   /* [9] */
+
 }
 .button:active,
 .button:focus {
@@ -1355,6 +1370,7 @@ Created:    2012-04-11
 .media {
   display: block;
   /* @extend .cf; */
+
 }
 .media__img,
 .media .img {
@@ -1395,17 +1411,20 @@ Created:    2012-04-11
   /**
      * So using `.icon` on certain elements doesn’t make a visual difference.
      */
+
   font-style: normal;
   font-weight: normal;
   /**
      * So icons added using `.icon` sit in the centre of the element.
      */
+
   text-align: center;
 }
 .sprite {
   /**
      * The typical size of most icons. Override in your theme stylesheet.
      */
+
   width: 16px;
   height: 16px;
   top: -1px;
@@ -1413,6 +1432,7 @@ Created:    2012-04-11
      * H5BP method image replacement:
      * github.com/h5bp/html5-boilerplate/commit/adecc5da035d6d76b77e3fa95c6abde841073da2
      */
+
   overflow: hidden;
   *text-indent: -9999px;
 }
@@ -1430,6 +1450,7 @@ Created:    2012-04-11
   /**
      * Place the icon in a box the exact same dimensions as the icon itself.
      */
+
   width: 1em;
   height: 1em;
 }
@@ -1599,6 +1620,7 @@ a:hover {
   _text-align: left;
   /* wraps other template elems to set width */
   /* text-align IE5.5 */
+
 }
 /* ====== Columns ====== */
 .leftCol {
@@ -1619,8 +1641,8 @@ a:hover {
 }
 body.rtl {
   font-size: 18px;
-  font-size: 1.28571429rem;
-  line-height: 1.33333333;
+  font-size: 1.2857142857142858rem;
+  line-height: 1.3333333333333333;
   direction: rtl;
 }
 .rtl h1,
@@ -1650,7 +1672,39 @@ font-family:'HelveticaNeueLTW20-Roma';
 font-family:'HelveticaNeueLTW20-Bold';
 
 
-*/
+*/.spinner {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin: 10px auto;
+  -webkit-animation: rotateplane 1.2s infinite ease-in-out;
+  animation: rotateplane 1.2s infinite ease-in-out;
+}
+@-webkit-keyframes rotateplane {
+  0% {
+    -webkit-transform: perspective(120px);
+  }
+  50% {
+    -webkit-transform: perspective(120px) rotateY(180deg);
+  }
+  100% {
+    -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg);
+  }
+}
+@keyframes rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
 html {
   overflow: hidden;
 }
