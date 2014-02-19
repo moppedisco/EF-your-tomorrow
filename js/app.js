@@ -1,16 +1,85 @@
 (function(window){
 
 	function init(){
-		FP.app.init();
+		var wrapperView = new YOUR_TMR.WrapperView();
 	}
 
-	window.FP = {
+	window.YOUR_TMR = {
 		init: init
 	};
 
 }(window)); // Self execute
 
-FP.app = (function(window){
+YOUR_TMR.WrapperView = Backbone.View.extend({
+	el: $('.body'),
+	initialize: function () {
+		this.model = new YOUR_TMR.myModel();
+		_.bindAll(this, "render");
+		this.render();
+	},	
+	addToPlaylist: function(){
+
+	},
+	render: function () {
+
+		this.$el.empty();
+
+		this.siteLoader = new YOUR_TMR.SiteLoader();
+		this.$el.append(this.siteLoader.$el)
+
+		if(this.siteLoader.isLoaded){
+			this.introView = new YOUR_TMR.IntroView();
+			this.categoryView = new YOUR_TMR.CategoryView();	
+
+			this.$el
+				.append(this.introView.$el)
+				.append(this.categoryView.$el);
+		}
+	}
+});
+
+YOUR_TMR.SiteLoader = Backbone.View.extend({
+	el: $('.section-loading'),
+	isLoaded: false,
+	initialize: function () {
+		this.render();
+	},
+	loadVideos: function(){
+
+	},
+	render: function(){
+		this.$el.html();
+	}
+});
+
+YOUR_TMR.IntroView = Backbone.View.extend({
+	el: $('.section-intro'),
+	initialize: function () {
+		this.render();
+	},
+	render: function(){
+		this.$el.html();
+	}
+});
+
+YOUR_TMR.CategoryView = Backbone.View.extend({
+	el: $('.section-category'),
+	initialize: function () {
+		this.render();
+	},
+	render: function(){
+		this.$el.html();
+	}
+});
+
+YOUR_TMR.myModel = Backbone.Model.extend({
+	defaults: {
+		firstStep: "Create List",
+		secondStep: "Sleep for 10 hours!!"
+	}
+});
+
+/*FP.app = (function(window){
 
 	var directionPosition = 0,
 		scrollDirection = 1, // down, -1 is up
@@ -25,17 +94,17 @@ FP.app = (function(window){
 	function init(){
 
 		var loader = new PxLoader(), 
-		    vid1 = loader.addVideo('vids/baseball.mp4'), 
-		    vid2 = loader.addVideo('vids/flipflops.mp4'), 
-		    vid3 = loader.addVideo('vids/surfsunset.mp4'),
-		    vid4 = loader.addVideo('vids/tapas.mp4'), 
-		    vid5 = loader.addVideo('vids/surf.mp4'); 
+			vid1 = loader.addVideo('vids/baseball.mp4'), 
+			vid2 = loader.addVideo('vids/flipflops.mp4'), 
+			vid3 = loader.addVideo('vids/surfsunset.mp4'),
+			vid4 = loader.addVideo('vids/tapas.mp4'), 
+			vid5 = loader.addVideo('vids/surf.mp4'); 
 
 			// callback that runs every time a video loads 
 			loader.addProgressListener(function(e) { 
-			     // the event provides stats on the number of completed items 
-			    console.log(e.completedCount + ' / ' + e.totalCount); 
-			    $(".section-intro__loadbar").text("Loading video " + e.completedCount + " of 5");
+				 // the event provides stats on the number of completed items 
+				console.log(e.completedCount + ' / ' + e.totalCount); 
+				$(".section-intro__loadbar").text("Loading video " + e.completedCount + " of 5");
 			}); 
 
 		// callback that will be run once video are ready 
@@ -277,4 +346,4 @@ FP.app = (function(window){
 		moveBGvideo : moveBGvideo
 	};
 
-})(window);
+})(window);*/

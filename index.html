@@ -11,33 +11,31 @@
 	<script src="js/plugins/modernizr.js"></script>
 </head>
 <body>
-<nav class="main-nav">
-	<a href="#intro"><span>Intro</span></a>
-	<a href="#one"><span>One</span></a>
-	<a href="#two"><span>Two</span></a>
-	<a href="#three"><span>Three</span></a>
-	<a href="#last"><span>Last</span></a>
-</nav>
+
 <main class="body" style="position: relative; z-index:3;">
-	<section id="intro" data-video="vids/baseball.mp4" class="full-screen-section section-intro">
+	<section id="loader" class="full-screen-section section-loading">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<div class="section-intro--loader">
 					<div class="spinner"></div>
 					<small class="section-intro__loadbar">Loading</small>
-				</div>				
-				<div class="section-intro--content">
-					<h1 class="mega section-intro__title">Make your tomorrow</h1>
-					<p class="section-intro__desc">Go abroad. Learn a language. Change your life.</p>
-					<a id="section-intro__btn" href="#one" class="innerLink" data-direction="1">
-						<i class="icon icon--button icon--circle icon--down">&#59236;</i>
-					</a>
 				</div>
+			</div>
+		</div>
+	</section>
+	<section id="intro" data-video="vids/baseball.mp4" class="full-screen-section section-intro">
+		<div class="vert-align">
+			<div class="vert-align__inner">
+				<h1 class="mega section-intro__title">Make your tomorrow</h1>
+				<p class="section-intro__desc">Go abroad. Learn a language. Change your life.</p>
+				<a id="section-intro__btn" href="#one" class="innerLink" data-direction="1">
+					<i class="icon icon--button icon--circle icon--down">&#59236;</i>
+				</a>
 			</div>
 		</div>
 		<img class="full-screen-image" src="img/baseball.jpg" />
 	</section>
-	<section id="one" data-video="vids/flipflops.mp4" class="full-screen-section section-two">
+	<section id="one" data-video="vids/flipflops.mp4" class="full-screen-section section-two section-category">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<h2>Learn a new language <small>1/5</small></h2>
@@ -54,7 +52,7 @@
 		</div>
 		<img class="full-screen-image" src="img/flipflops.jpg" />
 	</section>
-	<section id="two" data-video="vids/surfsunset.mp4" class="full-screen-section section-three">
+	<section id="two" data-video="vids/surfsunset.mp4" class="full-screen-section section-three section-category">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<h2>Create lifelone memories <small>2/5</small></h2>
@@ -71,7 +69,7 @@
 		</div>
 		<img class="full-screen-image" src="img/surfsunset.jpg" />
 	</section>
-	<section id="three" data-video="vids/tapas.mp4" class="full-screen-section section-three">
+	<section id="three" data-video="vids/tapas.mp4" class="full-screen-section section-three section-category">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<h2>Create lifelone memories <small>3/5</small></h2>
@@ -89,7 +87,7 @@
 		</div>
 		<img class="full-screen-image" src="img/tapas.jpg" />
 	</section>	
-	<section id="four" data-video="vids/surf.mp4" class="full-screen-section section-four">
+	<section id="four" data-video="vids/surf.mp4" class="full-screen-section section-four section-category">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<h2>Create lifelone memories <small>4/5</small></h2>
@@ -106,7 +104,7 @@
 		</div>
 		<img class="full-screen-image" src="img/surf.jpg" />
 	</section>	
-	<section id="five" data-video="vids/flipflops.mp4" class="full-screen-section section-five">
+	<section id="five" data-video="vids/flipflops.mp4" class="full-screen-section section-five section-category">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<h2>Learn a language<small>5/5</small></h2>
@@ -145,11 +143,12 @@
 	</section>
 </main>
 <video id="mainVideo"></video>
+
 <!-- //wrapper -->
 
 <script src="build/ef_your_tomorrow.min.js"></script>
 <script>
-	FP.init();
+	YOUR_TMR.init();
 </script>	
 </body>
 </html>
