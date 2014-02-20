@@ -1802,7 +1802,7 @@ hr.short {
   -o-transition: opacity 0.4s;
   transition: opacity 0.4s;
 }
-.section-intro.active .section-intro--content {
+.section-intro.active .section-intro--welcome {
   opacity: 1;
 }
 .section-intro--loader {
