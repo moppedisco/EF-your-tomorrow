@@ -12,64 +12,34 @@
 
 YOUR_TMR.AppView = Backbone.View.extend({
 	el: $('.body'),
-	isLoaded: true,
 	isAnimating: false,
 	currentPosition: 0,
+	pxLoader: new PxLoader(),
 	initialize: function () {
-		// _.bindAll(this, 'render', 'addToPlaylist');
 		this.model = new YOUR_TMR.AppViewModel;
-		console.log(this.model);
-		// console.log(this.model);
+		this.listenTo(this.model,'change', this.loadResource);
 		this.render();
 	},
 	events: function () {
 		var _this = this;
 		this.$el.find("#section-intro__btn").on('click',function(){
-			_this.addToPlaylist();
-			//YOUR_TMR.AppView.prototype.addToPlaylist("urban");
-		});
-	},	
-	render: function () {
-		this.introView = new YOUR_TMR.IntroView({
-			el : ".section-intro"
-		});
 
-		this.categoryView1 = new YOUR_TMR.CategoryView({
-			el : "#one",
-			model : new YOUR_TMR.CategoryModel
 		});
-		this.categoryView2 = new YOUR_TMR.CategoryView({
-			el : "#two",
-			model : new YOUR_TMR.CategoryModel
-		});
-		this.categoryView3 = new YOUR_TMR.CategoryView({
-			el : "#three",
-			model : new YOUR_TMR.CategoryModel
-		});
-		this.categoryView4 = new YOUR_TMR.CategoryView({
-			el : "#four",
-			model : new YOUR_TMR.CategoryModel
-		});
-		this.categoryView5 = new YOUR_TMR.CategoryView({
-			el : "#five",
-			model : new YOUR_TMR.CategoryModel
-		});
-
-		if(this.isLoaded){
-			//this.appViewModel = new YOUR_TMR.AppViewModel;
-			//console.log(this.appViewModel);
-		}
-
 	},
-	addToPlaylist: function(){
-		console.log(this.model);
-		console.log("asdasdasda");
-		// var playlist = this.model.playlist;
-		// playlist[0] = pelle;
-		// playlist[1] = 'belarbi';
-		
-		// this.model.set("playlist",playlist)
-		// YOUR_TMR.AppViewModel.set('isAnimating',true);		
+	loadResource: function(url,type){
+		console.log(this.model.attributes.playlist);
+		// switch (type){
+		// case "video":
+		// 	this.pxLoader.addVideo(url);
+		// break;
+		// case "audio":
+		// 	this.pxLoader.addImage(url);
+		// break;
+		// case "image":
+		// 	this.pxLoader.addSound(url);
+		// break;
+		// }
+		// this.pxLoader.start();
 	},
 	nextSection: function(element){
 		console.log("scroll bitches");
@@ -83,6 +53,42 @@ YOUR_TMR.AppView = Backbone.View.extend({
 			$('#mainVideo').css({"transform":"translate(0, 0)"});
 			playVideo(target);
 		});		
+	},
+	render: function () {
+		this.introView = new YOUR_TMR.IntroView({
+			el : ".section-intro"
+		});
+
+		this.categoryView1 = new YOUR_TMR.CategoryView({
+			el : "#one",
+			model : new YOUR_TMR.CategoryModel,
+			parent : this
+		});
+		this.categoryView2 = new YOUR_TMR.CategoryView({
+			el : "#two",
+			model : new YOUR_TMR.CategoryModel,
+			parent : this
+		});
+		this.categoryView3 = new YOUR_TMR.CategoryView({
+			el : "#three",
+			model : new YOUR_TMR.CategoryModel,
+			parent : this
+		});
+		this.categoryView4 = new YOUR_TMR.CategoryView({
+			el : "#four",
+			model : new YOUR_TMR.CategoryModel,
+			parent : this
+		});
+		this.categoryView5 = new YOUR_TMR.CategoryView({
+			el : "#five",
+			model : new YOUR_TMR.CategoryModel,
+			parent : this
+		});
+
+		if(this.isLoaded){
+
+		}
+
 	}
 });
 
@@ -91,14 +97,6 @@ YOUR_TMR.IntroView = Backbone.View.extend({
 		this.loadVideos();
 		this.render();
 	},
-	events: function () {
-		var that = this;
-		this.$el.find("#section-intro__btn").on('click',function(e){
-			//YOUR_TMR.AppView.prototype.nextSection(that.el);
-			// console.log(that);
-			//e.preventDefault();
-		});
-	},	
 	loadVideos: function(){
 		return this.isLoaded = true;
 	},
@@ -113,24 +111,35 @@ YOUR_TMR.IntroView = Backbone.View.extend({
 
 YOUR_TMR.CategoryView = Backbone.View.extend({
 	initialize: function (options) {
-		//console.log(this.model);
+		this.parent = options.parent;
 		this.model
 			.set("videoBgUrl",this.el.dataset.video)
 			.set("isActive",false);
 
 		this.render();
 	},
-	events: function () {
+	events: function(){
 		var _this = this;
 		this.$el.find(".link-list a").on('click',function(){
-			//console.log(_this.model);
-			YOUR_TMR.AppView.prototype.addToPlaylist("urban");
+			var selectedVideoUrl = "vids/video-1.mp4";
+			_this.addCategoryItem(selectedVideoUrl);
 		});
 	},
-	addCategoryItem: function(){
-		//console.log(this.model.attributes.videoBGUrl);
-		//var playlist = YOUR_TMR.AppViewModel.prototype.playlist;
+	addCategoryItem: function(video){
+		var tempPlaylist = this.parent.model.get("playlist");
+		tempPlaylist.push(video);
+		this.parent.model.set("playlist",tempPlaylist);
+		this.parent.model.trigger("change");
+	},
+	render: function(){
+		this.$el.html();
+		return this;
+	}
+});
 
+YOUR_TMR.VideoView = Backbone.View.extend({
+	initialize: function () {
+		this.render();
 	},
 	render: function(){
 		this.$el.html();
@@ -140,11 +149,11 @@ YOUR_TMR.CategoryView = Backbone.View.extend({
 
 YOUR_TMR.AppViewModel = Backbone.Model.extend({
 	defaults: {
-		ready: false,
-		playlist: [],
+		name:"",
+		isLoaded: false,
+		playlist: []
 	},
 	initialize: function(){
-		//console.log("hea");
 	}
 });
 
@@ -155,8 +164,7 @@ YOUR_TMR.CategoryModel = Backbone.Model.extend({
 		isActive: false,
 	},
 	initialize: function(){
-		//console.log(this.cid);
-		//console.log('CategoryModel has been initialized.');
+
 	}
 });
 
