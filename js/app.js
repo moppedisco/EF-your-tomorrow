@@ -23,48 +23,50 @@ FP.app = (function(window){
 		selectedVideos = ["vids/tapas.mp4","vids/flipflops.mp4","vids/baseball.mp4"];
 
 	function init(){
+		if(!Modernizr.touch){
+			var loader = new PxLoader(), 
+			    vid1 = loader.addVideo('vids/baseball.mp4'), 
+			    vid2 = loader.addVideo('vids/flipflops.mp4'), 
+			    vid3 = loader.addVideo('vids/surfsunset.mp4'),
+			    vid4 = loader.addVideo('vids/tapas.mp4'), 
+			    vid5 = loader.addVideo('vids/surf.mp4'); 
 
-		var loader = new PxLoader(), 
-		    vid1 = loader.addVideo('vids/baseball.mp4'), 
-		    vid2 = loader.addVideo('vids/flipflops.mp4'), 
-		    vid3 = loader.addVideo('vids/surfsunset.mp4'),
-		    vid4 = loader.addVideo('vids/tapas.mp4'), 
-		    vid5 = loader.addVideo('vids/surf.mp4'); 
+				// callback that runs every time a video loads 
+				loader.addProgressListener(function(e) { 
+				     // the event provides stats on the number of completed items 
+				    console.log(e.completedCount + ' / ' + e.totalCount); 
+				    $(".section-intro__loadbar").text("Loading video " + e.completedCount + " of 5");
+				}); 
 
-			// callback that runs every time a video loads 
-			loader.addProgressListener(function(e) { 
-			     // the event provides stats on the number of completed items 
-			    console.log(e.completedCount + ' / ' + e.totalCount); 
-			    $(".section-intro__loadbar").text("Loading video " + e.completedCount + " of 5");
+			// callback that will be run once video are ready 
+			loader.addCompletionListener(function() { 
+				console.log("LOADED");
+
+				$(".section-intro").addClass("active");
+				initVideo();
+				playVideo("#intro");
+
+				bindScrollButtons();	
+				bindWindowResize();
+
 			}); 
 
-		// callback that will be run once video are ready 
-		loader.addCompletionListener(function() { 
-			console.log("LOADED");
-
+			adjustImagePositioning($fullScreenImage);
+			loader.start(); 
+		} else {
 			$(".section-intro").addClass("active");
-			initVideo();
-			playVideo("#intro");
-
 			bindScrollButtons();	
-			bindWindowResize();
-
-		}); 
-
-		adjustImagePositioning($fullScreenImage);
-		loader.start(); 
+			bindWindowResize();			
+		}
 	}
 
 	function initVideo(){
-
 		videojs("mainVideo").ready(function(){
 			myPlayer = this;
 			myPlayer.loop(true);
 			console.log(myPlayer);
 		});
-
 		updateSize(fullScreenVideo);
-
 	}
 
 
@@ -91,14 +93,16 @@ FP.app = (function(window){
 	function bindScrollButtons(){
 
 		// Intro button
-		$('#section-intro__btn').click(function(e){		
+		$('#section-intro__btn').click(function(e){	
 			var target = $(this).attr('href');
 			
 			resetSection();
 
 			animatedIntroSection();
 			setTimeout(function(){
-				moveBGvideo(scrollDirection);
+				if(!Modernizr.touch){
+					moveBGvideo(scrollDirection);
+				}
 				scrollToDiv(scrollDirection,target);
 			},600);
 
@@ -110,7 +114,9 @@ FP.app = (function(window){
 			var target = $(this).attr("href");
 
 			setTimeout(function(){
-				moveBGvideo(scrollDirection);
+				if(!Modernizr.touch){
+					moveBGvideo(scrollDirection);
+				}
 				scrollToDiv(scrollDirection,target);
 			},200);
 
@@ -149,7 +155,10 @@ FP.app = (function(window){
 			$(".full-screen-section").removeClass("active");
 			$(target).addClass("active");
 			$('#mainVideo').css({"transform":"translate(0, 0)"});
-			playVideo(target);
+			if(!Modernizr.touch){
+				playVideo(target);
+			}
+			
 		});
 	}
 
@@ -182,6 +191,7 @@ FP.app = (function(window){
 			if(count < selectedVideos.length){
 				playPlaylist(count);
 			} else {
+				$(".subtitles").fadeOut();
 				console.log("ENDED");	
 				$(".section-last h1").addClass("animated fadeInDown");
 				$(".section-last h2").addClass("animated fadeInUp");
@@ -192,6 +202,8 @@ FP.app = (function(window){
 	}
 
 	function playPlaylist(index){
+		$(".subtitles li").hide();
+		$(".subtitles li:eq("+index+")").show();
 		myPlayer.src(selectedVideos[index]);		
 		myPlayer.play();
 		count++;
@@ -274,7 +286,8 @@ FP.app = (function(window){
 
 	return {
 		init : init,
-		moveBGvideo : moveBGvideo
+		moveBGvideo : moveBGvideo,
+		scrollToDiv : scrollToDiv
 	};
 
 })(window);
