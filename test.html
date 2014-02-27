@@ -7,29 +7,49 @@
 	<script src="js/jquery.js"></script>
 	<script src="js/plugins/mediaelement.js"></script>
 	<script src="js/plugins/mediaelementplayer.js"></script>
+	<link rel="stylesheet" href="css/plugins/mediaelementplayer.min.css">
 </head>
 <body>
 	<h1>Firefox test</h1>
 	<p>test motherfucker 2</p>
-<video width="360" height="203" id="player1" src="vids/baseball.mp4" type="video/mp4"></video>
+<video preload width="360" height="203" id="player1" src="vids/baseball.mp4" type="video/mp4"></video>
+<button class="play">Play</button><button class="pause">Pause</button>
 <script>
 $( document ).ready(function() {
-
+	var count = 0;
+	var playlist = ["vids/flipflops.mp4","vids/surf.mp4","vids/tapas.mp4"];
 	var player = $('#player1').mediaelementplayer({
-		loop: true,
-		features: []
+		features: [],
+	    success: function (mediaElement, domObject) { 
+			mediaElement.play();
+			mediaElement.addEventListener('timeupdate', function(e) {
+				console.log(mediaElement.currentTime); 
+	        }, false);
+
+			mediaElement.addEventListener('ended', function(e) {
+				count++;
+				// console.log(mediaElement);
+				mediaElement.setSrc(playlist[count]);
+				mediaElement.load();
+				console.log("ENDED"); 
+				mediaElement.play();
+	        }, false);
+
+			mediaElement.play();
+	    },
 	});
 
-	player[0].play();
-	console.log(player[0]);
-	$(player).on("timeupdate",function(){
-		console.log(this.currentTime);
-		if(this.ended === true){
-			console.log("ended");
-
-		}		
+	$('button.play').on("click",function(){
+		player[0].setSrc("vids/surf.mp4");
+		player[0].load();
+		mediaElement.play();
+		console.log("PLAY");
 	})
 
+	$('button.pause').on("click",function(){
+		player[0].pause();
+		console.log("PAUSE");
+	})	
 
 });
 
