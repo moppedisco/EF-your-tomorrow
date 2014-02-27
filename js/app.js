@@ -72,14 +72,14 @@ FP.app = (function(window){
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
 		myPlayer.src(videoToPlay);
-		if(Modernizr.video){ // Only fadeout images if browser supports video element
+		if(!Modernizr.video){ // Only fadeout images if browser supports video element
 			$(target).find(".full-screen-image").fadeOut();
 		}
 		myPlayer.play();
 	}
 
 	function resetSection(){
-		if(Modernizr.video){ // Only fadeout images if browser supports video element
+		if(!Modernizr.video){ // Only fadeout images if browser supports video element
 			$(".full-screen-section:not(.active)").find(".full-screen-image").show();
 		}
 	}
