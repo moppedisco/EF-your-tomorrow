@@ -1715,14 +1715,13 @@ h1 input[type="text"] {
   border-bottom: 8px solid #fff;
   color: #fff;
 }
-h2 small {
-  display: block;
-  font-size: 19px;
+h2 {
+  margin: 5px 0 10px;
 }
 .vert-align {
   display: table;
   width: 100%;
-  height: 100%;
+  height: 90%;
   position: relative;
   z-index: 99999;
 }
@@ -1730,6 +1729,24 @@ h2 small {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
+}
+.progress {
+  overflow: hidden;
+  width: 300px;
+  border: 1px solid #fff;
+  margin: 0 auto 40px;
+}
+.progress li {
+  width: 14.2857143%;
+  float: left;
+  height: 3px;
+  background: #ffffff;
+}
+.progress li.active {
+  background: #fff;
+}
+.progress li.active ~ li {
+  background: none;
 }
 .touch #mainVideo {
   display: none;
@@ -1823,8 +1840,8 @@ body {
   opacity: 0;
 }
 .icon--button {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   display: inline-block;
   border-radius: 50px;
   margin: 0 0 20px;
@@ -1832,7 +1849,7 @@ body {
 }
 /* Effect 5 */
 .icon--circle {
-  box-shadow: 0 0 0 4px #ffffff;
+  box-shadow: 0 0 0 1px #ffffff;
   overflow: hidden;
   -webkit-transition: background 0.3s, color 0.3s, box-shadow 0.3s;
   -moz-transition: background 0.3s, color 0.3s, box-shadow 0.3s;
@@ -1842,7 +1859,7 @@ body {
 .icon--circle:hover {
   background: none;
   color: #fff;
-  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6);
   cursor: pointer;
 }
 .icon--circle:after {
@@ -1857,10 +1874,10 @@ body {
   box-sizing: content-box;
 }
 .icon--circle:before {
-  font-size: 53px;
-  line-height: 53px;
+  font-size: 43px;
+  line-height: 43px;
   font-style: normal;
-  font-weight: bold;
+  font-weight: normal;
   font-variant: normal;
   text-transform: none;
   display: block;
@@ -1876,22 +1893,23 @@ body {
   vertical-align: top;
 }
 .icon--play:before {
-  content: "▶";
-  text-indent: 4px;
+  content: "";
+  text-indent: 1px;
 }
 .button--play:hover {
   cursor: pointer;
 }
 .button--play {
   text-decoration: none;
+  display: inline-block;
 }
 .button--play span {
   padding: 8px;
-  display: inline-block;
   font-size: 25px;
   font-family: georgia;
   font-style: italic;
-  margin: 0 12px;
+  margin: 0 12px 5px;
+  display: block;
 }
 .icon--circle:after {
   display: none;
@@ -1938,7 +1956,8 @@ body {
   font-style: italic;
   font-size: 22px;
   list-style: none;
-  margin-left: 0;
+  margin: 0 auto;
+  max-width: 400px;
 }
 .link-list--scroll {
   position: relative;
@@ -1985,7 +2004,7 @@ body {
 }
 .link-list.ef1 a {
   overflow: hidden;
-  display: inline-block;
+  display: block;
 }
 .link-list.ef1 a span {
   position: relative;

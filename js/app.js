@@ -69,14 +69,13 @@ FP.app = (function(window){
 		updateSize(fullScreenVideo);
 	}
 
-
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
 		myPlayer.src(videoToPlay);
 		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			$(target).find(".full-screen-image").fadeOut();
 		}
-		myPlayer.play();
+		myPlayer.pause();
 	}
 
 	function resetSection(){
