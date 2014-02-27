@@ -75,7 +75,7 @@ FP.app = (function(window){
 		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			$(target).find(".full-screen-image").fadeOut();
 		}
-		myPlayer.pause();
+		myPlayer.play();
 	}
 
 	function resetSection(){
