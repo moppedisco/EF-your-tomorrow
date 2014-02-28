@@ -1912,12 +1912,17 @@ body {
   content: "";
   text-indent: 1px;
 }
+.loading-videos {
+  margin: 0;
+  font-size: 22px;
+}
 .button--play:hover {
   cursor: pointer;
 }
 .button--play {
   text-decoration: none;
   display: inline-block;
+  visibility: hidden;
 }
 .button--play span {
   padding: 8px;

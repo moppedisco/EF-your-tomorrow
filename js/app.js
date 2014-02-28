@@ -33,7 +33,7 @@ FP.app = (function(window){
 				loadComplete();
 		loadProgressListener();
 	}
-	var pelle = 0;
+
 	function addLoadResources(url,type){
 		switch (type){
 		case "video":
@@ -46,10 +46,6 @@ FP.app = (function(window){
 			loader.addSound(url);
 			break;
 		}
-		if(pelle === 0){
-			loader.start();
-			pelle++;
-		}
 	}
 
 	function loadProgressListener(){
@@ -61,6 +57,8 @@ FP.app = (function(window){
 	function loadComplete(){
 		loader.addCompletionListener(function() { 
 			console.log("LOADED");
+			$(".loading-videos").hide();
+			$(".button--play").css("visibility","visible");			
 		}); 
 	}
 
@@ -120,6 +118,11 @@ FP.app = (function(window){
 
 			selectedVideos.push(videoUrl);
 			addLoadResources(videoUrl,"video");
+
+			if(target === "#playPlaylist"){
+				loader.start();
+			}
+
 			$(".subtitles").append("<li>"+text+"</li>");
 
 			setTimeout(function(){
@@ -134,12 +137,12 @@ FP.app = (function(window){
 
 		$('.button--play').click(function(e){
 			// $(".full-screen-section.active .mega").addClass("animated fadeOutUp");
-			$('.full-screen-section.active .button--play').addClass("animated fadeOutDown");
+			$('.full-screen-section.active .button--play').addClass("animated fadeOut");
 			initVideo();
 			setTimeout(function(){
 		
 				// scrollToDiv(scrollDirection,'#last');
-				$(".full-screen-section.active img").fadeOut(1500,function(){
+				$(".full-screen-section.active img").fadeOut(1200,function(){
 					// resetAmbientPlayer();
 					setTimeout(function(){
 						$(".full-screen-section").removeClass("active");
@@ -147,7 +150,7 @@ FP.app = (function(window){
 						loadPlaylist();
 					},1000);					
 				});
-			},1200);			
+			},800);			
 			e.preventDefault();
 		});	
 
