@@ -1686,6 +1686,8 @@ font-family:'HelveticaNeueLTW20-Bold';
 }
 html {
   overflow: hidden;
+  font-family: Georgia;
+  font-style: italic;
 }
 html,
 body {
@@ -1715,8 +1717,13 @@ h1 input[type="text"] {
   border-bottom: 8px solid #fff;
   color: #fff;
 }
+h1 {
+  font-style: normal;
+}
 h2 {
   margin: 5px 0 10px;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  font-style: normal;
 }
 .vert-align {
   display: table;
@@ -1762,6 +1769,10 @@ h2 {
   top: 0;
   left: 0;
 }
+#mainVideo {
+  z-index: 3;
+  display: none;
+}
 hr.short {
   border: 0;
   height: 2px;
@@ -1785,17 +1796,18 @@ body {
 .subtitles {
   margin: 0;
   font-family: Georgia;
-  font-size: 35px;
+  font-size: 55px;
+  line-height: 55px;
   font-style: italic;
   position: fixed;
-  top: 50%;
-  z-index: 1;
+  top: 30%;
+  z-index: 4;
   left: 50%;
   list-style: none;
   padding: 0;
   text-align: center;
-  width: 400px;
-  margin-left: -200px;
+  width: 700px;
+  margin-left: -350px;
   margin-top: -30px;
 }
 .subtitles li {
@@ -1835,9 +1847,13 @@ body {
 .section-intro.active .full-screen-image {
   opacity: 1;
 }
-.section-last h1,
-.section-last h2 {
+.section-last img,
+.section-last hr,
+.section-last p {
   opacity: 0;
+}
+.section-last p {
+  font-size: 22px;
 }
 .icon--button {
   width: 40px;

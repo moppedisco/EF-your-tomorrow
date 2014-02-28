@@ -12,6 +12,7 @@ module.exports = function(grunt) {
         src: [
           'js/jquery.js', 
           'js/plugins/PxLoader.js',
+          'js/plugins/PxLoaderImage.js',
           'js/plugins/PxLoaderVideo.js',
           'js/plugins/video.js',
           'js/plugins/jquery.transit.min.js',
