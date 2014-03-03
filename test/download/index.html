@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<body>
+
+    <h1>PAGE HERE</h1>
+
+    <ul id="menu">
+        <li><a id="opt1" data-option="1" data-video="http://thinkpixellab.com/pxloader/slowImage.php?delay=5" href="#">Option 1</a></li>
+        <li><a id="opt2" data-option="2" data-video="http://thinkpixellab.com/pxloader/slowImage.php?delay=4" href="#">Option 2</a></li>
+        <li><a id="opt3" data-option="3" data-video="http://thinkpixellab.com/pxloader/slowImage.php?delay=7" href="#">Option 3</a></li>
+        <li><a id="opt4" data-option="4" data-video="http://thinkpixellab.com/pxloader/slowImage.php?delay=3" href="#">Option 4</a></li>
+        <li><a id="opt5" data-option="5" data-video="http://thinkpixellab.com/pxloader/slowImage.php?delay=8" href="#">Option 5</a></li>
+        <li><a id="opt6" data-option="6" data-video="http://thinkpixellab.com/pxloader/slowImage.php?delay=6" href="#">Option 6</a></li>
+    </ul>
+
+    <script src="http://s3.amazonaws.com/es6-promises/promise-0.1.1.min.js"></script>
+    <script src="../../js/plugins/PxLoader.js"></script>
+    <script src="../../js/plugins/PxLoaderImage.js"></script>
+    <script src="../../js/plugins/PxLoaderVideo.js"></script>
+    <script>
+
+        (function () {
+
+            var ambients = [
+                'http://thinkpixellab.com/pxloader/slowImage.php?delay=1&time=' + Math.random(),
+                'http://thinkpixellab.com/pxloader/slowImage.php?delay=2&time=' + Math.random(),
+                'http://thinkpixellab.com/pxloader/slowImage.php?delay=1&time=' + Math.random(),
+                'http://thinkpixellab.com/pxloader/slowImage.php?delay=4&time=' + Math.random(),
+                'http://thinkpixellab.com/pxloader/slowImage.php?delay=3&time=' + Math.random(),
+                'http://thinkpixellab.com/pxloader/slowImage.php?delay=6&time=' + Math.random()
+            ];
+
+            var queueVideoPromises = []
+
+            function resolveVideo (i) {
+
+                return function (resolve) {
+                    var loader = new PxLoader();
+
+                    document.getElementById('opt' + i).addEventListener('click', function (e) {
+                        var target = e.target,
+                            option = parseInt(target.dataset['option']),
+                            video = target.dataset['video'] + '&time=' + Math.random();
+
+                        loader.add(new PxLoaderImage(video));
+
+                        loader.addCompletionListener(function () {
+                            console.log('Video ' + i + ' downloaded');
+                            resolve({ option: option, video: video });
+                        });
+
+                        loader.start();
+
+                    });
+
+                };
+
+            }
+
+            function resolveAmbients (resolve) {
+                var loader = new PxLoader(),
+                    resource;
+
+                for (var i = 0, len = ambients.length; i < len; i++) {
+                    resource = new PxLoaderImage(ambients[i]);
+                    resource.__id__ = i + 1;
+                    loader.add(resource);
+
+                    queueVideoPromises.push(new Promise(resolveVideo(i + 1)));
+                }
+
+                loader.addProgressListener(function (e) {
+                    console.log('Ambient ' + e.resource.__id__ + ' downloaded');
+                });
+
+                loader.addCompletionListener(function () {
+                    console.log('All the ambients are downloaded. Resolve promise');
+                    resolve(); // all the ambient videos have been downloaded
+                });
+
+                loader.start();
+
+            }
+
+            function downloadAmbients () {
+                return new Promise(resolveAmbients);
+            }
+
+            function downloadVideos () {
+                return Promise.all(queueVideoPromises);
+            }
+
+            function doFinalStage () {
+                console.log('We have all the videos ready to show. Play list');
+            }
+
+            downloadAmbients()
+                .then(downloadVideos)
+                .then(doFinalStage);
+        })();
+
+    </script>
+</body>
+</html>
