@@ -30,7 +30,7 @@
                 'http://thinkpixellab.com/pxloader/slowImage.php?delay=6&time=' + Math.random()
             ];
 
-            var queueVideoPromises = []
+            var queueVideoPromises = [];
 
             function resolveVideo (i) {
 
@@ -50,6 +50,8 @@
                         });
 
                         loader.start();
+
+                        e.target.parentNode.innerHTML = 'Option ' + i + ' DONE';
 
                     });
 
