@@ -12,76 +12,54 @@
 
 FP.app = (function(window){
 
-	var directionPosition = 0,
-		scrollDirection = 1, // down, -1 is up
-		$fullScreenImage = $(".full-screen-image"),
-		fullScreenVideo = "#mainVideo",
-		$sectionContainer = $(".body"),
-		$window = $(window),
-		myPlayer,
-		mediaAspect = 16/9,
-		selectedVideos = [],
-		loader = new PxLoader();
-
-
+	var el_fullScreenImage = ".full-screen-image",				// Cover image element before the video is loaded
+		el_fullScreenVideo = "#mainVideo",						// Background video element 
+		el_fullScreenSection = ".full-screen-section",			// Page sections
+		el_sectionContainer = ".wrapper",						// Main element we animate
+		$window = $(window),									// Window element
+		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
+		scrollDirection = 1, 									// 1 down, -1 is up
+		myPlayer,												// Video object
+		mediaAspect = 16/9,										// Video aspect ratio of videos
+		playlistCount = 0;										// Count to keep track of played videos in playlist
+		ambientVideos = [];										// Ambient videos
+		selectedVideos = [];									// Selected category videos
 
 	function init(){
-		adjustImagePositioning($fullScreenImage);
+		$(el_fullScreenSection).each(function(){
+			ambientVideos.push($(this).attr("data-video"));
+		});
+
+		adjustImagePositioning($(el_fullScreenImage));
 		$(".section-intro").addClass("active");
+
+		initVideo();
+		playVideo("#intro");
+		
 		bindScrollButtons();
 		bindWindowResize();
-				loadComplete();
-		loadProgressListener();
-	}
-
-	function addLoadResources(url,type){
-		switch (type){
-		case "video":
-			loader.addVideo(url);
-			break;
-		case "image":
-			loader.addImage(url);
-			break;
-		case "audio":
-			loader.addSound(url);
-			break;
-		}
-	}
-
-	function loadProgressListener(){
-		loader.addProgressListener(function(e) { 
-		    console.log(e.completedCount + ' / ' + e.totalCount); 
-		}); 
-	}
-
-	function loadComplete(){
-		loader.addCompletionListener(function() { 
-			console.log("LOADED");
-			$(".loading-videos").hide();
-			$(".button--play").css("visibility","visible");			
-		}); 
 	}
 
 	function initVideo(){
 		videojs("mainVideo").ready(function(){
 			myPlayer = this;
-			myPlayer.loop(false);
+			myPlayer.loop(true);
 			console.log(myPlayer);
 		});
-		updateSize(fullScreenVideo);
+		updateSize(el_fullScreenVideo);
 	}
 
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
 		myPlayer.src(videoToPlay);
-		if(!Modernizr.video){ // Only fadeout images if browser supports video element
+		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			$(target).find(".full-screen-image").fadeOut();
 		}
 		myPlayer.play();
 	}
 
 	function resetSection(){
-		if(!Modernizr.video){ // Only fadeout images if browser supports video element
+		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			$(".full-screen-section:not(.active)").find(".full-screen-image").show();
 		}
 	}
@@ -109,7 +87,8 @@ FP.app = (function(window){
 
 			e.preventDefault();
 		});		
-	
+
+		// Category buttons	
 		$('.link-list a').click(function(e){
 			$(this).addClass("active");
 			var target = $(this).attr("href"),
@@ -117,11 +96,7 @@ FP.app = (function(window){
 				text = $(this).text();
 
 			selectedVideos.push(videoUrl);
-			addLoadResources(videoUrl,"video");
-
-			if(target === "#playPlaylist"){
-				loader.start();
-			}
+			console.log(selectedVideos);
 
 			$(".subtitles").append("<li>"+text+"</li>");
 
@@ -135,15 +110,19 @@ FP.app = (function(window){
 			e.preventDefault();
 		});
 
+		// Play video button
 		$('.button--play').click(function(e){
-			// $(".full-screen-section.active .mega").addClass("animated fadeOutUp");
+			$(".full-screen-section.active .mega").addClass("animated fadeOutUp");
 			$('.full-screen-section.active .button--play').addClass("animated fadeOut");
+			
 			initVideo();
-			setTimeout(function(){
-		
-				// scrollToDiv(scrollDirection,'#last');
-				$(".full-screen-section.active img").fadeOut(1200,function(){
-					// resetAmbientPlayer();
+
+			// Wait for the text to disapear before fading out background
+			setTimeout(function(){ 
+				$(el_fullScreenVideo).fadeOut(1200,function(){
+					resetAmbientPlayer();
+
+					// Create delay effect before we start playing the playlist
 					setTimeout(function(){
 						$(".full-screen-section").removeClass("active");
 						$("#last").addClass("active");		
@@ -158,18 +137,18 @@ FP.app = (function(window){
 
 	function scrollToDiv(direction, target){
 
-		directionPosition = directionPosition - 100;
+		distanceScrolled = distanceScrolled - 100;
 
-		$sectionContainer.transition({ 
-			y: directionPosition+'%',
+		$(el_sectionContainer).transition({ 
+			y: distanceScrolled+'%',
 			easing: 'easeInOutExpo',
 			duration: 800
 		},function(){
 			$(".full-screen-section").removeClass("active");
 			$(target).addClass("active");
-			$('#mainVideo').css({"transform":"translate(0, 0)"});
+			$(el_fullScreenVideo).css({"transform":"translate(0, 0)"});
 			if(!Modernizr.touch){
-				// playVideo(target);
+				playVideo(target);
 			}
 			
 		});
@@ -183,7 +162,7 @@ FP.app = (function(window){
 			move = "-100%";
 		}
 
-		$('#mainVideo').transition({ 
+		$(el_fullScreenVideo).transition({ 
 			y: move,
 			easing: 'easeInOutExpo',
 			duration: 800
@@ -192,19 +171,18 @@ FP.app = (function(window){
 
 	function bindWindowResize(){
 		$( window ).resize(function() {
-			adjustImagePositioning($fullScreenImage);
-			// updateSize(fullScreenVideo);
+			adjustImagePositioning($(el_fullScreenImage));
+			updateSize(el_fullScreenVideo);
 		});
 	}
 
-	var count = 0;
 	function loadPlaylist(){
 		$(".full-screen-section.active .mega").hide();
-		$("#mainVideo").show();
-		scrollToDiv(scrollDirection,'#last');
+		$(el_fullScreenVideo).show();
+		// scrollToDiv(scrollDirection,'#last');
 		$("#mainVideo video").bind("ended", function() {
-			if(count < selectedVideos.length){
-				playPlaylist(count);
+			if(playlistCount < selectedVideos.length){
+				playPlaylist(playlistCount);
 			} else {
 				$(".subtitles,#mainVideo").fadeOut(1200,function(){
 					$(".section-last img,.section-last hr").addClass("animated fadeInDown");
@@ -213,7 +191,7 @@ FP.app = (function(window){
 				console.log("ENDED");	
 			}
 		});			
-		playPlaylist(count)
+		playPlaylist(playlistCount);
 	}
 
 	function playPlaylist(index){
@@ -221,15 +199,13 @@ FP.app = (function(window){
 		$(".subtitles li:eq("+index+")").show();
 		myPlayer.src(selectedVideos[index]);		
 		myPlayer.play();
-		count++;
+		playlistCount++;
 	}
 
 	function resetAmbientPlayer(){
 		myPlayer.loop(false);
 		myPlayer.src('');
 	}
-
-
 
 	function adjustImagePositioning(element) {
 		element.each(function(){
@@ -302,8 +278,7 @@ FP.app = (function(window){
 	return {
 		init : init,
 		moveBGvideo : moveBGvideo,
-		scrollToDiv : scrollToDiv,
-		addLoadResources : addLoadResources
+		scrollToDiv : scrollToDiv
 	};
 
 })(window);
