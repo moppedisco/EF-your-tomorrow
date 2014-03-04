@@ -12,20 +12,33 @@
 <body>
 	<h1>Firefox test</h1>
 	<p>test motherfucker 2</p>
-<video preload width="360" height="203" id="player1" src="vids/baseball.mp4" type="video/mp4"></video>
+	<p>
+		<button class="play">Play</button>
+		<button class="pause">Pause</button>
+	</p>	
+	<video preload width="360" height="203" id="player1" src="vids/baseball.mp4" type="video/mp4"></video>
 
-<button class="play">Play</button><button class="pause">Pause</button>
 <script>
 $( document ).ready(function() {
 	var count = 0;
 	var playlist = ["vids/flipflops.mp4","vids/surf.mp4","vids/tapas.mp4"];
 	var player = $('#player1').mediaelementplayer({
 		features: [],
+		plugins: ['flash', 'silverlight'],
 	    success: function (mediaElement, domObject) { 
 			mediaElement.play();
 			mediaElement.addEventListener('timeupdate', function(e) {
 				console.log(mediaElement.currentTime); 
 	        }, false);
+
+			if(mediaElement.pluginType == 'flash') {
+				console.log(mediaElement.pluginType);
+				mediaElement.addEventListener('canplay', function() {
+					// Player is ready
+					mediaElement.play();
+				}, false);
+			}
+
 
 			mediaElement.addEventListener('ended', function(e) {
 				count++;
@@ -40,19 +53,20 @@ $( document ).ready(function() {
 	    },
 	});
 
-	$('button.play').on("click",function(){
-		player[0].setSrc("vids/surf.mp4");
-		player[0].load();
+	$('button').on("click",function(){
+		// player[0].setSrc("vids/surf.mp4");
+		// player[0].load();
+		// player[0].play();
 		mediaElement.play();
 		console.log("PLAY");
 	})
 
-	$('button.pause').on("click",function(){
-		player[0].pause();
-		console.log("PAUSE");
-	})	
+	// $('button.pause').on("click",function(){
+	// 	player[0].pause();
+	// 	console.log("PAUSE");
+	// })	
 
-});
-
+});	
+</script>
 </body>
 </html>
