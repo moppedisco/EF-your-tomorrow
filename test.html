@@ -7,65 +7,76 @@
 	<script src="js/jquery.js"></script>
 	<script src="js/plugins/mediaelement.js"></script>
 	<script src="js/plugins/mediaelementplayer.js"></script>
-	<link rel="stylesheet" href="css/plugins/mediaelementplayer.min.css">
+	<script src="js/plugins/PxLoader.js"></script>
+	<script src="js/plugins/PxLoaderVideo.js"></script>
+	<!-- <link rel="stylesheet" href="css/plugins/mediaelementplayer.min.css"> -->
+	<style>
+		.mejs-controls { display: none !important; }
+	</style>
 </head>
 <body>
 	<h1>Firefox test</h1>
 	<p>test motherfucker 2</p>
-	<p>
-		<button class="play">Play</button>
-		<button class="pause">Pause</button>
-	</p>	
 	<video preload width="360" height="203" id="player1" src="vids/baseball.mp4" type="video/mp4"></video>
 
 <script>
 $( document ).ready(function() {
-	var count = 0;
-	var playlist = ["vids/flipflops.mp4","vids/surf.mp4","vids/tapas.mp4"];
-	var player = $('#player1').mediaelementplayer({
-		features: [],
-		plugins: ['flash', 'silverlight'],
-	    success: function (mediaElement, domObject) { 
-			mediaElement.play();
-			mediaElement.addEventListener('timeupdate', function(e) {
-				console.log(mediaElement.currentTime); 
-	        }, false);
+	var loader = new PxLoader(), 
+		vid1 = loader.addVideo('vids/baseball.mp4'), 
+		vid2 = loader.addVideo('vids/flipflops.mp4'), 
+		vid3 = loader.addVideo('vids/surf.mp4'), 
+		vid4 = loader.addVideo('vids/tapas.mp4'); 
 
-			if(mediaElement.pluginType == 'flash') {
-				console.log(mediaElement.pluginType);
-				mediaElement.addEventListener('canplay', function() {
-					// Player is ready
-					mediaElement.play();
-				}, false);
-			}
+	loader.addProgressListener(function(e) {     
+	    console.log(e.completedCount + ' / ' + e.totalCount); 
+	}); 
 
-
-			mediaElement.addEventListener('ended', function(e) {
-				count++;
-				// console.log(mediaElement);
-				mediaElement.setSrc(playlist[count]);
-				mediaElement.load();
-				console.log("ENDED"); 
-				mediaElement.play();
-	        }, false);
-
-			mediaElement.play();
-	    },
+	loader.addCompletionListener(function() { 
+		console.log("LOADED");
+		loadplayer();
 	});
 
-	$('button').on("click",function(){
-		// player[0].setSrc("vids/surf.mp4");
-		// player[0].load();
-		// player[0].play();
-		mediaElement.play();
-		console.log("PLAY");
-	})
+	loader.start();
 
-	// $('button.pause').on("click",function(){
-	// 	player[0].pause();
-	// 	console.log("PAUSE");
-	// })	
+	function loadplayer(){
+		console.log("start playing");
+		var count = 0;
+		var playlist = ["vids/flipflops.mp4","vids/surf.mp4","vids/tapas.mp4"];
+		var player = $('#player1').mediaelementplayer({
+			features: [],
+			plugins: ['flash', 'silverlight'],
+		    success: function (mediaElement, domObject) { 
+				mediaElement.play();
+		// 		mediaElement.addEventListener('timeupdate', function(e) {
+		// 			console.log(mediaElement.currentTime); 
+		//         }, false);
 
+				if(mediaElement.pluginType == 'flash') {
+					console.log(mediaElement.pluginType);
+					mediaElement.addEventListener('canplay', function() {
+						// Player is ready
+						mediaElement.play();
+					}, false);
+				}
+
+
+				mediaElement.addEventListener('ended', function(e) {
+					count++;
+					if(count < playlist.length){
+						// console.log(mediaElement);
+						mediaElement.setSrc(playlist[count]);
+						mediaElement.load();
+						console.log("ENDED"); 
+						mediaElement.play();
+					} else {
+						console.log("ALL DONE");
+					}
+		        }, false);
+
+				mediaElement.play();
+		    },
+		});
+	}
 });	
 </script>
 </body>

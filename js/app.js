@@ -26,18 +26,37 @@ FP.app = (function(window){
 		selectedVideos = [];									// Selected category videos
 
 	function init(){
+
+		var loader = new PxLoader();
+		adjustImagePositioning($(el_fullScreenImage));
+
 		$(el_fullScreenSection).each(function(){
-			ambientVideos.push($(this).attr("data-video"));
+			var videoUrl = $(this).attr("data-video");
+			if(videoUrl){
+				ambientVideos.push(videoUrl);
+				loader.addVideo(videoUrl);
+			}
+		});
+		console.log(ambientVideos);
+
+		loader.addProgressListener(function(e) { 
+		    console.log(e.completedCount + ' / ' + e.totalCount); 
+		}); 
+ 
+		loader.addCompletionListener(function() { 
+			console.log("LOADED");
+ 
+			$(".section-intro").addClass("active");
+
+			initVideo();
+			playVideo("#intro");
+			
+			bindScrollButtons();
+			bindWindowResize();
+ 
 		});
 
-		adjustImagePositioning($(el_fullScreenImage));
-		$(".section-intro").addClass("active");
-
-		initVideo();
-		playVideo("#intro");
-		
-		bindScrollButtons();
-		bindWindowResize();
+		loader.start();
 	}
 
 	function initVideo(){
