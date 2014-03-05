@@ -135,24 +135,24 @@ FP.app = (function(window){
 
 		// Play video button
 		$('.button--play').click(function(e){
-			$(".full-screen-section.active .mega").addClass("animated fadeOutUp");
+			// $(".full-screen-section.active .mega").addClass("animated fadeOutUp");
 			$('.full-screen-section.active .button--play').addClass("animated fadeOut");
 			
 			initVideo();
 
 			// Wait for the text to disapear before fading out background
-			setTimeout(function(){ 
+			// setTimeout(function(){ 
 				$(el_fullScreenVideo).fadeOut(1200,function(){
 					resetAmbientPlayer();
 
 					// Create delay effect before we start playing the playlist
 					setTimeout(function(){
+						$(".full-screen-section.active .mega").hide();
 						$(".full-screen-section").removeClass("active");
-						$("#last").addClass("active");		
 						loadPlaylist();
-					},1000);					
+					},1300);					
 				});
-			},800);			
+			// },800);			
 			e.preventDefault();
 		});	
 
@@ -200,13 +200,15 @@ FP.app = (function(window){
 	}
 
 	function loadPlaylist(){
-		$(".full-screen-section.active .mega").hide();
+		
 		$(el_fullScreenVideo).show();
-		// scrollToDiv(scrollDirection,'#last');
+
 		$("#mainVideo video").bind("ended", function() {
 			if(playlistCount < selectedVideos.length){
 				playPlaylist(playlistCount);
 			} else {
+				$("#last").addClass("active");
+				scrollToDiv(scrollDirection,'#last');
 				$(".subtitles,#mainVideo").fadeOut(1200,function(){
 					$(".section-last img,.section-last hr").addClass("animated fadeInDown");
 					$(".section-last p").addClass("animated fadeInUp");
