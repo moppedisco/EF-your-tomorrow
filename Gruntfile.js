@@ -16,6 +16,7 @@ module.exports = function(grunt) {
           'js/plugins/PxLoaderVideo.js',
           'js/plugins/video.js',
           'js/plugins/jquery.transit.min.js',
+          'js/plugins/promise-0.1.1.min.js',
           'js/app.js'
         ],
         dest: 'build/<%= pkg.name %>.min.js'

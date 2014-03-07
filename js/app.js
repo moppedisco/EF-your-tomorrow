@@ -16,56 +16,141 @@ FP.app = (function(window){
 		el_fullScreenVideo = "#mainVideo",						// Background video element 
 		el_fullScreenSection = ".full-screen-section",			// Page sections
 		el_sectionContainer = ".wrapper",						// Main element we animate
-		$window = $(window),									// Window element
 		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
 		scrollDirection = 1, 									// 1 down, -1 is up
 		myPlayer,												// Video object
-		mediaAspect = 16/9,										// Video aspect ratio of videos
-		playlistCount = 0;										// Count to keep track of played videos in playlist
-		ambientVideos = [];										// Ambient videos
+		playlistCount = 0,										// Count to keep track of played videos in playlist
+		ambients = [],											// Ambient videos
+		queueVideoPromises = [],
 		selectedVideos = [];									// Selected category videos
 
 	function init(){
 
-		var loader = new PxLoader();
-		adjustImagePositioning($(el_fullScreenImage));
+		FP.helpers.adjustImagePositioning($(el_fullScreenImage));
 
-		$(el_fullScreenSection).each(function(){
+		if(!Modernizr.touch){
+			downloadAmbients().then(initFirstFrame);
+		} else {
+			initFirstFrame();
+		}
+
+		// Category buttons	
+		// $('.link-list a').click(function(e){
+		// 	$(this).addClass("active");
+		// 	var target = $(this).attr("href"),
+		// 		videoUrl = $(this).attr("data-video"),
+		// 		text = $(this).text();
+
+		// 	selectedVideos.push(videoUrl);
+		// 	console.log(selectedVideos);
+
+		// 	$(".subtitles").append("<li>"+text+"</li>");
+
+		// 	setTimeout(function(){
+		// 		if(!Modernizr.touch){
+		// 			moveBGvideo(scrollDirection);
+		// 		}
+		// 		scrollToDiv(scrollDirection,target);
+		// 	},200);
+
+		// 	e.preventDefault();
+		// });
+
+	}
+
+	function resolveFirstFrame(){
+		$(".section-intro").addClass("active");
+
+		initVideo();
+		playVideo("#intro");
+		
+		bindScrollButtons();
+		FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);
+		return resolve();
+	}
+
+	function resolveVideo (i) {
+
+		return function (resolve) {
+			var loader = new PxLoader();
+
+			document.getElementById('opt' + i).addEventListener('click', function (e) {
+				var target = e.target,
+					option = parseInt(target.dataset['option']),
+					video = target.dataset['video'] + '&time=' + Math.random();
+
+				loader.add(new PxLoaderImage(video));
+
+				loader.addCompletionListener(function () {
+					console.log('Video ' + i + ' downloaded');
+					resolve({ option: option, video: video });
+				});
+
+				loader.start();
+
+				e.target.parentNode.innerHTML = 'Option ' + i + ' DONE';
+
+			});
+
+		};
+
+	}
+
+	function resolveAmbients (resolve) {
+		var loader = new PxLoader(),
+			resource;
+
+		$(".full-screen-section").each(function(i){
 			var videoUrl = $(this).attr("data-video");
+		
 			if(videoUrl){
-				ambientVideos.push(videoUrl);
-				loader.addVideo(videoUrl);
+				ambients.push(videoUrl);
+				resource = new PxLoaderVideo(videoUrl);
+				resource.__id__ = i + 1;
+				loader.add(resource);
+
+				// queueVideoPromises.push(new Promise(resolveVideo(i + 1)));				
 			}
 		});
-		console.log(ambientVideos);
 
-		loader.addProgressListener(function(e) { 
-		    console.log(e.completedCount + ' / ' + e.totalCount); 
-		}); 
- 
-		loader.addCompletionListener(function() { 
-			console.log("LOADED");
- 
-			$(".section-intro").addClass("active");
+		loader.addProgressListener(function (e) {
+			console.log('Ambient ' + e.resource.__id__ + ' downloaded');
+		});
 
-			initVideo();
-			playVideo("#intro");
-			
-			bindScrollButtons();
-			bindWindowResize();
- 
+		loader.addCompletionListener(function () {
+			console.log('All the ambients are downloaded. Resolve promise');
+			resolve(); // all the ambient videos have been downloaded
 		});
 
 		loader.start();
+
+	}
+
+	function initFirstFrame(){
+		return new Promise(resolveFirstFrame);
+	}
+
+	function downloadAmbients () {
+		return new Promise(resolveAmbients);
+	}
+
+	function downloadVideos () {
+		return Promise.all(queueVideoPromises);
+	}
+
+	function doFinalStage () {
+		console.log('We have all the videos ready to show. Play list');
 	}
 
 	function initVideo(){
+		
 		videojs("mainVideo").ready(function(){
 			myPlayer = this;
 			myPlayer.loop(true);
 			console.log(myPlayer);
-		});
-		updateSize(el_fullScreenVideo);
+		});	
+
+		FP.helpers.adjustVideoPositioning(el_fullScreenVideo);
 	}
 
 	function playVideo(target){
@@ -111,28 +196,6 @@ FP.app = (function(window){
 			e.preventDefault();
 		});		
 
-		// Category buttons	
-		$('.link-list a').click(function(e){
-			$(this).addClass("active");
-			var target = $(this).attr("href"),
-				videoUrl = $(this).attr("data-video"),
-				text = $(this).text();
-
-			selectedVideos.push(videoUrl);
-			console.log(selectedVideos);
-
-			$(".subtitles").append("<li>"+text+"</li>");
-
-			setTimeout(function(){
-				if(!Modernizr.touch){
-					moveBGvideo(scrollDirection);
-				}
-				scrollToDiv(scrollDirection,target);
-			},200);
-
-			e.preventDefault();
-		});
-
 		// Play video button
 		$('.button--play').click(function(e){
 			// $(".full-screen-section.active .mega").addClass("animated fadeOutUp");
@@ -143,7 +206,10 @@ FP.app = (function(window){
 			// Wait for the text to disapear before fading out background
 			// setTimeout(function(){ 
 				$(el_fullScreenVideo).fadeOut(1200,function(){
-					resetAmbientPlayer();
+					
+					// Resets ambient player
+					myPlayer.loop(false);
+					myPlayer.src('');
 
 					// Create delay effect before we start playing the playlist
 					setTimeout(function(){
@@ -155,7 +221,6 @@ FP.app = (function(window){
 			// },800);			
 			e.preventDefault();
 		});	
-
 	}
 
 	function scrollToDiv(direction, target){
@@ -192,13 +257,6 @@ FP.app = (function(window){
 		});
 	}
 
-	function bindWindowResize(){
-		$( window ).resize(function() {
-			adjustImagePositioning($(el_fullScreenImage));
-			updateSize(el_fullScreenVideo);
-		});
-	}
-
 	function loadPlaylist(){
 		
 		$(el_fullScreenVideo).show();
@@ -227,16 +285,30 @@ FP.app = (function(window){
 		playlistCount++;
 	}
 
-	function resetAmbientPlayer(){
-		myPlayer.loop(false);
-		myPlayer.src('');
+	return {
+		init : init,
+		myPlayer : myPlayer
+	};
+
+})(window);
+
+FP.helpers = (function(window){
+	var	mediaAspect = 16/9,										// Video aspect ratio of videos
+		$window = $(window);									// cache window element
+
+	function bindWindowResize(imageElements,videoElement){
+		$(window).resize(function() {
+			adjustImagePositioning($(imageElements));
+			adjustVideoPositioning(videoElement);
+		});
 	}
 
 	function adjustImagePositioning(element) {
+
 		element.each(function(){
 			var $img = $(this),
 				img = new Image();
-	 
+	 	
 			img.src = $img.attr('src');
 	 
 			var windowWidth = $window.width(),
@@ -264,16 +336,15 @@ FP.app = (function(window){
 			})
 	 
 		});
-	 
 	}
 
-	function updateSize(element) {
-		var windowW = $(window).width();
-		var windowH = $(window).height();
+	function adjustVideoPositioning(element) {
+		var windowW = $window.width();
+		var windowH = $window.height();
 		var windowAspect = windowW/windowH;
 		if (windowAspect < mediaAspect) {
 			// taller
-			myPlayer
+			$(element).find("video")
 				.width(windowH*mediaAspect)
 				.height(windowH);
 			$(element)
@@ -286,7 +357,7 @@ FP.app = (function(window){
 				.css('height',windowH);
 		} else {
 			// wider
-			myPlayer
+			$(element).find("video")
 				.width(windowW)
 				.height(windowW/mediaAspect);
 			$(element)
@@ -301,9 +372,9 @@ FP.app = (function(window){
 	}
 
 	return {
-		init : init,
-		moveBGvideo : moveBGvideo,
-		scrollToDiv : scrollToDiv
+		bindWindowResize : bindWindowResize,
+		adjustVideoPositioning : adjustVideoPositioning,
+		adjustImagePositioning : adjustImagePositioning
 	};
 
 })(window);
