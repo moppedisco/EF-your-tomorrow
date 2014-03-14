@@ -1,17 +1,9 @@
-window.YT_intro_model = Backbone.Model.extend({
-    defaults:{
-        heading:"1",
-        para:"2",
-		vidIntro:"vids/baseball.mp4",
-		bgImgIntro:"img/baseball.jpg"
-    }
-});
-
-
+window.YT_intro_model = Backbone.Model.extend();
 
 yt_intro_model = new YT_intro_model({
-    heading:"Make your tomorrow",
-    para:"Play",
-	vidIntro:"vids/baseball.mp4",
-	bgImgIntro:"img/baseball.jpg"
+    cssClass: "full-screen-section section-intro",
+    heading: "Make your tomorrowa",
+    para: "Play",
+	vidIntro: "vids/baseball.mp4",
+	bgImgIntro: "img/baseball.jpg",
 });

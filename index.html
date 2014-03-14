@@ -14,71 +14,52 @@
 
 <body>
 	<main class="wrapper">
-		
+
 	</main>
-	<div id="Section_intro">
-		<div class="intro"></div>
-	</div>
 
-	<div id="Section_options">
-		
-	</div>
-
-	<div id="Section_chosen">
-		<div class="chosen"></div>
-	</div>
-
-	<div id="Section_play">
-		<div class="play"></div>
-	</div>
-	
 	<video id="mainVideo"></video> 
 	
 	<!-- ============================================= -->
 	<!-- Intro Template -->
 	<!-- ============================================= -->
 	<script id="introTemplate" type="text/template">
-		<section id="intro" data-video="<%= vidIntro %>" class="full-screen-section section-intro">
-			<div class="vert-align">
-				<div class="vert-align__inner">
-					<div class="section-intro--loader">
-						<div class="spinner"></div>
-						<small class="section-intro__loadbar">Loading</small>
-					</div>
-					<div class="section-intro--welcome">
-						<h1 class="mega section-intro__title"><%= heading %></h1>
-						<p class="section-intro__desc"><%= para %></p>
-						<a id="section-intro__btn" href="#one" class="innerLink" data-direction="1">
-							<i class="icon icon--button icon--circle icon--down">&#59236;</i>
-						</a>
-					</div>
+		<div class="vert-align">
+			<div class="vert-align__inner">
+				<div class="section-intro--loader">
+					<div class="spinner"></div>
+					<small class="section-intro__loadbar">Loading</small>
+				</div>
+				<div class="section-intro--welcome">
+					<h1 class="mega section-intro__title"><%= heading %></h1>
+					<p class="section-intro__desc"><%= para %></p>
+					<a id="section-intro__btn" href="#one" class="innerLink" data-direction="1">
+						<i class="icon icon--button icon--circle icon--down">&#59236;</i>
+					</a>
 				</div>
 			</div>
-			<img class="full-screen-image" src="<%= bgImgIntro %>" />
-		</section>
+		</div>
+		<img class="full-screen-image" src="<%= bgImgIntro %>" />
 	</script>
 
 	<!-- ============================================= -->
 	<!-- Category Template -->
 	<!-- ============================================= -->	
 	<script id="optionTemplate" type="text/template">
-	 	<section id="<%= opID %>" data-video="<%= vidOption %>" class="full-screen-section section-category">
-			<div class="vert-align">
-				<div class="vert-align__inner">
-					<h2><%= topheading %> <small><%= page %></small></h2>
-					<ul class="link-list ef1">
-						<li><a href="<%= opIDnxt %>"><span><%= Option1 %></span></a></li>
-						<li><a href="<%= opIDnxt %>"><span><%= Option2 %></span></a></li>
-						<li><a href="<%= opIDnxt %>"><span><%= Option3 %></span></a></li>
-						<li><a href="<%= opIDnxt %>"><span><%= Option4 %></span></a></li>
-						<li><a href="<%= opIDnxt %>"><span><%= Option5 %></span></a></li>
-						<li><a href="<%= opIDnxt %>"><span><%= Option6 %></span></a></li>
-						<li><a href="<%= opIDnxt %>"><span><%= Option7 %></span></a></li>                               
-					</ul>
-				</div>
+		<div class="vert-align">
+			<div class="vert-align__inner">
+				<h2><%= topheading %> <small><%= page %></small></h2>
+				<ul class="link-list ef1">
+					<li><a href="<%= opIDnxt %>"><span><%= Option1 %></span></a></li>
+					<li><a href="<%= opIDnxt %>"><span><%= Option2 %></span></a></li>
+					<li><a href="<%= opIDnxt %>"><span><%= Option3 %></span></a></li>
+					<li><a href="<%= opIDnxt %>"><span><%= Option4 %></span></a></li>
+					<li><a href="<%= opIDnxt %>"><span><%= Option5 %></span></a></li>
+					<li><a href="<%= opIDnxt %>"><span><%= Option6 %></span></a></li>
+					<li><a href="<%= opIDnxt %>"><span><%= Option7 %></span></a></li>                               
+				</ul>
 			</div>
-			<img class="full-screen-image" src="<%= bgImgOption %>" />
-		</section>
+		</div>
+		<img class="full-screen-image" src="<%= bgImgOption %>" />
 	</script>
 
 	<!-- ============================================= -->

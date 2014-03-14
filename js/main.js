@@ -71,64 +71,54 @@
 
 	window.AppView = Backbone.View.extend({
 			
-		el: $(".body"),	
-		isAnimating: false,
-		currentPosition: 0,
-		pxLoader: new PxLoader(),
+		el: $(".wrapper"),
 		initialize: function() {
-			this.model = new yourTMAppViewModel;
 			this.render();
-			$("#intro").addClass("active");
 	    },
 		
 		render: function () {		
 
 			// =========================================================
 			// Init intro view
-			this.yt_intro_view = new YT_intro_view({
-	        	model: yt_intro_model
-	    	});		
-			
-			// Render intro view
-		 	$("#Section_intro").html(this.yt_intro_view.render().el);			
+			this.intro_view = new YT_intro_view();
+			this.category_collection_view = new YT_category_collection_view({collection: yourTMoptions});	
 
 
 
-		 	// =========================================================
-		 	// Init collection of categories
-			yt_category_collection_view = new YT_category_collection_view();		
+			this.$el.append(this.intro_view.render().$el);
+			// this.$el.append(this.category_collection_view.render().$el);
 
 
 
-		 	// =========================================================
-		 	// Init selected collection view	
-			this.yt_selected_collection_view = new YT_selected_collection_view({
-				model: yt_selected_collection_model
-			});	
+			return this;
+
+
+		  	// =========================================================
+		  	// Init collection of categories
+			// yt_category_collection_view = new YT_category_collection_view();		
+
+
+
+		  	// =========================================================
+		  	// Init selected collection view	
+			// this.yt_selected_collection_view = new YT_selected_collection_view({
+			// 	model: yt_selected_collection_model
+			// });	
 			
 			// Render selected collection view
-	   		$("#Section_chosen").html(this.yt_selected_collection_view.render().el);
+	  		// $("#Section_chosen").html(this.yt_selected_collection_view.render().el);
 
 
 
 
-		 	// =========================================================
-		 	// Init play selected collection					
-			this.yt_play_selected_collection_view = new YT_play_selected_collection_view({
-	        	model: YT_play_selected_collection_model
-	    	});
+		  	// =========================================================
+		  	// Init play selected collection					
+			// this.yt_play_selected_collection_view = new YT_play_selected_collection_view({
+	  		// model: YT_play_selected_collection_model
+	  		// });
 
 				
-		}				
-	});
-	
-	yourTMAppViewModel = Backbone.Model.extend({
-		defaults: {},
-		initialize: function(){
-		
-		
-		
-		}	
+		}		
 	});
 	
 	App = new AppView();
