@@ -1,150 +1,164 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> -->
-	<title>Fullpage - test</title>
-	<!-- <link rel="stylesheet" href="css/plugins/bigvideo.css" /> -->
-	<link rel="stylesheet" href="css/plugins/animate.css" />
-	<link rel="stylesheet" href="css/style.css" />
-	<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:700,400&amp;subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic" rel="stylesheet" type="text/css" />
-	<script src="js/plugins/modernizr.js"></script>
-</head>
-<body>
 
-<main class="body" style="position: relative; z-index:3;">
-	<section id="intro" data-video="vids/baseball.mp4" class="full-screen-section section-intro">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<div class="section-intro--loader">
-					<div class="spinner"></div>
-					<small class="section-intro__loadbar">Loading</small>
+	<title>Fullpage - test</title>
+	<link href="css/plugins/animate.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+	<link href=
+	"http://fonts.googleapis.com/css?family=Roboto+Condensed:700,400&amp;subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"
+	rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<main class="wrapper">
+		
+	</main>
+	<div id="Section_intro">
+		<div class="intro"></div>
+	</div>
+
+	<div id="Section_options">
+		
+	</div>
+
+	<div id="Section_chosen">
+		<div class="chosen"></div>
+	</div>
+
+	<div id="Section_play">
+		<div class="play"></div>
+	</div>
+	
+	<video id="mainVideo"></video> 
+	
+	<!-- ============================================= -->
+	<!-- Intro Template -->
+	<!-- ============================================= -->
+	<script id="introTemplate" type="text/template">
+		<section id="intro" data-video="<%= vidIntro %>" class="full-screen-section section-intro">
+			<div class="vert-align">
+				<div class="vert-align__inner">
+					<div class="section-intro--loader">
+						<div class="spinner"></div>
+						<small class="section-intro__loadbar">Loading</small>
+					</div>
+					<div class="section-intro--welcome">
+						<h1 class="mega section-intro__title"><%= heading %></h1>
+						<p class="section-intro__desc"><%= para %></p>
+						<a id="section-intro__btn" href="#one" class="innerLink" data-direction="1">
+							<i class="icon icon--button icon--circle icon--down">&#59236;</i>
+						</a>
+					</div>
 				</div>
-				<div class="section-intro--welcome">
-					<h1 class="mega section-intro__title">Make your tomorrow</h1>
-					<p class="section-intro__desc">Go abroad. Learn a language. Change your life.</p>
-					<a id="section-intro__btn" href="#one" class="innerLink" data-direction="1">
-						<i class="icon icon--button icon--circle icon--down">&#59236;</i>
+			</div>
+			<img class="full-screen-image" src="<%= bgImgIntro %>" />
+		</section>
+	</script>
+
+	<!-- ============================================= -->
+	<!-- Category Template -->
+	<!-- ============================================= -->	
+	<script id="optionTemplate" type="text/template">
+	 	<section id="<%= opID %>" data-video="<%= vidOption %>" class="full-screen-section section-category">
+			<div class="vert-align">
+				<div class="vert-align__inner">
+					<h2><%= topheading %> <small><%= page %></small></h2>
+					<ul class="link-list ef1">
+						<li><a href="<%= opIDnxt %>"><span><%= Option1 %></span></a></li>
+						<li><a href="<%= opIDnxt %>"><span><%= Option2 %></span></a></li>
+						<li><a href="<%= opIDnxt %>"><span><%= Option3 %></span></a></li>
+						<li><a href="<%= opIDnxt %>"><span><%= Option4 %></span></a></li>
+						<li><a href="<%= opIDnxt %>"><span><%= Option5 %></span></a></li>
+						<li><a href="<%= opIDnxt %>"><span><%= Option6 %></span></a></li>
+						<li><a href="<%= opIDnxt %>"><span><%= Option7 %></span></a></li>                               
+					</ul>
+				</div>
+			</div>
+			<img class="full-screen-image" src="<%= bgImgOption %>" />
+		</section>
+	</script>
+
+	<!-- ============================================= -->
+	<!-- Play video Template -->
+	<!-- ============================================= -->
+	<script id="chosenTemplate" type="text/template">
+		<section id="playPlaylist" data-video="<%= vidChosen %>" class="full-screen-section">
+			<div class="vert-align">
+				<div class="vert-align__inner">
+					<h1 class="mega">MAKE <input type="text" placeholder="YOUR"> Tomorrow</h1>
+					<a class="button--play">
+						<span>Play video</span>
+						<i class="icon icon--button icon--circle icon--play">▶</i>
 					</a>
 				</div>
 			</div>
-		</div>
-		<img class="full-screen-image" src="img/baseball.jpg" />
-	</section>
-	<section id="one" data-video="vids/flipflops.mp4" class="full-screen-section section-category">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<h2>Learn a new language <small>1/5</small></h2>
-				<ul class="link-list ef1">
-					<li><a href="#two"><span>Go Head Over Heels</span></a></li>
-					<li><a href="#two"><span>Take Deep Breat</span></a></li>
-					<li><a href="#two"><span>Stand Out In A Crowd</span></a></li>
-					<li><a href="#two"><span>Wait For The Right Moment</span></a></li>
-					<li><a href="#two"><span>Get A New Perspective</span></a></li>
-					<li><a href="#two"><span>Reach For The Stars</span></a></li>
-					<li><a href="#two"><span>Become The Tour Guide</span></a></li>								
-				</ul>
-			</div>
-		</div>
-		<img class="full-screen-image" src="img/flipflops.jpg" />
-	</section>
-	<section id="two" data-video="vids/surfsunset.mp4" class="full-screen-section section-category">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<h2>Create lifelone memories <small>2/5</small></h2>
-				<ul class="link-list ef1">
-					<li><a href="#three"><span>Refine Your Pallette</span></a></li>
-					<li><a href="#three"><span>Eat Organic</span></a></li>
-					<li><a href="#three"><span>Follow The Lead</span></a></li>
-					<li><a href="#three"><span>Chart Your Own Path</span></a></li>
-					<li><a href="#three"><span>Discover The Secret Ingredient</span></a></li>
-					<li><a href="#three"><span>Hitch A Ride</span></a></li>
-					<li><a href="#three"><span>Camp Out</span></a></li>								
-				</ul>				
-			</div>
-		</div>
-		<img class="full-screen-image" src="img/surfsunset.jpg" />
-	</section>
-	<section id="three" data-video="vids/tapas.mp4" class="full-screen-section section-category">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<h2>Create lifelone memories <small>3/5</small></h2>
+			<img class="full-screen-image" src="<%= bgImgChosen %>" />
+		</section>
+	</script>
 
-				<ul class="link-list ef1">
-					<li><a href="#four"><span>Feel Big</span></a></li>
-					<li><a href="#four"><span>Have Breakfast In Bed</span></a></li>
-					<li><a href="#four"><span>See Another World</span></a></li>
-					<li><a href="#four"><span>Get Lost</span></a></li>
-					<li><a href="#four"><span>Document Uncharted Territory</span></a></li>
-					<li><a href="#four"><span>Go Natural</span></a></li>
-					<li><a href="#four"><span>Be In Two Places At Once</span></a></li>
-				</ul>				
+	<!-- ============================================= -->
+	<!-- Share video template Template -->
+	<!-- ============================================= -->
+	<script id="playTemplate" type="text/template">
+		<section id="last" class="full-screen-section section-last">
+			<div class="vert-align">
+				<div class="vert-align__inner">
+					<h1>Last page hello</h1>
+					<h2>share this link etc</h2>
+				</div>
 			</div>
-		</div>
-		<img class="full-screen-image" src="img/tapas.jpg" />
-	</section>	
-	<section id="four" data-video="vids/surf.mp4" class="full-screen-section section-category">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<h2>Create lifelone memories <small>4/5</small></h2>
-				<ul class="link-list ef1">
-					<li><a href="#five"><span>Make A House A Home</span></a></li>
-					<li><a href="#five"><span>Hug A Tree</span></a></li>
-					<li><a href="#five"><span>Give Something Back</span></a></li>
-					<li><a href="#five"><span>See Yourself In A New Light</span></a></li>
-					<li><a href="#five"><span>Think Outside The Box</span></a></li>
-					<li><a href="#five"><span>Begin A New Chapter</span></a></li>
-					<li><a href="#five"><span>Conquer Your Fear</span></a></li>								
-				</ul>				
-			</div>
-		</div>
-		<img class="full-screen-image" src="img/surf.jpg" />
-	</section>	
-	<section id="five" data-video="vids/flipflops.mp4" class="full-screen-section section-category">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<h2>Learn a language<small>5/5</small></h2>
-				<ul class="link-list ef1">
-					<li><a href="#playPlaylist"><span>English</span></a></li>
-					<li><a href="#playPlaylist"><span>Spanish</span></a></li>
-					<li><a href="#playPlaylist"><span>Italian</span></a></li>
-					<li><a href="#playPlaylist"><span>Swedish</span></a></li>
-					<li><a href="#playPlaylist"><span>German</span></a></li>
-					<li><a href="#playPlaylist"><span>Chinese</span></a></li>
-					<li><a href="#playPlaylist"><span>Swahili</span></a></li>								
-				</ul>				
-			</div>
-		</div>
-		<img class="full-screen-image" src="img/flipflops.jpg" />
-	</section>		
-	<section id="playPlaylist" data-video="vids/baseball.mp4" class="full-screen-section">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<h1 class="mega">MAKE <input type="text" placeholder="YOUR"> Tomorrow</h1>
-				<a class="button--play">
-					<span>Play video</span>
-					<i class="icon icon--button icon--circle icon--play">▶</i>
-				</a>
-			</div>
-		</div>
-		<img class="full-screen-image" src="img/baseball.jpg" />
-	</section>		
-	<section id="last" class="full-screen-section section-last">
-		<div class="vert-align">
-			<div class="vert-align__inner">
-				<h1>Last page hello</h1>
-				<h2>share this link etc</h2>
-			</div>
-		</div>
-	</section>
-</main>
-<video id="mainVideo"></video>
+		</section>
+	</script>
 
-<!-- //wrapper -->
 
-<script src="build/ef_your_tomorrow.min.js"></script>
-<script>
-	YOUR_TMR.init();
-</script>	
+	<!-- ========================================================================================== -->
+	<!-- JS PLUGINS -->
+	<script src="js/lib/jquery.js"></script>
+	<script src="js/plugins/modernizr.js"></script>
+	<script src="js/plugins/PxLoader.js"></script>
+	<script src="js/plugins/PxLoaderVideo.js"></script>
+	<script src="js/plugins/PxLoaderImage.js"></script>
+	<script src="js/plugins/video.js"></script>
+	<script src="js/plugins/jquery.transit.min.js"></script>
+	<script src="js/lib/underscore.js"></script>
+	<script src="js/lib/backbone.js"></script>
+	<script src="js/lib/backbone.helper.js"></script>
+
+
+	<!-- ========================================================================================== -->
+	<!-- APP -->
+
+
+	<!-- ============================================ -- >
+	<!-- APP Data -->	
+
+	<script src="js/data/data.js"></script>
+
+	<!-- ============================================ -- >
+	<!-- APP Models -->	
+
+	<script src="js/models/intro_model.js"></script>
+	<script src="js/models/category_model.js"></script>
+	<script src="js/models/collection_selected_model.js"></script>
+	<script src="js/models/collection_play_model.js"></script>
+
+	<!-- ============================================ -- >
+	<!-- APP Views -->	
+
+	<script src="js/views/intro_view.js"></script>
+	<script src="js/views/category_view.js"></script>
+	<script src="js/views/category_collection_view.js"></script>
+	<script src="js/views/collection_selected_view.js"></script>
+	<script src="js/views/collection_play_view.js"></script>
+	
+	<script src="js/main.js"></script>
 </body>
 </html>
+
+
+
+
+
