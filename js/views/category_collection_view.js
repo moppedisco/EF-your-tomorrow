@@ -1,24 +1,25 @@
 // ====================================================================
 // Collection of category views
 	
-YT_category_collection= Backbone.Collection.extend({
-        model: YT_category_model
-});
+YT_category_collection= Backbone.Collection.extend();
 
 
 
 YT_category_collection_view = Backbone.View.extend({
-	tagName: 'ul',
-	initialize: function() {
-		this.render();
+	initialize: function(options) {
+		console.log("init collection");
+		this.parent = options.parent;
     },	
 	render: function(){
-		this.collection.each(function(YT_category_model){
-			var personView = new YT_category_view({ model: YT_category_model });
-			// console.log(personView.$el);
-			console.log("asdasd");
+		console.log("render collection");
+		var _this = this;
+		_.each(this.collection, function (item) {
+			console.log("render collection item");
+			var categoryModel = new YT_category_model(item);
+			var categoryView = new YT_category_view({model: categoryModel});
+			_this.parent.append(categoryView.$el);
 		},this);
-		return this; // returning this for chaining..
+		return this.parent; // returning this for chaining..
 	}
 });
 	

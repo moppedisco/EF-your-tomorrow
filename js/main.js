@@ -81,12 +81,16 @@
 			// =========================================================
 			// Init intro view
 			this.intro_view = new YT_intro_view();
-			this.category_collection_view = new YT_category_collection_view({collection: yourTMoptions});	
-
-
-
 			this.$el.append(this.intro_view.render().$el);
-			// this.$el.append(this.category_collection_view.render().$el);
+
+		  	// =========================================================
+		  	// Init collection of categories
+			this.category_collection_view = new YT_category_collection_view({
+				collection: yourTMoptions, 
+				parent: this.$el
+			});	
+			this.$el.append(this.category_collection_view.render().$el);
+			
 
 
 

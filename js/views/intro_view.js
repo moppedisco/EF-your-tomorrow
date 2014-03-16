@@ -2,12 +2,13 @@ window.YT_intro_view = Backbone.View.extend({
 	id: "intro",
 	tagName: "section",
 	className: "full-screen-section section-intro",
-    template:$("#introTemplate").html(),
+    template: $("#introTemplate").html(),
     model: yt_intro_model,
 	events: {
 		"click #section-intro__btn" : "testing"
 	},
 	initialize: function(){
+		console.log("init intro");
 		this.$el.attr('data-video',this.model.attributes.vidIntro);
 	},
 	testing: function(){
