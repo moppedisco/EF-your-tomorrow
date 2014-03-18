@@ -17,15 +17,14 @@
 <body>
 	<h1>Firefox test</h1>
 	<p>test motherfucker 2</p>
-	<video preload width="360" height="203" id="player1" src="vids/baseball.mp4" type="video/mp4"></video>
+	<video preload width="360" height="203" id="player1" src="http://pdl.vimeocdn.com/24490/315/234915623.mp4?aksessionid=3accabeda185b73d5c3896eea782fa70&token=1395161474_dc476f0c0afabf595d904957f57f7dae" type="video/mp4"></video>
 
 <script>
 $( document ).ready(function() {
 	var loader = new PxLoader(), 
-		vid1 = loader.addVideo('vids/baseball.mp4'), 
-		vid2 = loader.addVideo('vids/flipflops.mp4'), 
-		vid3 = loader.addVideo('vids/surf.mp4'), 
-		vid4 = loader.addVideo('vids/tapas.mp4'); 
+		vid1 = loader.addVideo('http://pdl.vimeocdn.com/24490/315/234915623.mp4?aksessionid=3accabeda185b73d5c3896eea782fa70&token=1395161474_dc476f0c0afabf595d904957f57f7dae'), 
+		vid2 = loader.addVideo('http://pdl.vimeocdn.com/57247/007/235878109.mp4?aksessionid=0a9f7b36afceebd5202aecd0671c498d&token=1395161499_ecc3b2382e82fbc71721b6e9f4029f57'), 
+		vid3 = loader.addVideo('http://pdl.vimeocdn.com/93363/689/234897937.mp4?aksessionid=fa84a3d64873ebcaa9f40e8735fa0211&token=1395161526_4ef5b340a1b1ee2414d639169cd352a1');
 
 	loader.addProgressListener(function(e) {     
 	    console.log(e.completedCount + ' / ' + e.totalCount); 
@@ -41,7 +40,7 @@ $( document ).ready(function() {
 	function loadplayer(){
 		console.log("start playing");
 		var count = 0;
-		var playlist = ["vids/flipflops.mp4","vids/surf.mp4","vids/tapas.mp4"];
+		var playlist = ["http://pdl.vimeocdn.com/24490/315/234915623.mp4?aksessionid=3accabeda185b73d5c3896eea782fa70&token=1395161474_dc476f0c0afabf595d904957f57f7dae","http://pdl.vimeocdn.com/57247/007/235878109.mp4?aksessionid=0a9f7b36afceebd5202aecd0671c498d&token=1395161499_ecc3b2382e82fbc71721b6e9f4029f57","http://pdl.vimeocdn.com/93363/689/234897937.mp4?aksessionid=fa84a3d64873ebcaa9f40e8735fa0211&token=1395161526_4ef5b340a1b1ee2414d639169cd352a1"];
 		var player = $('#player1').mediaelementplayer({
 			features: [],
 			plugins: ['flash', 'silverlight'],
@@ -70,6 +69,7 @@ $( document ).ready(function() {
 						mediaElement.play();
 					} else {
 						console.log("ALL DONE");
+						mediaElement.stop();
 					}
 		        }, false);
 

@@ -20,10 +20,9 @@ FP.app = (function(window){
 		myAudioPlayer,
 		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
 		scrollDirection = 1, 									// 1 down, -1 is up
-		myPlayer,												// Video object
+		myPlayer,												// Video player object
 		playlistCount = 0,										// Count to keep track of played videos in playlist
 		ambients = [],											// Ambient videos
-		queueVideoPromises = [],
 		selectedVideos = [];									// Selected category videos
 
 	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
@@ -36,8 +35,17 @@ FP.app = (function(window){
 		if(!Modernizr.touch){
 			downloadAmbients();
 			animateIntro();
+
+			initVideo();
+			playVideo("#start");
+
+			bindScrollButtons();
+			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);		
+
 		} else {
-			initFirstFrame();
+			animateIntro();
+			bindScrollButtons();
+			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);		
 		}
 	}
 
@@ -58,12 +66,6 @@ FP.app = (function(window){
 				});
 			})
 		},3000);
-		
-
-		initVideo();
-		playVideo("#start");			
-		bindScrollButtons();
-		FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);
 	}
 
 	function animateStart(){
@@ -132,13 +134,17 @@ FP.app = (function(window){
 
 	function playVideo(target){
 		var videoToPlay = $(target).attr("data-video");
-		myPlayer.src(videoToPlay);
+
+		myPlayer.src(videoToPlay); 
+
+		myPlayer.play();
+
 		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			if(!Modernizr.touch){ // Dont fadeout image on touch devices
 				$(target).find(".full-screen-image").fadeOut();
 			}
 		}
-		myPlayer.play();
+
 	}
 
 	function resetSection(){
