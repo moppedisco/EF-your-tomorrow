@@ -53,7 +53,7 @@ FP.app = (function(window){
 		console.log("init")
 		$(".section-loading").addClass("active");
 
-		$("#intromessage li:eq(0)").fadeIn();
+		$("#intromessage li:eq(0)").fadeIn(800);
 		setTimeout(function(){
 			$("#intromessage li:eq(0)").fadeOut(function(){
 				$("#intromessage li:eq(1)").fadeIn(function(){
@@ -73,7 +73,7 @@ FP.app = (function(window){
 		$(".article-loading").fadeOut(function(){
 			setTimeout(function(){
 				$(".article-start__desc,.article-start__btn").addClass("animated fadeIn");
-			},1500);			
+			},1000);			
 		});
 	}
 
@@ -117,32 +117,40 @@ FP.app = (function(window){
 		return Promise.all(queueVideoPromises);
 	}
 
-	function doFinalStage () {
-		console.log('We have all the videos ready to show. Play list');
-	}
-
 	function initVideo(){
-		console.log(Modernizr.video)
+
+		// Using videojs plugin to handle source etc. Actually not necessary
 		videojs("mainVideo").ready(function(){
 			myPlayer = this;
 			myPlayer.loop(true);
 			console.log(myPlayer);
 		});	
 
+		// Init Make our video player fit entire screen
 		FP.helpers.adjustVideoPositioning(el_fullScreenVideo);
 	}
 
 	function playVideo(target){
-		var videoToPlay = $(target).attr("data-video");
+		var videoToPlay = $(target).attr("data-video"),
+			poster = $(target).find(".full-screen-image").attr("src");
 
+		// We set html5 poster attribute incase video fails to load.
+		$(el_fullScreenVideo).find("video").attr("poster",poster); 
+		
+		// Set target video src
 		myPlayer.src(videoToPlay); 
 
+		// Play new video src
 		myPlayer.play();
 
-		if(Modernizr.video){ // Only fadeout images if browser supports video element
-			if(!Modernizr.touch){ // Dont fadeout image on touch devices
+		// Only fadeout images if browser supports video element
+		if(Modernizr.video){ 
+
+			// Mobile supports html5 video but not the way we want so dont fadeout image on touch devices
+			if(!Modernizr.touch){ 
 				$(target).find(".full-screen-image").fadeOut();
 			}
+
 		}
 
 	}
@@ -197,13 +205,19 @@ FP.app = (function(window){
 			$('.full-screen-section.active .button--play').addClass("animated fadeOut");
 			
 			$(el_fullScreenVideo).fadeOut(2500,function(){
-				
-				// Resets ambient player
-				myPlayer.loop(false);
-				myPlayer.src('');
 				goToSection(scrollDirection,'#playingPlaylist',false,function(){
 					// initAudio();	
-					playPlaylist();
+					if(!Modernizr.touch){
+						// Resets ambient player
+						myPlayer.loop(false);
+						myPlayer.src('');						
+						console.log("desktop playlist");
+						playPlaylist();
+					} else {
+						console.log("mobile playlist");
+						mobilePlaylist();						
+					}
+					
 				});
 			});
 			e.preventDefault();
@@ -232,7 +246,7 @@ FP.app = (function(window){
 			});
 		} else {
 			console.log("dont animate section jump");
-			$(el_sectionContainer).css({"-webkit-transform":"translate(0, -100%)"});
+			$(el_sectionContainer).css({"-webkit-transform":"translate(0, "+distanceScrolled+"%)"});
 			callback();
 		}
 	}
@@ -279,7 +293,9 @@ FP.app = (function(window){
 
 				// $("#last").addClass("active");
 
-				goToSection(scrollDirection,'#last',true);
+				goToSection(scrollDirection,'#last',false,function(){
+					console.log("going to last");
+				});
 				$(".subtitles,#mainVideo").fadeOut(1200,function(){
 					// $(".inner-item--one").addClass("animated fadeInDown");
 					$(".inner-item--one").fadeIn();
@@ -300,6 +316,44 @@ FP.app = (function(window){
 		myPlayer.src(selectedVideos[index]);		
 		myPlayer.play();
 		playlistCount++;
+	}
+
+	function mobilePlaylist(){
+		var player = $('#mainVideo').mediaelementplayer({
+			features: [],
+			plugins: ['flash', 'silverlight'],
+		    success: function (mediaElement, domObject) { 
+				mediaElement.play();
+		// 		mediaElement.addEventListener('timeupdate', function(e) {
+		// 			console.log(mediaElement.currentTime); 
+		//         }, false);
+
+				if(mediaElement.pluginType == 'flash') {
+					console.log(mediaElement.pluginType);
+					mediaElement.addEventListener('canplay', function() {
+						// Player is ready
+						mediaElement.play();
+					}, false);
+				}
+
+
+				mediaElement.addEventListener('ended', function(e) {
+					count++;
+					if(count < selectedVideos.length){
+						// console.log(mediaElement);
+						mediaElement.setSrc(selectedVideos[count]);
+						mediaElement.load();
+						console.log("ENDED"); 
+						mediaElement.play();
+					} else {
+						console.log("ALL DONE");
+						mediaElement.stop();
+					}
+		        }, false);
+
+				mediaElement.play();
+		    },
+		});		
 	}
 
 	return {

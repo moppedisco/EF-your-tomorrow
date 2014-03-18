@@ -6,7 +6,7 @@ module.exports = function(grunt) {
     uglify: {
       build: {
         options: {
-          beautify: true,
+          beautify: false,
           mangle: false
         },              
         src: [
@@ -17,6 +17,8 @@ module.exports = function(grunt) {
           'js/plugins/video.js',
           'js/plugins/jquery.transit.min.js',
           'js/plugins/promise-0.1.1.min.js',
+          'js/plugins/mediaelement.js',
+          'js/plugins/mediaelementplayer.js',
           'js/app.js'
         ],
         dest: 'build/<%= pkg.name %>.min.js'
@@ -38,17 +40,17 @@ module.exports = function(grunt) {
     // }
     watch: {
       js: {
-        files: ['js/*.js'],
+        files: ['js/app.js'],
         tasks: ['uglify:build'],
         options: {
-          livereload: true,
+          livereload: false,
         }
       },
       css: {
         files: ['css/*.less'],
         tasks: ['less:style'],
         options: {
-          livereload: true,
+          livereload: false,
         }
       }
     } 
