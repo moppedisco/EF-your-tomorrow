@@ -45,7 +45,7 @@ FP.app = (function(window){
 		} else {
 			animateIntro();
 			bindScrollButtons();
-			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);		
+			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);
 		}
 	}
 
@@ -185,6 +185,7 @@ FP.app = (function(window){
 				text = $(this).text();
 
 			selectedVideos.push(videoUrl);
+
 			console.log(selectedVideos);
 
 			$(".subtitles").append("<li>"+text+"</li>");
@@ -208,14 +209,14 @@ FP.app = (function(window){
 				goToSection(scrollDirection,'#playingPlaylist',false,function(){
 					// initAudio();	
 					if(!Modernizr.touch){
+
 						// Resets ambient player
 						myPlayer.loop(false);
 						myPlayer.src('');						
 						console.log("desktop playlist");
 						playPlaylist();
 					} else {
-						console.log("mobile playlist");
-						mobilePlaylist();						
+						console.log("mobile playlist");					
 					}
 					
 				});
@@ -247,7 +248,9 @@ FP.app = (function(window){
 		} else {
 			console.log("dont animate section jump");
 			$(el_sectionContainer).css({"-webkit-transform":"translate(0, "+distanceScrolled+"%)"});
-			callback();
+			if (callback && typeof(callback) === "function") {  
+				callback();
+			}  
 		}
 	}
 
@@ -293,17 +296,15 @@ FP.app = (function(window){
 
 				// $("#last").addClass("active");
 
-				goToSection(scrollDirection,'#last',false,function(){
-					console.log("going to last");
-				});
-				$(".subtitles,#mainVideo").fadeOut(1200,function(){
-					// $(".inner-item--one").addClass("animated fadeInDown");
-					$(".inner-item--one").fadeIn();
-					setTimeout(function(){
-						$(".inner-item--two,.inner-item--three").fadeIn();
-					},2000);
+				$(".subtitles,#mainVideo").fadeOut(1200).promise().done(function(){
+					goToSection(scrollDirection,'#last',false,function(){
+						console.log("going to last");
+						setTimeout(function(){
+							$(".article-message").fadeOut();
+						},3000);
+					});					
+				})
 
-				});
 				console.log("ENDED");	
 			}
 		});			
@@ -316,44 +317,6 @@ FP.app = (function(window){
 		myPlayer.src(selectedVideos[index]);		
 		myPlayer.play();
 		playlistCount++;
-	}
-
-	function mobilePlaylist(){
-		var player = $('#mainVideo').mediaelementplayer({
-			features: [],
-			plugins: ['flash', 'silverlight'],
-		    success: function (mediaElement, domObject) { 
-				mediaElement.play();
-		// 		mediaElement.addEventListener('timeupdate', function(e) {
-		// 			console.log(mediaElement.currentTime); 
-		//         }, false);
-
-				if(mediaElement.pluginType == 'flash') {
-					console.log(mediaElement.pluginType);
-					mediaElement.addEventListener('canplay', function() {
-						// Player is ready
-						mediaElement.play();
-					}, false);
-				}
-
-
-				mediaElement.addEventListener('ended', function(e) {
-					count++;
-					if(count < selectedVideos.length){
-						// console.log(mediaElement);
-						mediaElement.setSrc(selectedVideos[count]);
-						mediaElement.load();
-						console.log("ENDED"); 
-						mediaElement.play();
-					} else {
-						console.log("ALL DONE");
-						mediaElement.stop();
-					}
-		        }, false);
-
-				mediaElement.play();
-		    },
-		});		
 	}
 
 	return {

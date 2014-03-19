@@ -1733,6 +1733,12 @@ audio {
   margin-left: -150px;
   display: none;
 }
+.touch #playingPlaylist {
+  display: none;
+}
+.no-touch #yacine {
+  display: none;
+}
 .article-start__title,
 .article-start__line,
 .article-start__desc,
@@ -1831,11 +1837,14 @@ body {
   background: #000;
   z-index: 2;
 }
+.article-message {
+  background: #000;
+}
 .subtitles {
   margin: 0;
   font-family: Georgia;
-  font-size: 55px;
-  line-height: 66px;
+  font-size: 35px;
+  line-height: 46px;
   font-style: italic;
   position: absolute;
   top: 30%;
@@ -1850,19 +1859,6 @@ body {
 }
 .subtitles li {
   display: none;
-}
-.section-last .inner-item--one,
-.section-last .inner-item--two,
-.section-last .inner-item--three {
-  display: none;
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -ms-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
-}
-.section-last .full-screen-image {
-  display: none !important;
 }
 .icon--button {
   width: 40px;
