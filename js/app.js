@@ -87,13 +87,12 @@ FP.app = (function(window){
 			if(videoUrl){
 				ambients.push(videoUrl);
 				resource = new PxLoaderVideo(videoUrl);
-				resource.__id__ = i + 1;
 				loader.add(resource);		
 			}
 		});
 
 		loader.addProgressListener(function (e) {
-			console.log('Ambient ' + e.resource.__id__ + ' downloaded');
+			console.log('Ambient ' + e.completedCount + ' downloaded');
 		});
 
 		loader.addCompletionListener(function () {
@@ -102,19 +101,10 @@ FP.app = (function(window){
 		});
 
 		loader.start();
-
-	}
-
-	function initFirstFrame(){
-		return new Promise(resolveFirstFrame);
 	}
 
 	function downloadAmbients () {
 		return new Promise(resolveAmbients);
-	}
-
-	function downloadVideos () {
-		return Promise.all(queueVideoPromises);
 	}
 
 	function initVideo(){
@@ -145,10 +135,9 @@ FP.app = (function(window){
 
 		// Only fadeout images if browser supports video element
 		if(Modernizr.video){ 
-
 			// Mobile supports html5 video but not the way we want so dont fadeout image on touch devices
 			if(!Modernizr.touch){ 
-				$(target).find(".full-screen-image").fadeOut();
+				$(target).find(".full-screen-image").fadeOut();				
 			}
 
 		}
@@ -206,13 +195,13 @@ FP.app = (function(window){
 			$('.full-screen-section.active .button--play').addClass("animated fadeOut");
 			
 			$(el_fullScreenVideo).fadeOut(2500,function(){
-				goToSection(scrollDirection,'#playingPlaylist',false,function(){
-					// initAudio();	
-					if(!Modernizr.touch){
 
-						// Resets ambient player
-						myPlayer.loop(false);
-						myPlayer.src('');						
+				myPlayer.loop(false);
+				myPlayer.src('');	
+				goToSection(scrollDirection,'#playingPlaylist',false,function(){
+					initAudio();	
+					if(!Modernizr.touch){
+						// Resets ambient player					
 						console.log("desktop playlist");
 						playPlaylist();
 					} else {
@@ -278,7 +267,7 @@ FP.app = (function(window){
 	}
 
 	function playPlaylist(){
-		
+		$(el_fullScreenVideo).find("video").attr("poster",""); 
 		$(el_fullScreenVideo).show();
 		$("#mainVideo video").bind("ended", function() {
 			
