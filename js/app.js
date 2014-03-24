@@ -36,8 +36,9 @@ FP.app = (function(window){
 			downloadAmbients();
 			animateIntro();
 
-			initVideo();
-			playVideo("#start");
+			initVideo(function(){
+				playVideo("#start");	
+			});
 
 			bindScrollButtons();
 			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);		
@@ -107,7 +108,7 @@ FP.app = (function(window){
 		return new Promise(resolveAmbients);
 	}
 
-	function initVideo(){
+	function initVideo(callback){
 
 		// Using videojs plugin to handle source etc. Actually not necessary
 		videojs("mainVideo").ready(function(){
@@ -118,6 +119,7 @@ FP.app = (function(window){
 
 		// Init Make our video player fit entire screen
 		FP.helpers.adjustVideoPositioning(el_fullScreenVideo);
+		callback();
 	}
 
 	function playVideo(target){
@@ -162,7 +164,7 @@ FP.app = (function(window){
 			if(!Modernizr.touch){
 				moveBGvideo(scrollDirection);
 			}
-			goToSection(scrollDirection,target,true);
+			goToSection(1,target,true);
 
 			e.preventDefault();
 		});		
@@ -183,7 +185,7 @@ FP.app = (function(window){
 				if(!Modernizr.touch){
 					moveBGvideo(scrollDirection);
 				}
-				goToSection(scrollDirection,target,true);
+				goToSection(1,target,true);
 			},200);
 
 			e.preventDefault();
@@ -198,7 +200,7 @@ FP.app = (function(window){
 
 				myPlayer.loop(false);
 				myPlayer.src('');	
-				goToSection(scrollDirection,'#playingPlaylist',false,function(){
+				goToSection(1,'#playingPlaylist',false,function(){
 					initAudio();	
 					if(!Modernizr.touch){
 						// Resets ambient player					
@@ -212,10 +214,22 @@ FP.app = (function(window){
 			});
 			e.preventDefault();
 		});	
+
+		$("#replay").on('click',function(){
+			$(".article-share").fadeOut(1000,function(){
+				goToSection(-1,'#playingPlaylist',false,function(){
+					console.log("replay video");
+					playPlaylist();
+					$(".subtitles").show();
+					$(".article-message").show();
+				});						
+			})
+		})
 	}
 
-	function goToSection(direction, target, animate, callback){
-		distanceScrolled = distanceScrolled - 100;
+	function goToSection(steps, target, animate, callback){
+		distanceScrolled = distanceScrolled - 100*steps;
+
 		
 		if(animate){
 			console.log("animate section jump");
@@ -235,7 +249,10 @@ FP.app = (function(window){
 				}  
 			});
 		} else {
+			console.log(distanceScrolled);
 			console.log("dont animate section jump");
+			$(".full-screen-section").removeClass("active");
+			$(target).addClass("active");			
 			$(el_sectionContainer).css({"-webkit-transform":"translate(0, "+distanceScrolled+"%)"});
 			if (callback && typeof(callback) === "function") {  
 				callback();
@@ -269,11 +286,12 @@ FP.app = (function(window){
 	function playPlaylist(){
 		$(el_fullScreenVideo).find("video").attr("poster",""); 
 		$(el_fullScreenVideo).show();
+		playPlaylistIndex(playlistCount);
 		$("#mainVideo video").bind("ended", function() {
 			
 			// Play each selected video
 			if(playlistCount < selectedVideos.length){
-			
+				console.log(playlistCount);
 				playPlaylistIndex(playlistCount);
 			
 			// Video ends
@@ -284,25 +302,25 @@ FP.app = (function(window){
 				// });
 
 				// $("#last").addClass("active");
-
+				playlistCount = 0;
 				$(".subtitles,#mainVideo").fadeOut(1200).promise().done(function(){
-					goToSection(scrollDirection,'#last',false,function(){
+					goToSection(1,'#last',false,function(){
 						console.log("going to last");
 						setTimeout(function(){
 							$(".article-message").fadeOut();
 						},3000);
 					});					
 				})
-
+				$("#mainVideo video").unbind("ended");
 				console.log("ENDED");	
 			}
 		});			
-		playPlaylistIndex(playlistCount);
 	}
 
 	function playPlaylistIndex(index){
 		$(".subtitles li").hide();
 		$(".subtitles li:eq("+index+")").show();
+		console.log(selectedVideos[index]);
 		myPlayer.src(selectedVideos[index]);		
 		myPlayer.play();
 		playlistCount++;
