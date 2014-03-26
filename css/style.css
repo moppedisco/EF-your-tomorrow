@@ -1837,8 +1837,8 @@ body {
   background: #000;
   z-index: 2;
 }
-.article-message {
-  background: #000;
+#last .full-screen-image {
+  display: none;
 }
 .subtitles {
   margin: 0;
@@ -1927,6 +1927,7 @@ body {
 .button--play {
   text-decoration: none;
   display: inline-block;
+  visibility: hidden;
 }
 .button--play span {
   padding: 8px;

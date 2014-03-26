@@ -23,6 +23,7 @@ FP.app = (function(window){
 		myPlayer,												// Video player object
 		playlistCount = 0,										// Count to keep track of played videos in playlist
 		ambients = [],											// Ambient videos
+		videoPromises = [],
 		selectedVideos = [];									// Selected category videos
 
 	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
@@ -36,9 +37,20 @@ FP.app = (function(window){
 			downloadAmbients();
 			animateIntro();
 
+			for(var i=0;i<6;i++){
+				var categoryPromise = $.Deferred();
+				videoPromises.push(categoryPromise);				
+			}
+
 			initVideo(function(){
 				playVideo("#start");	
 			});
+
+			$.when.apply(null, videoPromises).done(function() {
+				console.log("ALL VIDEOS HAVE DOWNLOADED MOTHERFUCKER");
+				$('.button--play').css("visibility","visible");
+			});
+
 
 			bindScrollButtons();
 			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);		
@@ -149,9 +161,21 @@ FP.app = (function(window){
 	function resetSection(){
 		if(Modernizr.video){ // Only fadeout images if browser supports video element
 			if(!Modernizr.touch){ // Dont fadeout image on touch devices
-				$(".full-screen-section:not(.active)").find(".full-screen-image").show();
+				// $(".full-screen-section:not(.active)").find(".full-screen-image").show();
 			}
 		}
+	}
+
+	function downloadVids(url,index){
+		var loader = new PxLoader();
+
+		loader.add(new PxLoaderVideo(url));
+		loader.addCompletionListener(function () {
+			console.log('Video ' + index + ' downloaded');
+			videoPromises[index].resolve();
+		});
+
+		loader.start();
 	}
 
 	function bindScrollButtons(){
@@ -177,6 +201,7 @@ FP.app = (function(window){
 
 			selectedVideos.push(videoUrl);
 
+			downloadVids(videoUrl,selectedVideos.indexOf(videoUrl));
 			console.log(selectedVideos);
 
 			$(".subtitles").append("<li>"+text+"</li>");
@@ -201,7 +226,7 @@ FP.app = (function(window){
 				myPlayer.loop(false);
 				myPlayer.src('');	
 				goToSection(1,'#playingPlaylist',false,function(){
-					initAudio();	
+					// initAudio();	
 					if(!Modernizr.touch){
 						// Resets ambient player					
 						console.log("desktop playlist");
@@ -303,12 +328,20 @@ FP.app = (function(window){
 
 				// $("#last").addClass("active");
 				playlistCount = 0;
-				$(".subtitles,#mainVideo").fadeOut(1200).promise().done(function(){
+				$(".subtitles,#mainVideo").hide().promise().done(function(){
 					goToSection(1,'#last',false,function(){
 						console.log("going to last");
 						setTimeout(function(){
-							$(".article-message").fadeOut();
+							$(".article-message h1:nth-of-type(1)").fadeOut(function(){
+								$(".article-message h1:nth-of-type(2)").fadeIn();
+							});
+							$(".article-message p:nth-of-type(1)").fadeOut(function(){
+								$(".article-message p:nth-of-type(2)").fadeIn(function(){
+									$("#last .full-screen-image").fadeIn();
+								});
+							});
 						},3000);
+
 					});					
 				})
 				$("#mainVideo video").unbind("ended");
@@ -320,6 +353,9 @@ FP.app = (function(window){
 	function playPlaylistIndex(index){
 		$(".subtitles li").hide();
 		$(".subtitles li:eq("+index+")").show();
+		setTimeout(function(){
+			$(".subtitles li:eq("+index+")").hide();
+		},3000);		
 		console.log(selectedVideos[index]);
 		myPlayer.src(selectedVideos[index]);		
 		myPlayer.play();
