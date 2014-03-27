@@ -150,9 +150,9 @@ FP.app = (function(window){
 		// Only fadeout images if browser supports video element
 		if(Modernizr.video){ 
 			// Mobile supports html5 video but not the way we want so dont fadeout image on touch devices
-			if(!Modernizr.touch){ 
+			// if(!Modernizr.touch){ 
 				$(target).find(".full-screen-image").fadeOut();				
-			}
+			// }
 
 		}
 
@@ -226,7 +226,7 @@ FP.app = (function(window){
 				myPlayer.loop(false);
 				myPlayer.src('');	
 				goToSection(1,'#playingPlaylist',false,function(){
-					// initAudio();	
+					initAudio();	
 					if(!Modernizr.touch){
 						// Resets ambient player					
 						console.log("desktop playlist");
@@ -304,7 +304,7 @@ FP.app = (function(window){
 		$mainAudio.show();
 		$mainAudio[0].volume = 1;
 		// $mainAudio.animate({volume: 1}, 5000);
-		$mainAudio[0].currentTime = 30.5;
+		// $mainAudio[0].currentTime = 30.5;
 		$mainAudio[0].play();
 	}
 
@@ -322,9 +322,9 @@ FP.app = (function(window){
 			// Video ends
 			} else { 
 				
-				// $mainAudio.animate({volume: 0}, 5000,function(){
-				// 	$mainAudio[0].pause();	
-				// });
+				$mainAudio.animate({volume: 0}, 5000,function(){
+					$mainAudio[0].pause();	
+				});
 
 				// $("#last").addClass("active");
 				playlistCount = 0;
