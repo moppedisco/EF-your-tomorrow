@@ -2041,26 +2041,30 @@ body {
 }
 .link-list.ef1 a span::before {
   position: absolute;
-  top: 100%;
   content: "✓";
   font-family: "entypo";
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   text-align: center;
-  width: 100%;
   font-size: 43px;
   line-height: 85%;
+  left: 0;
+  opacity: 0;
+  top: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
 }
 .link-list.ef1 a.active span::before {
   color: #5DDB5D;
 }
-.link-list.ef1 a.active span,
-.link-list.ef1 a:hover span,
-.link-list.ef1 a:focus span {
-  -webkit-transform: translateY(-100%);
-  -moz-transform: translateY(-100%);
-  transform: translateY(-100%);
+.link-list.ef1 a:hover span {
+  -webkit-transform: translateX(5px);
+}
+.link-list.ef1 a:hover span::before {
+  opacity: 1;
+  -webkit-transform: translateX(-30px);
 }
 .link-list.ef2 a {
   color: rgba(0, 0, 0, 0.2);
