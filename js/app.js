@@ -36,6 +36,9 @@ FP.app = (function(window){
 		if(!Modernizr.touch){
 			downloadAmbients();
 			animateIntro();
+			// $.when(animateIntro(), animateWelcome()).done(function() {
+			// 	console.log("animation done");
+			// });
 
 			for(var i=0;i<6;i++){
 				var categoryPromise = $.Deferred();
@@ -68,20 +71,15 @@ FP.app = (function(window){
 
 		$("#intromessage li:eq(0)").fadeIn(800);
 		setTimeout(function(){
-			$("#intromessage li:eq(0)").fadeOut(function(){
-				$("#intromessage li:eq(1)").fadeIn(function(){
-					setTimeout(function(){
-						$("#intromessage li:eq(1)").fadeOut(function(){
-							console.log("jump to start section");	
-							animateStart();
-						});
-					},2000);
-				});
-			})
+			$("#intromessage li:eq(1)").fadeIn(function(){
+				setTimeout(function(){
+					animateWelcome();
+				},2000);
+			});
 		},3000);
 	}
 
-	function animateStart(){
+	function animateWelcome(){
 		$(".article-start__title,.article-start__line").addClass("animated fadeInDown");
 		$(".article-loading").fadeOut(function(){
 			setTimeout(function(){
@@ -188,6 +186,7 @@ FP.app = (function(window){
 			if(!Modernizr.touch){
 				moveBGvideo(scrollDirection);
 			}
+
 			goToSection(1,target,true);
 
 			e.preventDefault();
@@ -195,9 +194,12 @@ FP.app = (function(window){
 
 		$('.link-list a').click(function(e){
 			$(this).addClass("active");
+
+
 			var target = $(this).attr("href"),
 				videoUrl = $(this).attr("data-video"),
 				text = $(this).text();
+				console.log(target);
 
 			selectedVideos.push(videoUrl);
 
@@ -255,7 +257,6 @@ FP.app = (function(window){
 	function goToSection(steps, target, animate, callback){
 		distanceScrolled = distanceScrolled - 100*steps;
 
-		
 		if(animate){
 			console.log("animate section jump");
 			$(el_sectionContainer).transition({ 
@@ -324,6 +325,10 @@ FP.app = (function(window){
 				
 				$mainAudio.animate({volume: 0}, 5000,function(){
 					$mainAudio[0].pause();	
+				});
+
+				$(".input-share").click(function () {
+					$(this).select();
 				});
 
 				// $("#last").addClass("active");
