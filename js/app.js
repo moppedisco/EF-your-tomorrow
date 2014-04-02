@@ -17,6 +17,7 @@ FP.app = (function(window){
 		el_fullScreenSection = ".full-screen-section",			// Page sections
 		el_sectionContainer = ".wrapper",						// Main element we animate
 		$mainAudio = $("#mainAudio"),
+		$mainAudioCtrl = $("#volumeCtrl"),
 		myAudioPlayer,
 		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
 		scrollDirection = 1, 									// 1 down, -1 is up
@@ -44,7 +45,7 @@ FP.app = (function(window){
 				var categoryPromise = $.Deferred();
 				videoPromises.push(categoryPromise);				
 			}
-
+			namePlaceholder();
 			initVideo(function(){
 				playVideo("#start");	
 			});
@@ -63,6 +64,33 @@ FP.app = (function(window){
 			bindScrollButtons();
 			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);
 		}
+	}
+
+	function namePlaceholder(){
+		var isPlaceholder = true;
+		// $('.name-field__inputarea'),focuson();
+		$('.name-field__inputarea').on('keypress', function(event) {
+			if(isPlaceholder){
+				$(this).empty();
+				isPlaceholder = false;	
+			}
+
+			if (event.which == 13 ) {
+				return false;
+			}
+		}).on('focusout', function() {
+			var currentName = $(this).html();
+				placeholderText = $(this).attr('data-text');
+			if(currentName.length === 0 || isPlaceholder){
+				$(this).text(placeholderText);
+				isPlaceholder = true;
+				$(this).removeClass("ready");
+			} else {
+				$(this).addClass("ready");
+			}
+		}).on('focuson', function() {
+			$(this).removeClass("ready");
+		});		
 	}
 
 	function animateIntro(){
@@ -182,7 +210,7 @@ FP.app = (function(window){
 		$('.article-start__btn').click(function(e){	
 			var target = $(this).attr('href');
 			
-			resetSection();
+			// resetSection();
 			if(!Modernizr.touch){
 				moveBGvideo(scrollDirection);
 			}
@@ -193,13 +221,19 @@ FP.app = (function(window){
 		});		
 
 		$('.link-list a').click(function(e){
+			$(this).siblings().unbind('click');
+			if($(this).hasClass("active")){
+				return false;
+			}
+			
 			$(this).addClass("active");
-
+			
 
 			var target = $(this).attr("href"),
 				videoUrl = $(this).attr("data-video"),
-				text = $(this).text();
-				console.log(target);
+				text = $(this).attr("data-text");
+
+			console.log(target);
 
 			selectedVideos.push(videoUrl);
 
@@ -220,7 +254,7 @@ FP.app = (function(window){
 
 		// Play video button
 		$('.button--play').click(function(e){
-			$(".full-screen-section.active .mega").addClass("animated fadeOutUp");
+			// $(".full-screen-section.active .mega").addClass("animated fadeOutUp");
 			$('.full-screen-section.active .button--play').addClass("animated fadeOut");
 			
 			$(el_fullScreenVideo).fadeOut(2500,function(){
@@ -302,11 +336,18 @@ FP.app = (function(window){
 	}
 
 	function initAudio(){
-		$mainAudio.show();
+		$mainAudioCtrl.show();
 		$mainAudio[0].volume = 1;
 		// $mainAudio.animate({volume: 1}, 5000);
 		// $mainAudio[0].currentTime = 30.5;
 		$mainAudio[0].play();
+
+		$("#volumeCtrl").on("change",function(){
+			var val = $(this).val();
+			console.log($(this).val());
+			$mainAudio[0].volume = val/100;
+		})
+
 	}
 
 	function playPlaylist(){
