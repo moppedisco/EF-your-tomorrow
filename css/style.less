@@ -487,10 +487,6 @@ input[type='range']::-webkit-slider-thumb {
 	padding: 15px 0; 
 } 
 
-.link-list a span:before { 
-	padding: 15px 0; 
-} 
-
 .link-list.ef1 a { 
 	overflow: hidden;
 	display: block;
@@ -504,25 +500,31 @@ input[type='range']::-webkit-slider-thumb {
 	transition: transform 0.3s;
 }
 
+.link-list.ef1 a span::after,
 .link-list.ef1 a span::before {
-position: absolute;
-	// top: 100%;
-	// content: attr(data-hover);
-	content: "✓";
-	font-family: "entypo";
+	position: absolute;
+	content: "";
+	width: 20px;
+	height: 15px;
+	margin-top: -7px;
+	background: url(../img/icon-tick--thin.png) no-repeat;
 	-webkit-transform: translate3d(0,0,0);
 	-moz-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
-	text-align: center;
-	// width: 100%;
-	font-size: 43px;
-	line-height: 85%;
 	left: 0;
 	opacity: 0;
-	top: 0;
+	top: 50%;
 	-webkit-transition: all 0.2s;
 	-moz-transition: all 0.2s;
 	transition: all 0.2s;
+}
+
+.link-list.ef1 a span::after {
+	background: url(../img/icon-tick--thick.png) no-repeat;	
+	width: 0;
+	-webkit-transition: all  0.3s ease-out;
+	-moz-transition: all  0.3s ease-out;
+	transition: all  0.3s ease-out;
 }
 
 .link-list.ef1 a.active span::before {
@@ -534,6 +536,11 @@ position: absolute;
 	-webkit-transform: translateX(5px);
 }
 
+.link-list.ef1 a.active span::after {
+	width: 20px;
+}
+
+.link-list.ef1 a:hover span::after,
 .link-list.ef1 a.active span::before,
 .link-list.ef1 a:hover span::before {
 	opacity: 1;
