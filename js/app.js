@@ -1,113 +1,37 @@
 (function(window){
 
 	function init(){
-		FP.app.init();
+		YT.animations.intro();
+
+		YT.app.init();
+
+		YT.helpers.init();
 	}
 
-	window.FP = {
+	window.YT = {
 		init: init
 	};
 
 }(window)); // Self execute
 
-FP.app = (function(window){
 
-	var el_fullScreenImage = ".full-screen-image",				// Cover image element before the video is loaded
-		el_fullScreenVideo = "#mainVideo",						// Background video element 
-		el_fullScreenSection = ".full-screen-section",			// Page sections
-		el_sectionContainer = ".wrapper",						// Main element we animate
-		$mainAudio = $("#mainAudio"),
-		$mainAudioCtrl = $("#volumeCtrl"),
-		myAudioPlayer,
-		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
-		scrollDirection = 1, 									// 1 down, -1 is up
-		myPlayer,												// Video player object
-		playlistCount = 0,										// Count to keep track of played videos in playlist
-		ambients = [],											// Ambient videos
-		videoPromises = [],
-		selectedVideos = [];									// Selected category videos
+YT.animations = (function(window){
 
-	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
-	$.cssEase['custom-ease'] = 'cubic-bezier(1,0,0,1)';
-
-	function init(){
-
-		FP.helpers.adjustImagePositioning($(el_fullScreenImage));
-
-		if(!Modernizr.touch){
-			downloadAmbients();
-			animateIntro();
-			// $.when(animateIntro(), animateWelcome()).done(function() {
-			// 	console.log("animation done");
-			// });
-
-			for(var i=0;i<6;i++){
-				var categoryPromise = $.Deferred();
-				videoPromises.push(categoryPromise);				
-			}
-			namePlaceholder();
-			initVideo(function(){
-				playVideo("#start");	
-			});
-
-			$.when.apply(null, videoPromises).done(function() {
-				console.log("ALL VIDEOS HAVE DOWNLOADED MOTHERFUCKER");
-				$('.button--play').css("visibility","visible");
-			});
-
-
-			bindScrollButtons();
-			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);		
-
-		} else {
-			animateIntro();
-			bindScrollButtons();
-			FP.helpers.bindWindowResize(el_fullScreenImage,el_fullScreenVideo);
-		}
-	}
-
-	function namePlaceholder(){
-		var isPlaceholder = true;
-		// $('.name-field__inputarea'),focuson();
-		$('.name-field__inputarea').on('keypress', function(event) {
-			if(isPlaceholder){
-				$(this).empty();
-				isPlaceholder = false;	
-			}
-
-			if (event.which == 13 ) {
-				return false;
-			}
-		}).on('focusout', function() {
-			var currentName = $(this).html();
-				placeholderText = $(this).attr('data-text');
-			if(currentName.length === 0 || isPlaceholder){
-				$(this).text(placeholderText);
-				isPlaceholder = true;
-				$(this).removeClass("ready");
-			} else {
-				$(this).addClass("ready");
-			}
-		}).on('focuson', function() {
-			$(this).removeClass("ready");
-		});		
-	}
-
-	function animateIntro(){
-		console.log("init")
+	function intro(){
+		console.log("intro animation");
 		$(".section-loading").addClass("active");
 
 		$("#intromessage li:eq(0)").fadeIn(800);
 		setTimeout(function(){
 			$("#intromessage li:eq(1)").fadeIn(function(){
 				setTimeout(function(){
-					animateWelcome();
+					showFirstScreen();
 				},2000);
 			});
 		},3000);
 	}
 
-	function animateWelcome(){
+	function showFirstScreen(){
 		$(".article-start__title,.article-start__line").addClass("animated fadeInDown");
 		$(".article-loading").fadeOut(function(){
 			setTimeout(function(){
@@ -116,11 +40,89 @@ FP.app = (function(window){
 		});
 	}
 
+	function outro(callback){
+		$('.full-screen-section.active .button--play').addClass("animated fadeOut");
+		$("#mainVideo").fadeOut(2500,function(){
+			callback();
+		});
+	}
+
+	function share(){
+		$(".article-message h1:nth-of-type(1)").fadeOut(function(){
+			$(".article-message h1:nth-of-type(2)").fadeIn();
+		});
+		$(".article-message p:nth-of-type(1)").fadeOut(function(){
+			$(".article-message p:nth-of-type(2)").fadeIn(function(){
+				$("#last .full-screen-image").fadeIn();
+			});
+		});
+	}
+
+	return {
+		intro : intro,
+		outro : outro,
+		share : share
+	};
+
+})(window);
+
+YT.app = (function(window){
+
+	var $fullScreenImage = $(".full-screen-image"),				// Cover image element before the video is loaded 
+		$fullScreenSection = $(".full-screen-section"),			// Page sections
+		$sectionContainer = $(".wrapper"),						// Main element we animate
+		$mainAudio = $("#mainAudio"), 							// Main audio element
+		$mainAudioCtrl = $("#volumeCtrl"), 						// Volume controller
+		el_fullScreenVideo = "#mainVideo",						// Background video element
+		myAudioPlayer,											// Audio player instance
+		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
+		scrollDirection = 1, 									// 1 down, -1 is up
+		playlistCount = 0,
+		myPlayer,												// Video player object
+		ambients = [],											// Ambient videos
+		videoPromises = [],										// Video download promises
+		selectedVideos = [];									// Selected category videos
+
+	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
+	$.cssEase['custom-ease'] = 'cubic-bezier(1,0,0,1)';
+
+	function init(){
+
+			downloadAmbients();
+			downloadVideos(6); // Nr of categories
+
+			initVideo(function(){
+				playVideo("#start");	
+			});
+
+			initAudio();
+
+			$.when.apply(null, videoPromises).done(function() {
+				console.log("ALL VIDEOS HAVE DOWNLOADED MOTHERFUCKER");
+				$('.button--play').css("visibility","visible");
+			});
+
+			bindActionButtons();
+
+	}
+
+	function downloadAmbients () {
+		
+		return new Promise(resolveAmbients);
+	}
+
+	function downloadVideos(nrOfcategories){
+		for(var i=0;i<nrOfcategories;i++){
+			var categoryPromise = $.Deferred();
+			videoPromises.push(categoryPromise);				
+		}		
+	}
+
 	function resolveAmbients (resolve) {
 		var loader = new PxLoader(),
 			resource;
 
-		$(".full-screen-section").each(function(i){
+		$fullScreenSection.each(function(i){
 			var videoUrl = $(this).attr("data-video");
 		
 			if(videoUrl){
@@ -142,8 +144,16 @@ FP.app = (function(window){
 		loader.start();
 	}
 
-	function downloadAmbients () {
-		return new Promise(resolveAmbients);
+	function resolveVideos(url,index){
+		var loader = new PxLoader();
+
+		loader.add(new PxLoaderVideo(url));
+		loader.addCompletionListener(function () {
+			console.log('Video ' + index + ' downloaded');
+			videoPromises[index].resolve();
+		});
+
+		loader.start();
 	}
 
 	function initVideo(callback){
@@ -152,11 +162,10 @@ FP.app = (function(window){
 		videojs("mainVideo").ready(function(){
 			myPlayer = this;
 			myPlayer.loop(true);
-			console.log(myPlayer);
 		});	
 
 		// Init Make our video player fit entire screen
-		FP.helpers.adjustVideoPositioning(el_fullScreenVideo);
+		YT.helpers.adjustVideoPositioning(el_fullScreenVideo);
 		callback();
 	}
 
@@ -175,36 +184,11 @@ FP.app = (function(window){
 
 		// Only fadeout images if browser supports video element
 		if(Modernizr.video){ 
-			// Mobile supports html5 video but not the way we want so dont fadeout image on touch devices
-			// if(!Modernizr.touch){ 
-				$(target).find(".full-screen-image").fadeOut();				
-			// }
-
-		}
-
-	}
-
-	function resetSection(){
-		if(Modernizr.video){ // Only fadeout images if browser supports video element
-			if(!Modernizr.touch){ // Dont fadeout image on touch devices
-				// $(".full-screen-section:not(.active)").find(".full-screen-image").show();
-			}
+			$(target).find(".full-screen-image").fadeOut();				
 		}
 	}
 
-	function downloadVids(url,index){
-		var loader = new PxLoader();
-
-		loader.add(new PxLoaderVideo(url));
-		loader.addCompletionListener(function () {
-			console.log('Video ' + index + ' downloaded');
-			videoPromises[index].resolve();
-		});
-
-		loader.start();
-	}
-
-	function bindScrollButtons(){
+	function bindActionButtons(){
 
 		// Intro button
 		$('.article-start__btn').click(function(e){	
@@ -220,24 +204,23 @@ FP.app = (function(window){
 			e.preventDefault();
 		});		
 
+		// Category buttons
 		$('.link-list a').click(function(e){
+			var target = $(this).attr("href"),
+				videoUrl = $(this).attr("data-video"),
+				text = $(this).attr("data-text");
+
 			$(this).siblings().unbind('click');
+
 			if($(this).hasClass("active")){
 				return false;
 			}
 			
 			$(this).addClass("active");
-			
-
-			var target = $(this).attr("href"),
-				videoUrl = $(this).attr("data-video"),
-				text = $(this).attr("data-text");
-
-			console.log(target);
 
 			selectedVideos.push(videoUrl);
 
-			downloadVids(videoUrl,selectedVideos.indexOf(videoUrl));
+			resolveVideos(videoUrl,selectedVideos.indexOf(videoUrl));
 			console.log(selectedVideos);
 
 			$(".subtitles").append("<li>"+text+"</li>");
@@ -254,15 +237,11 @@ FP.app = (function(window){
 
 		// Play video button
 		$('.button--play').click(function(e){
-			// $(".full-screen-section.active .mega").addClass("animated fadeOutUp");
-			$('.full-screen-section.active .button--play').addClass("animated fadeOut");
-			
-			$(el_fullScreenVideo).fadeOut(2500,function(){
 
+			YT.animations.outro(function(){
 				myPlayer.loop(false);
-				myPlayer.src('');	
+				myPlayer.src('');
 				goToSection(1,'#playingPlaylist',false,function(){
-					initAudio();	
 					if(!Modernizr.touch){
 						// Resets ambient player					
 						console.log("desktop playlist");
@@ -270,9 +249,9 @@ FP.app = (function(window){
 					} else {
 						console.log("mobile playlist");					
 					}
-					
-				});
-			});
+				});					
+			})
+
 			e.preventDefault();
 		});	
 
@@ -293,12 +272,12 @@ FP.app = (function(window){
 
 		if(animate){
 			console.log("animate section jump");
-			$(el_sectionContainer).transition({ 
+			$sectionContainer.transition({ 
 				y: distanceScrolled+'%',
 				easing: 'custom-ease',
 				duration: 800
 			},function(){
-				$(".full-screen-section").removeClass("active");
+				$fullScreenSection.removeClass("active");
 				$(target).addClass("active");
 				$(el_fullScreenVideo).css({"transform":"translate(0, 0)"});
 				if(!Modernizr.touch){
@@ -309,11 +288,9 @@ FP.app = (function(window){
 				}  
 			});
 		} else {
-			console.log(distanceScrolled);
-			console.log("dont animate section jump");
-			$(".full-screen-section").removeClass("active");
+			$fullScreenSection.removeClass("active");
 			$(target).addClass("active");			
-			$(el_sectionContainer).css({"-webkit-transform":"translate(0, "+distanceScrolled+"%)"});
+			$sectionContainer.css({"transform":"translate(0, "+distanceScrolled+"%)"});
 			if (callback && typeof(callback) === "function") {  
 				callback();
 			}  
@@ -337,10 +314,7 @@ FP.app = (function(window){
 
 	function initAudio(){
 		$mainAudioCtrl.show();
-		$mainAudio[0].volume = 1;
-		// $mainAudio.animate({volume: 1}, 5000);
-		// $mainAudio[0].currentTime = 30.5;
-		$mainAudio[0].play();
+		$mainAudio[0].volume = 0.5;
 
 		$("#volumeCtrl").on("change",function(){
 			var val = $(this).val();
@@ -351,9 +325,15 @@ FP.app = (function(window){
 	}
 
 	function playPlaylist(){
+		playlistCount = 0;		
+
 		$(el_fullScreenVideo).find("video").attr("poster",""); 
 		$(el_fullScreenVideo).show();
+		
 		playPlaylistIndex(playlistCount);
+		
+		$mainAudio[0].play();
+		
 		$("#mainVideo video").bind("ended", function() {
 			
 			// Play each selected video
@@ -368,29 +348,14 @@ FP.app = (function(window){
 					$mainAudio[0].pause();	
 				});
 
-				$(".input-share").click(function () {
-					$(this).select();
+				$(".subtitles,#mainVideo").hide()
+				goToSection(1,'#last',false,function(){
+					setTimeout(function(){
+						YT.animations.share();
+					},3000);
+
 				});
-
-				// $("#last").addClass("active");
-				playlistCount = 0;
-				$(".subtitles,#mainVideo").hide().promise().done(function(){
-					goToSection(1,'#last',false,function(){
-						console.log("going to last");
-						setTimeout(function(){
-							$(".article-message h1:nth-of-type(1)").fadeOut(function(){
-								$(".article-message h1:nth-of-type(2)").fadeIn();
-							});
-							$(".article-message p:nth-of-type(1)").fadeOut(function(){
-								$(".article-message p:nth-of-type(2)").fadeIn(function(){
-									$("#last .full-screen-image").fadeIn();
-								});
-							});
-						},3000);
-
-					});					
-				})
-				$("#mainVideo video").unbind("ended");
+				$(this).unbind("ended"); // Reset video
 				console.log("ENDED");	
 			}
 		});			
@@ -399,12 +364,14 @@ FP.app = (function(window){
 	function playPlaylistIndex(index){
 		$(".subtitles li").hide();
 		$(".subtitles li:eq("+index+")").show();
+
 		setTimeout(function(){
 			$(".subtitles li:eq("+index+")").hide();
 		},3000);		
-		console.log(selectedVideos[index]);
+
 		myPlayer.src(selectedVideos[index]);		
 		myPlayer.play();
+
 		playlistCount++;
 	}
 
@@ -417,13 +384,24 @@ FP.app = (function(window){
 
 })(window);
 
-FP.helpers = (function(window){
+YT.helpers = (function(window){
 	var	mediaAspect = 16/9,										// Video aspect ratio of videos
-		$window = $(window);									// cache window element
+		$window = $(window),									// cache window element
+		$fullScreenImage = $(".full-screen-image"),
+		el_fullScreenVideo = "#mainVideo";
+
+	function init(){
+		bindWindowResize($fullScreenImage,el_fullScreenVideo);		
+		adjustImagePositioning($fullScreenImage);
+
+		namePlaceholder();
+
+		shareInput();
+	}
 
 	function bindWindowResize(imageElements,videoElement){
 		$(window).resize(function() {
-			adjustImagePositioning($(imageElements));
+			adjustImagePositioning(imageElements);
 			adjustVideoPositioning(videoElement);
 		});
 	}
@@ -496,7 +474,42 @@ FP.helpers = (function(window){
 		}
 	}
 
+	function shareInput(){
+		$(".input-share").click(function () {
+			$(this).select();
+		});		
+	}
+
+	function namePlaceholder(){
+		var isPlaceholder = true;
+		// $('.name-field__inputarea'),focuson();
+		$('.name-field__inputarea').on('keypress', function(event) {
+			if(isPlaceholder){
+				$(this).empty();
+				isPlaceholder = false;	
+			}
+
+			if (event.which == 13 ) {
+				return false;
+			}
+		}).on('focusout', function() {
+			var currentName = $(this).html();
+				placeholderText = $(this).attr('data-text');
+			if(currentName.length === 0 || isPlaceholder){
+				$(this).text(placeholderText);
+				isPlaceholder = true;
+				$(this).removeClass("ready");
+			} else {
+				$(this).addClass("ready");
+			}
+		}).on('focuson', function() {
+			$(this).removeClass("ready");
+		});		
+	}
+
+
 	return {
+		init : init,
 		bindWindowResize : bindWindowResize,
 		adjustVideoPositioning : adjustVideoPositioning,
 		adjustImagePositioning : adjustImagePositioning
