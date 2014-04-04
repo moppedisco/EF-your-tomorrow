@@ -19,7 +19,7 @@ html {
 	font-style: italic; 
 }
 
-html, body {
+html, body, form {
 	height: 100%;
 	width: 100%;
 	color: #fff;
@@ -154,9 +154,12 @@ hr.short {
 	margin: 0;
 }
 
-.size0 { 
-	width: 0; 
-}
+.hr-progress__bar--1of6 { width: 16.666666666%; }
+.hr-progress__bar--2of6 { width: 33.333333333%; }
+.hr-progress__bar--3of6 { width: 50%; }
+.hr-progress__bar--4of6 { width: 66.666666666%; }
+.hr-progress__bar--5of6 { width: 83.3333333%; }
+.hr-progress__bar--6of6 { width: 100%; }
 
 .hr-progress__bar.size1of1 { 
 	width: 100%; 
@@ -422,7 +425,6 @@ hr.short {
 .name-field__inputarea.ready {
 	font-size: inherit;
 	border: none;
-	padding: 0;
 }
 
 // ================================== //
@@ -434,36 +436,32 @@ hr.short {
 }
 
 #volumeCtrl {
+	display: none;
+	width: 80px;
+	height: 1px;
 	position: absolute;
 	bottom: 50px;
-	right: 20px;
-	z-index: 9999;
-	display: none;
-	width: 50px;
-	height: 1px;
+	left: 50%;
+	z-index: 999999999;
 	-webkit-appearance: none;
 	background: #fff;
 	background: rgba(255,255,255,0.7);
-	-webkit-transform: rotate(-90deg);
-	-moz-transform: rotate(-90deg);
-	-ms-transform: rotate(-90deg);
-	-o-transform: rotate(-90deg);
-	transform: rotate(-90deg);
 	box-shadow: 1px 1px 7px #000;
+	margin-left: -40px;
 }
 
 #volumeCtrl:focus {
 	outline: none;
 }
 
-input[type='range']::-webkit-slider-thumb {
-	-webkit-appearance: none !important;
-	-webkit-border-radius: 10px;
-	background: #fff;
-	height: 10px;
-	width: 10px;
-	border-radius: 10px;
-}
+// input[type='range']::-webkit-slider-thumb {
+// 	-webkit-appearance: none !important;
+// 	-webkit-border-radius: 10px;
+// 	background: #fff;
+// 	height: 10px;
+// 	width: 10px;
+// 	border-radius: 10px;
+// }
 
 // ================================== //
 // VIDEO SUBTITLES

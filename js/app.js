@@ -41,7 +41,7 @@ YT.animations = (function(window){
 	}
 
 	function outro(callback){
-		$('.full-screen-section.active .button--play').addClass("animated fadeOut");
+		$('.full-screen-section.active .button--play').fadeOut(2500);
 		$("#mainVideo").fadeOut(2500,function(){
 			callback();
 		});
@@ -51,10 +51,18 @@ YT.animations = (function(window){
 		$(".article-outromessage").fadeOut();
 	}
 
+	function replay(callback){
+		$(".section-last .full-screen-image").fadeOut(1000);
+		$(".article-sharepage").fadeOut(1000,function(){
+			callback();
+		})		
+	}
+
 	return {
 		intro : intro,
 		outro : outro,
-		share : share
+		share : share,
+		replay : replay
 	};
 
 })(window);
@@ -203,8 +211,6 @@ YT.app = (function(window){
 				videoUrl = $(this).attr("data-video"),
 				text = $(this).attr("data-text");
 
-			// $(this).parents('li').siblings().unbind('click');
-
 			if($(this).hasClass("active")){
 				return false;
 			}
@@ -249,14 +255,16 @@ YT.app = (function(window){
 		});	
 
 		$("#replay").on('click',function(){
-			$(".article-share").fadeOut(1000,function(){
+			YT.animations.replay(function(){
 				goToSection(-1,'#playingPlaylist',false,function(){
 					console.log("replay video");
 					playPlaylist();
 					$(".subtitles").show();
-					$(".article-message").show();
+					$(".article-outromessage").show();
+					$(".section-last .full-screen-image").show();
+					$(".article-sharepage").show();
 				});						
-			})
+			});
 		})
 	}
 
@@ -325,6 +333,7 @@ YT.app = (function(window){
 		
 		playPlaylistIndex(playlistCount);
 		
+		$mainAudio[0].currentTime = 0;
 		$mainAudio[0].play();
 		
 		$("#mainVideo video").bind("ended", function() {
