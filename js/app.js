@@ -48,14 +48,7 @@ YT.animations = (function(window){
 	}
 
 	function share(){
-		$(".article-message h1:nth-of-type(1)").fadeOut(function(){
-			$(".article-message h1:nth-of-type(2)").fadeIn();
-		});
-		$(".article-message p:nth-of-type(1)").fadeOut(function(){
-			$(".article-message p:nth-of-type(2)").fadeIn(function(){
-				$("#last .full-screen-image").fadeIn();
-			});
-		});
+		$(".article-outromessage").fadeOut();
 	}
 
 	return {
@@ -210,7 +203,7 @@ YT.app = (function(window){
 				videoUrl = $(this).attr("data-video"),
 				text = $(this).attr("data-text");
 
-			$(this).siblings().unbind('click');
+			// $(this).parents('li').siblings().unbind('click');
 
 			if($(this).hasClass("active")){
 				return false;
@@ -349,12 +342,13 @@ YT.app = (function(window){
 				});
 
 				$(".subtitles,#mainVideo").hide()
-				goToSection(1,'#last',false,function(){
-					setTimeout(function(){
-						YT.animations.share();
-					},3000);
+					goToSection(1,'#last',false,function(){
+						setTimeout(function(){
+							YT.animations.share();
+						},4000);
+					});
 
-				});
+
 				$(this).unbind("ended"); // Reset video
 				console.log("ENDED");	
 			}
