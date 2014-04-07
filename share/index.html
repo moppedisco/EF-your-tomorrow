@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> -->
+	<title>Fullpage - test</title>
+	<link rel="stylesheet" href="../css/plugins/animate.css" />
+	<link rel="stylesheet" href="../css/style.css" />
+	<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:700,400&amp;subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic" rel="stylesheet" type="text/css" />
+	<script src="../js/plugins/modernizr.js"></script>
+</head>
+<body>
+<main class="wrapper wrapper--share" style="position: relative; z-index:3;">
+	<section id="start" data-video="http://player.vimeo.com/external/88978547.hd.mp4?s=ae5b1f74b1e0155d19b090a5b2e621e6" class="full-screen-section section-playPlaylist">
+		<div class="vert-align">
+			<div class="vert-align__inner">
+				<h1 class="mega name-field">
+					<span class="name-field__text">THIS IS</span>
+					<span class="name-field__inputarea" contenteditable="true" data-text="YOUR">
+						YOUR
+					</span>
+					<span  class="name-field__text">Tomorrow</span>
+				</h1>
+				<a href="#playingPlaylist" class="button button--play">
+					<span>Play </span>
+					<i class="icon icon--button icon--circle icon--play"></i>
+				</a>
+			</div>
+			<!-- // .vert-align__inner // -->
+		</div>
+		<!-- // .vert-align // -->
+		<img class="full-screen-image" src="../img/cover_beachsand.jpg" />
+	</section>	
+	<!-- // #playPlatlist // -->
+	<section id="playingPlaylist" class="full-screen-section section-playingPlaylist">
+		<div class="vert-align">
+			<div class="vert-align__inner txtC">
+				<ul class="subtitles">
+				</ul>
+				<!-- // .subtitles // -->
+			</div>
+			<!-- // .vert-align__inner // -->
+		</div>
+		<!-- // .vert-align__inner // -->
+		<input id="volumeCtrl" type="range" name="points" min="0" max="100" step="10" orient="vertical">
+	</section>	
+	<!-- // #playingPlaylist // -->	
+	<section id="last" class="full-screen-section section-last">
+		<article class="full-screen-section__inner article-outromessage">
+			<div class="vert-align">
+				<div class="vert-align__inner txtC">			
+					<h1><img src="http://media.ef.com/sitecore/__/~/media/universal/ef-logo/2013/logo-white.png" height="63" alt=""></h1>
+					<hr>
+					<p>Go abroad. Learn a language. Change your life.</p>
+				</div>
+				<!-- // .vert-align__inner // -->
+			</div>
+			<!-- // .vert-align // -->
+		</article>
+		<article class="full-screen-section__inner article-sharepage">
+			<div class="vert-align">
+				<div class="vert-align__inner txtC">
+					<h1 style="margin-bottom: 10px;" >Make your own tomorrow</h1>
+					<hr style="margin-bottom: 10px;">
+					
+					<a class="button ">
+						<span>Start here</span>
+						<i class="icon icon--button icon--circle icon--play"></i>
+					</a><br><br><br>
+
+					<div class="share--replay">
+						<a id="replay" class="button--text button--replay">Replay</a>
+						<hr style="margin-bottom: 0;">
+						<a class="button--text button--makeanother">Make another tomorrow</a>
+					</div>					
+
+
+					<div>
+						<img src="http://media.ef.com/sitecore/__/~/media/universal/ef-logo/2013/logo-white.png" alt="">
+						<h3 style="font-style: normal;">World leader in international education</h3 style="font-style: normal;">
+
+					</div>
+				</div>
+				<!-- // .vert-align__inner // -->
+			</div>
+			<!-- // .vert-align // -->
+		</article>
+		<!-- // .full-screen-section__inner // -->
+		<img class="full-screen-image" src="../img/temp_newyork.jpg" />
+	</section>
+	<!-- // #last // -->	
+</main>
+<video id="mainVideo"></video>
+<audio id="mainAudio" preload>
+	<source src="music/EF_Make_your_own_tomorrow_86s.mp3" />  
+</audio>
+
+<!-- //wrapper -->
+
+<script src="../build/ef_your_tomorrow.min.js"></script>
+<script>
+	YT.share();
+</script>	
+</body>
+</html>

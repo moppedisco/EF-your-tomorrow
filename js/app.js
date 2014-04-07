@@ -1,23 +1,66 @@
 (function(window){
+	var playlist = [],
+		playlistCount = 0;
 
 	function init(){
-		YT.animations.intro();
+		if(!Modernizr.touch){
+			YT.animations.welcomeScreen();
+			YT.app.init();
+			YT.helpers.init();
+		} else {
+			window.location.href = "http://www.ef.com";
+		}
+	}
 
+	function share(){
 		YT.app.init();
-
 		YT.helpers.init();
+		YT.sharePage.init();
 	}
 
 	window.YT = {
-		init: init
+		init: init,
+		share: share,
+		playlist: playlist,
+		playlistCount: playlistCount
 	};
 
 }(window)); // Self execute
 
+YT.sharePage = (function(window){
+
+	var data = {},
+		videoPromises = [];
+
+	function init(){
+		getURIdata();
+		downloadVideos(data);
+	}
+
+	function getURIdata(){
+		var queryString = YT.helpers.getUrlVars();
+		data = jQuery.parseJSON(decodeURIComponent(queryString.data));		
+	}
+
+	function downloadVideos(data){
+		for(var i = 0; i < data.length; i++) {
+			var categoryPromise = $.Deferred();
+			videoPromises.push(categoryPromise);
+			$(".subtitles").append("<li>"+data[i].text+"</li>");
+			YT.playlist.push(data[i].video);
+			YT.app.resolveVideos(data[i].video,i);
+		}
+	}
+
+	return {
+		init: init
+	};
+
+})(window);
 
 YT.animations = (function(window){
 
-	function intro(){
+	function welcomeScreen(){
 		console.log("intro animation");
 		$(".section-loading").addClass("active");
 
@@ -40,7 +83,7 @@ YT.animations = (function(window){
 		});
 	}
 
-	function outro(callback){
+	function playlistIntro(callback){
 		$('.full-screen-section.active .button--play').fadeOut(2500);
 		$("#mainVideo").fadeOut(2500,function(){
 			callback();
@@ -59,8 +102,8 @@ YT.animations = (function(window){
 	}
 
 	return {
-		intro : intro,
-		outro : outro,
+		welcomeScreen : welcomeScreen,
+		playlistIntro : playlistIntro,
 		share : share,
 		replay : replay
 	};
@@ -78,11 +121,12 @@ YT.app = (function(window){
 		myAudioPlayer,											// Audio player instance
 		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
 		scrollDirection = 1, 									// 1 down, -1 is up
-		playlistCount = 0,
+		// playlistCount = 0,
 		myPlayer,												// Video player object
 		ambients = [],											// Ambient videos
 		videoPromises = [],										// Video download promises
-		selectedVideos = [];									// Selected category videos
+		selectedCatogories = [];
+		// playlist = [];											// Selected videos videos
 
 	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
 	$.cssEase['custom-ease'] = 'cubic-bezier(1,0,0,1)';
@@ -209,6 +253,7 @@ YT.app = (function(window){
 		$('.link-list a').click(function(e){
 			var target = $(this).attr("href"),
 				videoUrl = $(this).attr("data-video"),
+				text_button = $.trim($(this).text()),
 				text = $(this).attr("data-text");
 
 			if($(this).hasClass("active")){
@@ -217,10 +262,11 @@ YT.app = (function(window){
 			
 			$(this).addClass("active");
 
-			selectedVideos.push(videoUrl);
-
-			resolveVideos(videoUrl,selectedVideos.indexOf(videoUrl));
-			console.log(selectedVideos);
+			var category = new categoryScene(text,text_button,videoUrl);
+			
+			YT.playlist.push(videoUrl);
+			selectedCatogories.push(category);
+			resolveVideos(videoUrl,YT.playlist.indexOf(videoUrl));
 
 			$(".subtitles").append("<li>"+text+"</li>");
 
@@ -237,19 +283,13 @@ YT.app = (function(window){
 		// Play video button
 		$('.button--play').click(function(e){
 
-			YT.animations.outro(function(){
+			YT.animations.playlistIntro(function(){
 				myPlayer.loop(false);
 				myPlayer.src('');
 				goToSection(1,'#playingPlaylist',false,function(){
-					if(!Modernizr.touch){
-						// Resets ambient player					
-						console.log("desktop playlist");
-						playPlaylist();
-					} else {
-						console.log("mobile playlist");					
-					}
+					playPlaylist();
 				});					
-			})
+			});
 
 			e.preventDefault();
 		});	
@@ -266,6 +306,14 @@ YT.app = (function(window){
 				});						
 			});
 		})
+	}
+
+
+	// Category constructor
+	function categoryScene(text,text_button,video) {
+		this.text = text;
+		this.text_button = text_button;
+		this.video = video; 
 	}
 
 	function goToSection(steps, target, animate, callback){
@@ -326,12 +374,12 @@ YT.app = (function(window){
 	}
 
 	function playPlaylist(){
-		playlistCount = 0;		
+		YT.playlistCount = 0;		
 
 		$(el_fullScreenVideo).find("video").attr("poster",""); 
 		$(el_fullScreenVideo).show();
 		
-		playPlaylistIndex(playlistCount);
+		playPlaylistIndex(YT.playlistCount);
 		
 		$mainAudio[0].currentTime = 0;
 		$mainAudio[0].play();
@@ -339,9 +387,9 @@ YT.app = (function(window){
 		$("#mainVideo video").bind("ended", function() {
 			
 			// Play each selected video
-			if(playlistCount < selectedVideos.length){
-				console.log(playlistCount);
-				playPlaylistIndex(playlistCount);
+			if(YT.playlistCount < YT.playlist.length){
+				console.log(YT.playlistCount);
+				playPlaylistIndex(YT.playlistCount);
 			
 			// Video ends
 			} else { 
@@ -372,17 +420,19 @@ YT.app = (function(window){
 			$(".subtitles li:eq("+index+")").hide();
 		},3000);		
 
-		myPlayer.src(selectedVideos[index]);		
+		myPlayer.src(YT.playlist[index]);		
 		myPlayer.play();
 
-		playlistCount++;
+		YT.playlistCount++;
 	}
 
 	return {
 		init : init,
 		myPlayer : myPlayer,
 		myAudioPlayer : myAudioPlayer,
-		initAudio : initAudio
+		initAudio : initAudio,
+		downloadVideos : downloadVideos,
+		resolveVideos : resolveVideos
 	};
 
 })(window);
@@ -510,12 +560,23 @@ YT.helpers = (function(window){
 		});		
 	}
 
+	function getUrlVars() {
+		var vars = [], hash;
+		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for(var i = 0; i < hashes.length; i++){
+			hash = hashes[i].split('=');
+			vars.push(hash[0]);
+			vars[hash[0]] = hash[1];
+		}
+		return vars;
+	}
 
 	return {
 		init : init,
 		bindWindowResize : bindWindowResize,
 		adjustVideoPositioning : adjustVideoPositioning,
-		adjustImagePositioning : adjustImagePositioning
+		adjustImagePositioning : adjustImagePositioning,
+		getUrlVars : getUrlVars
 	};
 
 })(window);
