@@ -10,7 +10,12 @@
 	<script src="../js/plugins/modernizr.js"></script>
 </head>
 <body>
+<script type="text/javascript">
+	window.Settings = window.Settings || {};
+	window.Settings.PlayList = <xsl:value-of select="$playListJson"/>;
+</script>
 <main class="wrapper wrapper--share" style="position: relative; z-index:3;">
+
 	<section id="start" data-video="http://player.vimeo.com/external/88978547.hd.mp4?s=ae5b1f74b1e0155d19b090a5b2e621e6" class="full-screen-section section-playPlaylist">
 		<div class="vert-align">
 			<div class="vert-align__inner">
@@ -92,7 +97,7 @@
 </main>
 <video id="mainVideo"></video>
 <audio id="mainAudio" preload>
-	<source src="music/EF_Make_your_own_tomorrow_86s.mp3" />  
+	<source src="../music/EF_Make_your_own_tomorrow_86s.mp3" />  
 </audio>
 
 <!-- //wrapper -->

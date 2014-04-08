@@ -121,12 +121,10 @@ YT.app = (function(window){
 		myAudioPlayer,											// Audio player instance
 		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
 		scrollDirection = 1, 									// 1 down, -1 is up
-		// playlistCount = 0,
 		myPlayer,												// Video player object
 		ambients = [],											// Ambient videos
 		videoPromises = [],										// Video download promises
 		selectedCatogories = [];
-		// playlist = [];											// Selected videos videos
 
 	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
 	$.cssEase['custom-ease'] = 'cubic-bezier(1,0,0,1)';
@@ -239,7 +237,6 @@ YT.app = (function(window){
 		$('.article-start__btn').click(function(e){	
 			var target = $(this).attr('href');
 			
-			// resetSection();
 			if(!Modernizr.touch){
 				moveBGvideo(scrollDirection);
 			}
@@ -254,7 +251,8 @@ YT.app = (function(window){
 			var target = $(this).attr("href"),
 				videoUrl = $(this).attr("data-video"),
 				text_button = $.trim($(this).text()),
-				text = $(this).attr("data-text");
+				text = $(this).attr("data-text"),
+				ulElement = $(this).closest("ul");
 
 			if($(this).hasClass("active")){
 				return false;
@@ -262,12 +260,16 @@ YT.app = (function(window){
 			
 			$(this).addClass("active");
 
-			var category = new categoryScene(text,text_button,videoUrl);
-			
+			// Add video to playlist
 			YT.playlist.push(videoUrl);
-			selectedCatogories.push(category);
-			resolveVideos(videoUrl,YT.playlist.indexOf(videoUrl));
 
+			// Creates unique url of playlist
+			selectedCatogories[YT.helpers.getNumberOfCategory(ulElement)] = YT.helpers.getNumberOfOption($(this), ulElement);
+			
+			// Resolve download of video
+			resolveVideos(videoUrl,YT.playlist.indexOf(videoUrl));
+			
+			// Create subtitle
 			$(".subtitles").append("<li>"+text+"</li>");
 
 			setTimeout(function(){
@@ -282,6 +284,7 @@ YT.app = (function(window){
 
 		// Play video button
 		$('.button--play').click(function(e){
+			var input_name = $(".name-field__inputarea").text();
 
 			YT.animations.playlistIntro(function(){
 				myPlayer.loop(false);
@@ -290,6 +293,9 @@ YT.app = (function(window){
 					playPlaylist();
 				});					
 			});
+
+			// Create unique link for user
+			$(".input-share[type='text']").attr("value",YT.helpers.getShareLink(input_name,selectedCatogories));
 
 			e.preventDefault();
 		});	
@@ -320,7 +326,6 @@ YT.app = (function(window){
 		distanceScrolled = distanceScrolled - 100*steps;
 
 		if(animate){
-			console.log("animate section jump");
 			$sectionContainer.transition({ 
 				y: distanceScrolled+'%',
 				easing: 'custom-ease',
@@ -381,6 +386,7 @@ YT.app = (function(window){
 		
 		playPlaylistIndex(YT.playlistCount);
 		
+		$mainAudio[0].volume = 0.5;
 		$mainAudio[0].currentTime = 0;
 		$mainAudio[0].play();
 		
@@ -571,12 +577,40 @@ YT.helpers = (function(window){
 		return vars;
 	}
 
+	var getNumberOfCategory = function(ulElement) {
+		var categories = $("ul.link-list");
+		for (var i = 0; i < categories.length; i++) {
+			if (categories[i] == ulElement[0])
+				return i;
+		}
+		return null;
+	};
+
+	var getNumberOfOption = function(anchorElement, ulElement) {
+		var options = ulElement.find("li a");
+		for (var i = 0; i < options.length; i++) {
+			if (options[i] == anchorElement[0])
+			    return i;
+		}
+		return null;
+	};
+
+	var getShareLink = function(userName, selectedCatogories) {
+		selectedCatogories.sort();
+		var serializedString = selectedCatogories.join('_') + '_' + userName;
+		console.log(serializedString);
+		console.log(window.location.host + window.Settings.VideoPageUrl + "?id=" + btoa(escape(serializedString)))
+		return window.location.host + window.Settings.VideoPageUrl + "?id=" + btoa(escape(serializedString));
+	};
+
 	return {
 		init : init,
 		bindWindowResize : bindWindowResize,
 		adjustVideoPositioning : adjustVideoPositioning,
 		adjustImagePositioning : adjustImagePositioning,
-		getUrlVars : getUrlVars
+		getNumberOfOption: getNumberOfOption,
+		getNumberOfCategory: getNumberOfCategory,
+		getShareLink: getShareLink
 	};
 
 })(window);
