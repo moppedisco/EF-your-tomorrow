@@ -1672,6 +1672,16 @@ hr.short {
   font-size: inherit;
   border: none;
 }
+.name-field__inputarea:after {
+  content: "[ enter name ]";
+  position: absolute;
+  font-size: 12px;
+  width: 100%;
+  top: 36px;
+  left: 0;
+  text-align: center;
+  opacity: 0.3;
+}
 #mainAudio {
   display: none;
 }
