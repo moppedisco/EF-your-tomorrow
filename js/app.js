@@ -29,26 +29,20 @@
 
 YT.sharePage = (function(window){
 
-	var data = {},
+	var data = window.Settings.PlayList,
 		videoPromises = [];
 
 	function init(){
-		getURIdata();
-		downloadVideos(data);
-	}
-
-	function getURIdata(){
-		var queryString = YT.helpers.getUrlVars();
-		data = jQuery.parseJSON(decodeURIComponent(queryString.data));		
+		downloadVideos(data['Videos']);
 	}
 
 	function downloadVideos(data){
 		for(var i = 0; i < data.length; i++) {
 			var categoryPromise = $.Deferred();
 			videoPromises.push(categoryPromise);
-			$(".subtitles").append("<li>"+data[i].text+"</li>");
-			YT.playlist.push(data[i].video);
-			YT.app.resolveVideos(data[i].video,i);
+			$(".subtitles").append("<li>"+data[i].Title+"</li>");
+			YT.playlist.push(data[i].Url);
+			YT.app.resolveVideos(data[i].Url,i);
 		}
 	}
 
@@ -280,6 +274,10 @@ YT.app = (function(window){
 			},200);
 
 			e.preventDefault();
+		});
+
+		$('#two .link-list a').click(function(e){
+			$("#three h2 u").html($(this).attr("data-text"));
 		});
 
 		// Play video button
