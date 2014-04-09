@@ -390,12 +390,13 @@ hr.short {
 	margin: 0 auto;
 	max-width: none;
 	border: none;
-	border-bottom: 1px solid rgba(255,255,255,0.5);
 	background: none;
 	color: #fff;
-	padding: 0px 5px 5px;
+	padding: 5px;
 	font-size: 14px;
 	text-align: center;
+	background: rgba(255,255,255,0.6);
+	color: #000;	
 }
 
 .input-share[type="text"]:focus {
@@ -432,10 +433,18 @@ hr.short {
 	position: absolute;
 	font-size: 12px;
 	width: 100%;
-	top: 36px;
+	top: 60px;
 	left: 0;
 	text-align: center;
 	opacity: 0.3;
+	z-index: 1;
+	height: 13px;
+	display: block;
+	line-height: 12px;
+}
+
+.name-field__inputarea.ready:after {
+	display: none;
 }
 
 // ================================== //

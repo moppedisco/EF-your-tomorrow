@@ -12,13 +12,13 @@ module.exports = function(grunt) {
         src: [
           'js/jquery.js', 
           'js/plugins/PxLoader.js',
-          'js/plugins/PxLoaderImage.js',
+          // 'js/plugins/PxLoaderImage.js',
           'js/plugins/PxLoaderVideo.js',
           'js/plugins/video.js',
           'js/plugins/jquery.transit.min.js',
           'js/plugins/promise-0.1.1.min.js',
-          'js/plugins/mediaelement.js',
-          'js/plugins/mediaelementplayer.js',
+          // 'js/plugins/mediaelement.js',
+          // 'js/plugins/mediaelementplayer.js',
           'js/app.js'
         ],
         dest: 'build/<%= pkg.name %>.min.js'

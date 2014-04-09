@@ -55,6 +55,18 @@ YT.createVideoPage = (function(window){
 
 	}
 
+	function setCaret() {
+		var el = $(".name-field__inputarea").get(0);
+		var center_text = $(".name-field__inputarea").text().length/2;
+		var range = document.createRange();
+		var sel = window.getSelection();
+		range.setStart(el.childNodes[0], center_text);
+		range.collapse(true);
+		sel.removeAllRanges();
+		sel.addRange(range);
+		el.focus();
+	}
+
 	function downloadVideos(nrOfcategories){
 		for(var i=0;i<nrOfcategories;i++){
 			var categoryPromise = $.Deferred();
@@ -71,9 +83,13 @@ YT.createVideoPage = (function(window){
 				YT.app.moveBGvideo(1);
 			}
 
-			YT.app.goToSection(1,target,true);
+			YT.app.goToSection(1,true);
 
 			e.preventDefault();
+		});
+		
+		$('.name-field__text').click(function(e){
+			setCaret();
 		});
 
 		// Category buttons
@@ -106,7 +122,7 @@ YT.createVideoPage = (function(window){
 				if(!Modernizr.touch){
 					YT.app.moveBGvideo(1);
 				}
-				YT.app.goToSection(1,target,true);
+				YT.app.goToSection(1,true);
 			},200);
 
 			e.preventDefault();
@@ -144,6 +160,10 @@ YT.createVideoPage = (function(window){
 		$(".input-share").click(function () {
 			$(this).select();
 		});		
+	}
+
+	function solveNamePromise(){
+
 	}
 
 	function namePlaceholder(){
@@ -262,13 +282,16 @@ YT.app = (function(window){
 		playlist = [],
 		playlistCount = 0,
 		mediaAspect = 16/9,										// Video aspect ratio of videos
+		pageSections = [],
+		active_section = 0,
 		$window = $(window);									// cache window element
-
 
 	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
 	$.cssEase['custom-ease'] = 'cubic-bezier(1,0,0,1)';
 
 	function init(){
+
+			createPageSections();
 
 			// Download ambients
 			downloadAmbients();
@@ -284,6 +307,13 @@ YT.app = (function(window){
 		
 			// Full screen image positioning
 			adjustImagePositioning($fullScreenImage);
+	}
+
+	function createPageSections(){
+		$fullScreenSection.each(function(i,el){
+			pageSections.push(el);
+		});
+		console.log(pageSections);
 	}
 
 	function share(){
@@ -362,6 +392,7 @@ YT.app = (function(window){
 	}
 
 	function playVideo(target){
+		console.log(target);
 		var videoToPlay = $(target).attr("data-video"),
 			poster = $(target).find(".full-screen-image").attr("src");
 
@@ -388,7 +419,7 @@ YT.app = (function(window){
 			playlistIntro(function(){
 				myPlayer.loop(false);
 				myPlayer.src('');
-				goToSection(1,'#playingPlaylist',false,function(){
+				goToSection(1,false,function(){
 					playPlaylist();
 				});					
 			});
@@ -401,7 +432,7 @@ YT.app = (function(window){
 
 		$("#replay").on('click',function(){
 			replay(function(){
-				goToSection(-1,'#playingPlaylist',false,function(){
+				goToSection(-1,false,function(){
 					console.log("replay video");
 					playPlaylist();
 					$(".subtitles").show();
@@ -413,8 +444,13 @@ YT.app = (function(window){
 		})
 	}
 
-	function goToSection(steps, target, animate, callback){
+	function goToSection(steps, animate, callback){
 		distanceScrolled = distanceScrolled - 100*steps;
+
+		var current = pageSections[active_section].id,
+			target = pageSections[active_section + steps].id;
+
+		active_section = active_section + steps;
 
 		if(animate){
 			$sectionContainer.transition({ 
@@ -422,19 +458,19 @@ YT.app = (function(window){
 				easing: 'custom-ease',
 				duration: 800
 			},function(){
-				$fullScreenSection.removeClass("active");
-				$(target).addClass("active");
+				$("#"+current).removeClass("active");
+				$("#"+target).addClass("active");
 				$(el_fullScreenVideo).css({"transform":"translate(0, 0)"});
 				if(!Modernizr.touch){
-					playVideo(target);
+					playVideo("#"+target);
 				}
 				if (callback && typeof(callback) === "function") {  
 					callback();
 				}  
 			});
 		} else {
-			$fullScreenSection.removeClass("active");
-			$(target).addClass("active");			
+			$("#"+current).removeClass("active");
+			$("#"+target).addClass("active");
 			$sectionContainer.css({"transform":"translate(0, "+distanceScrolled+"%)"});
 			if (callback && typeof(callback) === "function") {  
 				callback();
@@ -495,7 +531,7 @@ YT.app = (function(window){
 				});
 
 				$(".subtitles,#mainVideo").hide()
-					goToSection(1,'#last',false,function(){
+					goToSection(1,false,function(){
 						setTimeout(function(){
 							share();
 						},4000);
