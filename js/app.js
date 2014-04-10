@@ -148,10 +148,10 @@ YT.createVideoPage = (function(window){
 	}
 
 	function showFirstScreen(){
-		$(".article-start__title,.article-start__line").addClass("animated fadeInDown");
+		$(".article-start__title,.article-start__line").transition({ opacity: 1 });
 		$(".article-loading").fadeOut(function(){
 			setTimeout(function(){
-				$(".article-start__desc,.article-start__btn").addClass("animated fadeIn");
+				$(".article-start__desc,.article-start__btn").transition({ opacity: 1 });
 			},1000);			
 		});
 	}
@@ -636,9 +636,10 @@ YT.app = (function(window){
 	var getShareLink = function(userName, selectedCatogories) {
 		selectedCatogories.sort();
 		var serializedString = selectedCatogories.join('_') + '_' + userName;
-		console.log(serializedString);
-		console.log(window.location.host + window.Settings.VideoPageUrl + "?id=" + btoa(escape(serializedString)))
-		return window.location.host + window.Settings.VideoPageUrl + "?id=" + btoa(escape(serializedString));
+		if(Modernizr.csstransitions){
+			console.log("base64");
+			return window.location.host + window.Settings.VideoPageUrl + "?id=" + window.btoa(escape(serializedString));
+		}
 	};
 
 	return {
