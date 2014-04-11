@@ -38,7 +38,7 @@ window.Settings.VideoPageUrl = '.com';
 
 					<a href="#one" class="button article-start__btn">
 						<span>Start here</span>
-						<i class="icon icon--button icon--circle icon--down"></i>
+						<i class="icon--circle icon--down"></i>
 					</a>
 				</div>
 				<!-- // .vert-align__inner // -->
@@ -324,9 +324,12 @@ window.Settings.VideoPageUrl = '.com';
 					<span class="name-field__inputarea" contenteditable="true" data-text="YOUR">YOUR</span>
 					<span class="name-field__text">Tomorrow</span>
 				</h1>
+
 				<a href="#playingPlaylist" class="button button--play">
-					<span>Play </span>
-					<i class="icon icon--button icon--circle icon--play"></i>
+					<span class="text--loading">Loading</span>
+					<span class="text--playvideo">Play video</span>
+					<i class="icon--circle icon--right"></i>
+					<i class="spinner"></i>
 				</a>
 			</div>
 			<!-- // .vert-align__inner // -->
@@ -398,7 +401,7 @@ window.Settings.VideoPageUrl = '.com';
 	</section>
 	<!-- // #last // -->
 </main>
-<video id="mainVideo"></video>
+<video preload id="mainVideo"></video>
 <audio id="mainAudio" preload>
 	<source src="music/EF_Make_your_own_tomorrow_86s.mp3" />  
 </audio>

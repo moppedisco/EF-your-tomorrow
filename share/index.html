@@ -16,7 +16,7 @@
 </script>
 <main class="wrapper wrapper--share" style="position: relative; z-index:3;">
 
-	<section id="playPlaylist" data-video="http://player.vimeo.com/external/88978547.hd.mp4?s=ae5b1f74b1e0155d19b090a5b2e621e6" class="full-screen-section section-playPlaylist">
+	<section id="playPlaylist" data-video="http://player.vimeo.com/external/88978547.hd.mp4?s=ae5b1f74b1e0155d19b090a5b2e621e6" class="full-screen-section section-playPlaylist active">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<h1 class="mega name-field">
@@ -25,8 +25,10 @@
 					<span  class="name-field__text">Tomorrow</span>
 				</h1>
 				<a href="#playingPlaylist" class="button button--play">
-					<span>Play </span>
-					<i class="icon icon--button icon--circle icon--play"></i>
+					<span class="text--loading">Loading</span>
+					<span class="text--playvideo">Play video</span>
+					<i class="icon--circle icon--right"></i>
+					<i class="spinner"></i>
 				</a>
 			</div>
 			<!-- // .vert-align__inner // -->
@@ -68,7 +70,7 @@
 					
 					<a class="button ">
 						<span>Start here</span>
-						<i class="icon icon--button icon--circle icon--play"></i>
+						<i class="icon--circle icon--right"></i>
 					</a><br><br><br>
 
 					<div class="share--replay">
