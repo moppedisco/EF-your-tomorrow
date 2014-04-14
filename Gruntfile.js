@@ -18,8 +18,8 @@ module.exports = function(grunt) {
           'js/plugins/video.js',
           'js/plugins/jquery.transit.min.js',
           'js/plugins/promise-0.1.1.min.js',
-          // 'js/plugins/mediaelement.js',
-          // 'js/plugins/mediaelementplayer.js',
+          'js/plugins/mediaelement.js',
+          'js/plugins/mediaelementplayer.js',
           'js/app.js'
         ],
         dest: 'build/<%= pkg.name %>.min.js'

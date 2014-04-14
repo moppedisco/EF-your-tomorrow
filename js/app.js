@@ -143,7 +143,6 @@ YT.createVideoPage = (function(window){
 	}
 
 	function welcomeScreen(){
-		console.log("intro animation");
 		$(".section-loading").addClass("active");
 
 		$("#intromessage li:eq(0)").fadeIn(800);
@@ -277,7 +276,6 @@ YT.app = (function(window){
 		$fullScreenSection = $(".full-screen-section"),			// Page sections
 		$sectionContainer = $(".wrapper"),						// Main element we animate
 		$mainAudio = $("#mainAudio"), 							// Main audio element
-		$mainAudioCtrl = $("#volumeCtrl"), 						// Volume controller
 		el_fullScreenVideo = "#mainVideo",						// Background video element
 		myAudioPlayer,											// Audio player instance
 		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
@@ -321,7 +319,6 @@ YT.app = (function(window){
 		$fullScreenSection.each(function(i,el){
 			pageSections.push(el);
 		});
-		console.log(pageSections);
 	}
 
 	function share(){
@@ -400,7 +397,6 @@ YT.app = (function(window){
 	}
 
 	function playVideo(target){
-		console.log(target);
 		var videoToPlay = $(target).attr("data-video"),
 			poster = $(target).find(".full-screen-image").attr("src");
 
@@ -446,7 +442,6 @@ YT.app = (function(window){
 		$("#replay").on('click',function(){
 			replay(function(){
 				goToSection(-1,false,function(){
-					console.log("replay video");
 					playPlaylist();
 					$(".subtitles").show();
 					$(".article-outromessage").show();
@@ -507,14 +502,12 @@ YT.app = (function(window){
 	}
 
 	function initAudio(){
-		$mainAudioCtrl.show();
 		$mainAudio[0].volume = 0.5;
-
-		$("#volumeCtrl").on("change",function(){
-			var val = $(this).val();
-			console.log($(this).val());
-			$mainAudio[0].volume = val/100;
-		})
+		$('audio').mediaelementplayer({
+			audioWidth: "26",
+			features: ['playpause','volume'],
+			audioVolume: 'vertical'
+		});
 	}
 
 	function playPlaylist(){
@@ -533,7 +526,6 @@ YT.app = (function(window){
 			
 			// Play each selected video
 			if(playlistCount < playlist.length){
-				console.log(playlistCount);
 				playPlaylistIndex(playlistCount);
 			
 			// Video ends
@@ -552,7 +544,6 @@ YT.app = (function(window){
 
 
 				$(this).unbind("ended"); // Reset video
-				console.log("ENDED");	
 			}
 		});			
 	}
