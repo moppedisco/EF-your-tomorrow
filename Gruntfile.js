@@ -39,6 +39,17 @@ module.exports = function(grunt) {
     //     }
     //   }
     // }
+	
+	connect: {
+		server: {
+			options: {
+				hostname: 'localhost',
+				port: 9000,
+				keepalive: true
+			}
+		}
+	},
+	
     watch: {
       js: {
         files: ['js/app.js'],
@@ -63,6 +74,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   //grunt.loadNpmTasks('grunt-contrib-cssmin');
 
+  // I need a server to run this ;-)
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  
   // Default task(s).
   grunt.registerTask('default', ['watch']);
 
