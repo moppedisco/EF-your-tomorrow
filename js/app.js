@@ -518,7 +518,6 @@ YT.app = (function(window){
 		
 		playPlaylistIndex(playlistCount);
 		
-		$mainAudio[0].volume = 0.5;
 		$mainAudio[0].currentTime = 0;
 		$mainAudio[0].play();
 		
