@@ -1619,9 +1619,6 @@ hr.short {
   top: -4px;
   left: -4px;
 }
-.icon--social + .icon--social {
-  margin-left: 5px;
-}
 .intromessage {
   margin-top: -72px;
 }
@@ -1707,7 +1704,6 @@ hr.short {
   z-index: 999999;
   background: none;
   margin-left: -11px;
-<<<<<<< HEAD
 }
 .mejs-inner {
   position: relative;
@@ -1717,17 +1713,6 @@ hr.short {
 .mejs-container .mejs-controls {
   background: none;
 }
-=======
-}
-.mejs-inner {
-  position: relative;
-  width: 26px;
-  height: 30px;
-}
-.mejs-container .mejs-controls {
-  background: none;
-}
->>>>>>> 51f1ad73b68d08c975cb893e67db7cbac70fc5d2
 .mejs-container .mejs-controls .mejs-pause,
 .mejs-container .mejs-controls .mejs-play {
   display: none;
