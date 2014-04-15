@@ -1530,6 +1530,10 @@ hr.short {
   -o-animation: toBottomFromTop 0.3s forwards;
   animation: toBottomFromTop 0.3s forwards;
 }
+.icon--social {
+  margin: 5px 3px 16px;
+  display: inline-block;
+}
 .icon--right:before {
   content: " ";
   width: 40px;
@@ -1625,6 +1629,12 @@ hr.short {
 .intromessage li {
   display: none;
 }
+.article-start__title {
+  margin-bottom: 25px;
+}
+.article-start__line {
+  margin-bottom: 19px;
+}
 .article-start__title,
 .article-start__line,
 .article-start__desc,
@@ -1667,7 +1677,7 @@ hr.short {
   padding: 5px;
   font-size: 14px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
   color: #000;
 }
 .input-share[type="text"]:focus {
@@ -1695,6 +1705,9 @@ hr.short {
 }
 .name-field__inputarea:focus:after,
 .name-field__inputarea.ready:after {
+  display: none;
+}
+#mep_0 {
   display: none;
 }
 .mejs-container {

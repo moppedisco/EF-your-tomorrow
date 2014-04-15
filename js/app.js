@@ -29,7 +29,12 @@ YT.createVideoPage = (function(window){
 	function init(){
 		
 		// Animate welcome screen
-		welcomeScreen();
+		welcomeScreen(function(){
+			YT.app.myAudioPlayer()[0].play();
+			console.log(YT.app.myAudioPlayer());
+			YT.app.myAudioPlayer().animate({volume: 0.5}, 1500);
+			$("#mep_0").fadeIn(500);
+		});
 
 		// Init video and play video
 		YT.app.initVideo(function(){
@@ -142,14 +147,13 @@ YT.createVideoPage = (function(window){
 		});
 	}
 
-	function welcomeScreen(){
-		$(".section-loading").addClass("active");
-
+	function welcomeScreen(callback){
 		$("#intromessage li:eq(0)").fadeIn(800);
 		setTimeout(function(){
 			$("#intromessage li:eq(1)").fadeIn(function(){
 				setTimeout(function(){
 					showFirstScreen();
+					callback();
 				},2000);
 			});
 		},3000);
@@ -328,8 +332,16 @@ YT.app = (function(window){
 
 	function playlistIntro(callback){
 		$('.full-screen-section.active .button--play').fadeOut(2500);
+		var volume = YT.app.myAudioPlayer()[0].volume;
+			song = YT.app.myAudioPlayer().attr('data-playlist-music');
+
+		YT.app.myAudioPlayer().animate({volume: 0}, 2500);
 		$("#mainVideo").fadeOut(2500,function(){
 			callback();
+			YT.app.myAudioPlayer()[0].setSrc(song);
+			YT.app.myAudioPlayer()[0].volume = volume;
+			YT.app.myAudioPlayer()[0].loop = false;
+			YT.app.myAudioPlayer()[0].play();
 		});
 	}
 
@@ -502,12 +514,16 @@ YT.app = (function(window){
 	}
 
 	function initAudio(){
-		$mainAudio[0].volume = 0.5;
-		$('audio').mediaelementplayer({
+		myAudioPlayer = $('audio').mediaelementplayer({
 			audioWidth: "26",
 			features: ['playpause','volume'],
 			audioVolume: 'vertical'
 		});
+		myAudioPlayer[0].volume = 0;
+	}
+
+	function audioPlayer(){
+		return myAudioPlayer
 	}
 
 	function playPlaylist(){
@@ -518,20 +534,21 @@ YT.app = (function(window){
 		
 		playPlaylistIndex(playlistCount);
 		
-		$mainAudio[0].currentTime = 0;
-		$mainAudio[0].play();
+		// $mainAudio[0].currentTime = 0;
+		// $mainAudio[0].play();
 		
+		// console.log($mainAudio[0].attr("data-playlist-music"));
+
 		$("#mainVideo video").bind("ended", function() {
 			
 			// Play each selected video
 			if(playlistCount < playlist.length){
 				playPlaylistIndex(playlistCount);
-			
 			// Video ends
 			} else { 
 				
 				$mainAudio.animate({volume: 0}, 5000,function(){
-					$mainAudio[0].pause();	
+					// $mainAudio[0].pause();	
 				});
 
 				$(".subtitles,#mainVideo").hide()
@@ -656,7 +673,8 @@ YT.app = (function(window){
 		resolveVideos : resolveVideos,
 		videoPromises : videoPromises,
 		active_section : active_section,
-		pageSections : pageSections
+		pageSections : pageSections,
+		myAudioPlayer : audioPlayer
 	};
 
 })(window);
