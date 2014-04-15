@@ -285,6 +285,8 @@ YT.app = (function(window){
 		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
 		scrollDirection = 1, 									// 1 down, -1 is up
 		myPlayer,												// Video player object
+		prePlayer,												// For pre-loading
+		videoPlayers = [],										// The two video players for preloading
 		ambients = [],											// Ambient videos
 		videoPromises = [],										// Video download promises
 		selectedCatogories = [],
@@ -398,10 +400,15 @@ YT.app = (function(window){
 	function initVideo(callback){
 
 		// Using videojs plugin to handle source etc. Actually not necessary
+		/*
 		videojs("mainVideo").ready(function(){
 			myPlayer = this;
 			myPlayer.loop(true);
 		});	
+		*/
+		
+		myPlayer = $(el_fullScreenVideo)[0];
+		myPlayer.setAttribute('loop', 'true');
 
 		// Init Make our video player fit entire screen
 		adjustVideoPositioning(el_fullScreenVideo);
@@ -413,10 +420,12 @@ YT.app = (function(window){
 			poster = $(target).find(".full-screen-image").attr("src");
 
 		// We set html5 poster attribute incase video fails to load.
-		$(el_fullScreenVideo).find("video").attr("poster",poster); 
+		//$(el_fullScreenVideo).find("video").attr("poster",poster); 
+		myPlayer.setAttribute('poster', poster);
 		
 		// Set target video src
-		myPlayer.src(videoToPlay); 
+		//myPlayer.src(videoToPlay); 
+		myPlayer.setAttribute('src', videoToPlay);
 
 		// Play new video src
 		myPlayer.play();
@@ -439,8 +448,12 @@ YT.app = (function(window){
 			$(this).addClass("active");
 
 			playlistIntro(function(){
-				myPlayer.loop(false);
-				myPlayer.src('');
+				//myPlayer.loop(false);
+				//myPlayer.src('');
+				
+				myPlayer.removeAttribute('loop');
+				myPlayer.setAttribute('src', '');
+				
 				goToSection(1,false,function(){
 					playPlaylist();
 				});					
@@ -526,11 +539,51 @@ YT.app = (function(window){
 		return myAudioPlayer
 	}
 
+	function createPrePlayer($myVideo) {
+		// let's clone the video element we already have to have same styles
+		// but we change the id and insert after the original one
+		var $preVideo = $myVideo.clone();
+		prePlayer = $preVideo[0];
+		prePlayer.setAttribute('id', 'preVideo');
+		$myVideo.after(prePlayer);
+	}
+	
+	function preparePlayListPlayer() {
+		var $myVideo = $(el_fullScreenVideo);
+		$myVideo.attr('poster', '');
+		
+		// we create the video element that'll be used for preloading
+		// it'll be hosted in prePlayer variable
+		createPrePlayer($myVideo);
+		
+		// we need this array to swap video players when we finish with
+		// the current one. We'll always play videoPlayers[0] and hide
+		// the other one
+		videoPlayers = [myPlayer, prePlayer];
+		
+		// let's do the hiding and showing using zIndex. I'd say it's better
+		// than using display in terms of performance
+		myPlayer.style.zIndex = 1;
+		prePlayer.style.zIndex = 0;
+		
+		
+		// all the video elements should be visible though
+		myPlayer.style.display = 'inline-block';
+		prePlayer.style.display = 'inline-block';
+		
+		// empties the src in case of realoading
+		myPlayer.setAttribute('src', '');
+		
+		$myVideo.show();
+	}
+	
 	function playPlaylist(){
 		playlistCount = 0;		
 
-		$(el_fullScreenVideo).find("video").attr("poster",""); 
-		$(el_fullScreenVideo).show();
+		// $(el_fullScreenVideo).find("video").attr("poster",""); 
+		// $(el_fullScreenVideo).show();
+		
+		preparePlayListPlayer();
 		
 		playPlaylistIndex(playlistCount);
 		
@@ -538,8 +591,9 @@ YT.app = (function(window){
 		// $mainAudio[0].play();
 		
 		// console.log($mainAudio[0].attr("data-playlist-music"));
-
-		$("#mainVideo video").bind("ended", function() {
+		
+		//$("#mainVideo video").bind("ended", function() {
+		$(".videoPlayer").bind("ended", function() {
 			
 			// Play each selected video
 			if(playlistCount < playlist.length){
@@ -559,11 +613,23 @@ YT.app = (function(window){
 					});
 
 
-				$(this).unbind("ended"); // Reset video
+				//$(this).unbind("ended"); // Reset video
+				
+				$(".videoPlayer").unbind("ended"); // Reset video
+				
+				// we no longer need this element
+				$(prePlayer).remove();
 			}
 		});			
 	}
 
+	function swapVideoPlayers() {
+		// let's swap video players
+		var videoPlayer = videoPlayers[0];
+		videoPlayers[0] = videoPlayers[1];
+		videoPlayers[1] = videoPlayer;
+	}
+	
 	function playPlaylistIndex(index){
 		$(".subtitles li").hide();
 		$(".subtitles li:eq("+index+")").show();
@@ -572,10 +638,33 @@ YT.app = (function(window){
 			$(".subtitles li:eq("+index+")").hide();
 		},3000);		
 
-		myPlayer.src(playlist[index]);		
-		myPlayer.play();
-
+		//myPlayer.src(playlist[index]);
+		
+		var curVideoPlayer = videoPlayers[0],
+			preVideoPlayer = videoPlayers[1];
+		
+		// makes current one visible by placing in on top
+		curVideoPlayer.style.zIndex = 1;
+		
+		if (!curVideoPlayer.getAttribute('src')) {
+			// only sets the attribute if there is no video set.
+			// first video will have the horrible back screen of death
+			curVideoPlayer.setAttribute('src', playlist[index]);
+		}
+		
+		curVideoPlayer.play();
+		
+		if (playlist[index+1]) {
+			// the magic happens in here, preloading next video
+			preVideoPlayer.style.zIndex = 0;
+			preVideoPlayer.setAttribute('src', playlist[index+1]);
+		}
+		
 		playlistCount++;
+		
+		// at the end we swap video players
+		swapVideoPlayers();
+
 	}
 
 	function bindWindowResize(imageElements,videoElement){
