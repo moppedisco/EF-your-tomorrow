@@ -91,6 +91,8 @@ YT.createVideoPage = (function(window){
 				return false;
 			}
 			
+			ga('send', 'event', 'Introbutton', 'click', 'Start here');
+
 			$(this).addClass("active");
 			
 			if(!Modernizr.touch){
@@ -114,6 +116,8 @@ YT.createVideoPage = (function(window){
 				return false;
 			}
 			
+			ga('send', 'event', 'Category'+YT.app.active_section, 'click', text);
+
 			$(this).addClass("active");
 
 			// Add video to playlist
@@ -437,6 +441,8 @@ YT.app = (function(window){
 				return false;
 			}
 			
+			ga('send', 'event', 'Playbutton', 'click', 'Play your playlist');
+
 			$(this).addClass("active");
 
 			playlistIntro(function(){
@@ -460,6 +466,7 @@ YT.app = (function(window){
 			replay(function(){
 				goToSection(-1,false,function(){
 					playPlaylist();
+					ga('send', 'event', 'Replaybutton', 'click', 'Replay');
 					$(".subtitles").show();
 					$(".article-outromessage").show();
 					$(".section-last .full-screen-image").show();
