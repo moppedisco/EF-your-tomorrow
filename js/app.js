@@ -248,12 +248,13 @@ YT.sharePage = (function(window){
 
 		// Init video and play video
 		YT.app.initVideo(function(){
-			YT.app.playVideo("#playPlaylist");	
+			YT.app.playVideo("#playPlaylist");
 		});
 
 		// Show play button once all video promises resolved
 		$.when.apply(null, YT.app.videoPromises).done(function() {
 			$('.button--play').addClass('loaded');
+			$("#mep_0").fadeIn(500);
 		});
 
 	}
@@ -339,11 +340,10 @@ YT.app = (function(window){
 
 		YT.app.myAudioPlayer().animate({volume: 0}, 2500);
 		$("#mainVideo").fadeOut(2500,function(){
-			callback();
 			YT.app.myAudioPlayer()[0].setSrc(song);
 			YT.app.myAudioPlayer()[0].volume = volume;
 			YT.app.myAudioPlayer()[0].loop = false;
-			YT.app.myAudioPlayer()[0].play();
+			callback();
 		});
 	}
 
@@ -399,14 +399,6 @@ YT.app = (function(window){
 
 	function initVideo(callback){
 
-		// Using videojs plugin to handle source etc. Actually not necessary
-		/*
-		videojs("mainVideo").ready(function(){
-			myPlayer = this;
-			myPlayer.loop(true);
-		});	
-		*/
-		
 		myPlayer = $(el_fullScreenVideo)[0];
 		myPlayer.setAttribute('loop', 'true');
 
@@ -579,20 +571,14 @@ YT.app = (function(window){
 	
 	function playPlaylist(){
 		playlistCount = 0;		
-
-		// $(el_fullScreenVideo).find("video").attr("poster",""); 
-		// $(el_fullScreenVideo).show();
 		
 		preparePlayListPlayer();
 		
 		playPlaylistIndex(playlistCount);
 		
-		// $mainAudio[0].currentTime = 0;
-		// $mainAudio[0].play();
-		
-		// console.log($mainAudio[0].attr("data-playlist-music"));
-		
-		//$("#mainVideo video").bind("ended", function() {
+		myAudioPlayer[0].volume = myAudioPlayer[0].volume + 0.1; // BUG, you dont hear the sound unless you change the volume
+		myAudioPlayer[0].play();
+
 		$(".videoPlayer").bind("ended", function() {
 			
 			// Play each selected video
@@ -602,7 +588,8 @@ YT.app = (function(window){
 			} else { 
 				
 				$mainAudio.animate({volume: 0}, 5000,function(){
-					// $mainAudio[0].pause();	
+					myAudioPlayer[0].pause();
+					myAudioPlayer[0].currentTime = 0;
 				});
 
 				$(".subtitles,#mainVideo").hide()
@@ -611,9 +598,6 @@ YT.app = (function(window){
 							share();
 						},4000);
 					});
-
-
-				//$(this).unbind("ended"); // Reset video
 				
 				$(".videoPlayer").unbind("ended"); // Reset video
 				
