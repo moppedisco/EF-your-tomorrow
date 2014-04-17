@@ -25,7 +25,6 @@
 }(window));
 
 YT.createVideoPage = (function(window){
-
 	function init(){
 		
 		// Animate welcome screen
@@ -90,8 +89,10 @@ YT.createVideoPage = (function(window){
 			if($(this).hasClass("active")){
 				return false;
 			}
-			
-			ga('send', 'event', 'Introbutton', 'click', 'Start here');
+
+			if (typeof ga !== 'undefined') {
+				ga('send','event', 'Button - Start here', 'click', 'Clicked Start here');
+			}
 
 			$(this).addClass("active");
 			
@@ -110,13 +111,16 @@ YT.createVideoPage = (function(window){
 				videoUrl = $(this).attr("data-video"),
 				text_button = $.trim($(this).text()),
 				text = $(this).attr("data-text"),
-				ulElement = $(this).closest("ul");
+				ulElement = $(this).closest("ul"),
+				liElement = $(this).closest("li").index();
 
 			if($(this).hasClass("active")){
 				return false;
 			}
-			
-			ga('send', 'event', 'Category'+YT.app.active_section, 'click', text);
+
+			if (typeof ga !== 'undefined') {			
+				ga('send','event', 'Button - Category'+YT.app.active_section, 'click', 'Clicked index: '+liElement + ' - '+text);
+			}
 
 			$(this).addClass("active");
 
@@ -131,6 +135,11 @@ YT.createVideoPage = (function(window){
 			
 			// Create subtitle
 			$(".subtitles").append("<li>"+text+"</li>");
+
+			// If language section, add the selected text to the next section byline
+			if(YT.app.active_section === 4){
+				$('.full-screen-section:eq('+(YT.app.active_section+1)+')').find('h2 u').html($.trim(text_button));
+			}
 
 			setTimeout(function(){
 				if(!Modernizr.touch){
@@ -173,8 +182,18 @@ YT.createVideoPage = (function(window){
 	}
 
 	function shareInput(){
-		$(".input-share").click(function () {
-			$(this).select();
+		$(".input-share").on({
+			click : function () {
+				$(this).select();
+				if (typeof ga !== 'undefined') {			
+					ga('send','event', 'Button - URL field', 'click', 'Clicked share your video field');
+				}	
+			},
+			copy : function(){
+				if (typeof ga !== 'undefined') {			
+					ga('send','event', 'Button - URL field', 'click', 'Copyied URL field');
+				}
+			}
 		});		
 	}
 
@@ -435,20 +454,33 @@ YT.app = (function(window){
 	function bindActionButtons(){
 		// Play video button
 		$('.button--play').click(function(e){
-			var input_name = $(".name-field__inputarea").text();
-
 			if($(this).hasClass("active")){
 				return false;
 			}
+
+			// Analytics tracking of name
+			if($(".name-field__inputarea").hasClass('ready')){
+				var input_name = $(".name-field__inputarea");
+				console.log('entered name');
+				if (typeof ga !== 'undefined') {	
+					ga('send','event', 'Name', 'click', 'Did enter name');
+				}
+			} else {
+				console.log('NO name');
+				if (typeof ga !== 'undefined') {	
+					ga('send','event', 'Name', 'click', 'Did NOT enter name');
+				}				
+			}
 			
-			ga('send', 'event', 'Playbutton', 'click', 'Play your playlist');
+			// Analytics tracking of clicked button
+			if (typeof ga !== 'undefined') {	
+				ga('send','event', 'Button - Play', 'click', 'Clicked Play playlist');
+			}
 
 			$(this).addClass("active");
 
 			playlistIntro(function(){
-				//myPlayer.loop(false);
-				//myPlayer.src('');
-				
+					
 				myPlayer.removeAttribute('loop');
 				myPlayer.setAttribute('src', '');
 				
@@ -466,7 +498,11 @@ YT.app = (function(window){
 			replay(function(){
 				goToSection(-1,false,function(){
 					playPlaylist();
-					ga('send', 'event', 'Replaybutton', 'click', 'Replay');
+					
+					if (typeof ga !== 'undefined') {
+						ga('send','event', 'Button - replay', 'click', 'Clicked replay button');
+					}
+
 					$(".subtitles").show();
 					$(".article-outromessage").show();
 					$(".section-last .full-screen-image").show();
@@ -606,8 +642,8 @@ YT.app = (function(window){
 						},4000);
 					});
 				
-				$(".videoPlayer").unbind("ended"); // Reset video
-				
+				$(".videoPlayer").unbind(); // Reset video
+
 				// we no longer need this element
 				$(prePlayer).remove();
 			}
