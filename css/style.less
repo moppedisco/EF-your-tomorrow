@@ -32,8 +32,8 @@ body{
 }
 .videoPlayer{
 	position:absolute;
-	min-width:100%;
-	min-height:100%;
+	width:100%;
+	height:100%;
 	height:auto;
 	width:auto;
 	z-index:1;
@@ -77,6 +77,12 @@ body{
 	width:100%;
 	height:100%;
 }
+
+// HIDE AMBIENT VIDEOS FOR IE9 since PAGE TRANSITIONS DONT WORK SO NO POINT
+.no-cssanimations #mainVideo {
+	display: none;
+}
+
 // ================================================================== //
 // ================================================================== //
 // ================================================================== //

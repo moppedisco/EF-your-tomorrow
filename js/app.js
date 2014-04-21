@@ -30,7 +30,6 @@ YT.createVideoPage = (function(window){
 		// Animate welcome screen
 		welcomeScreen(function(){
 			YT.app.myAudioPlayer()[0].play();
-			console.log(YT.app.myAudioPlayer());
 			YT.app.myAudioPlayer().animate({volume: 0.5}, 1500);
 			$("#mep_0").fadeIn(500);
 		});
@@ -362,12 +361,23 @@ YT.app = (function(window){
 			song = YT.app.myAudioPlayer().attr('data-playlist-music');
 
 		YT.app.myAudioPlayer().animate({volume: 0}, 2500);
-		$("#mainVideo").fadeOut(2500,function(){
-			YT.app.myAudioPlayer()[0].setSrc(song);
-			YT.app.myAudioPlayer()[0].volume = volume;
-			YT.app.myAudioPlayer()[0].loop = false;
-			callback();
-		});
+		
+		// IF NOT IE9 CHECK. Just animate different sections to black
+		if(Modernizr.cssanimations){
+			$("#mainVideo").fadeOut(2500,function(){
+				YT.app.myAudioPlayer()[0].setAttribute('src', song);
+				YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
+				YT.app.myAudioPlayer()[0].setAttribute('loop', false);
+				callback();
+			});
+		} else {
+			$(".full-screen-section.active .full-screen-image").fadeOut(2500,function(){
+				YT.app.myAudioPlayer()[0].setAttribute('src', song);
+				YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
+				YT.app.myAudioPlayer()[0].setAttribute('loop', false);
+				callback();
+			});			
+		}
 	}
 
 	function replay(callback){
@@ -446,7 +456,7 @@ YT.app = (function(window){
 		myPlayer.play();
 
 		// Only fadeout images if browser supports video element
-		if(Modernizr.video){ 
+		if(Modernizr.video && Modernizr.cssanimations){ 
 			$(target).find(".full-screen-image").fadeOut();				
 		}
 	}
@@ -488,9 +498,16 @@ YT.app = (function(window){
 					playPlaylist();
 				});					
 			});
-
+			
 			// Create unique link for user
-			$(".input-share[type='text']").attr("value",getShareLink(input_name,selectedCatogories));
+			var uniqueURL = getShareLink(input_name,selectedCatogories);
+				twitterURL = "https://twitter.com/home?status=This%20is%20my%20tomorrow%20"+uniqueURL+"%20%23EFyourtomorrow",
+				mailURL = "mailto:?subject=This is my tomorrow&body="+uniqueURL;
+
+			$(".input-share[type='text']").attr("value",uniqueURL);
+			$(".icon--twitter").attr("href",twitterURL);
+			$(".icon--mail").attr("href",mailURL);
+
 			e.preventDefault();
 		});	
 
@@ -512,6 +529,10 @@ YT.app = (function(window){
 		})
 	}
 
+	function createShareURLs(){
+
+	}
+
 	function goToSection(steps, animate, callback){
 		distanceScrolled = distanceScrolled - 100*steps;
 
@@ -520,7 +541,8 @@ YT.app = (function(window){
 
 		YT.app.active_section = YT.app.active_section + steps;
 
-		if(animate){
+		// TO ANIMATE SECTIONS WE NEED TO CHECK IF ANIMATIONS ARE SUPPORTED // IE9 
+		if(animate && Modernizr.cssanimations){
 			$sectionContainer.transition({ 
 				y: distanceScrolled+'%',
 				easing: 'custom-ease',
@@ -529,9 +551,9 @@ YT.app = (function(window){
 				$("#"+current).removeClass("active");
 				$("#"+target).addClass("active");
 				$(el_fullScreenVideo).css({"transform":"translate(0, 0)"});
-				if(!Modernizr.touch){
-					playVideo("#"+target);
-				}
+
+				playVideo("#"+target);
+
 				if (callback && typeof(callback) === "function") {
 					callback();
 				}  
@@ -539,6 +561,7 @@ YT.app = (function(window){
 		} else {
 			$("#"+current).removeClass("active");
 			$("#"+target).addClass("active");
+			$(el_fullScreenVideo).css({"transform":"translate(0, 0)"});
 			$sectionContainer.css({"transform":"translate(0, "+distanceScrolled+"%)"});
 			if (callback && typeof(callback) === "function") {  
 				callback();

@@ -1363,8 +1363,8 @@ body {
 }
 .videoPlayer {
   position: absolute;
-  min-width: 100%;
-  min-height: 100%;
+  width: 100%;
+  height: 100%;
   height: auto;
   width: auto;
   z-index: 1;
@@ -1407,6 +1407,9 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
+}
+.no-cssanimations #mainVideo {
+  display: none;
 }
 h1 {
   font-style: normal;
