@@ -331,6 +331,15 @@ hr.short{
 	top:-4px;
 	left:-4px;
 }
+
+.button--pause {
+	position: absolute;
+	bottom: 40px;
+	left: 50%;
+	background: #000;
+	color: #fff;
+}
+
 // ================================================================== //
 // ================================================================== //
 // ================================================================== //
@@ -386,6 +395,11 @@ hr.short{
 	background:#000;
 	z-index:2;
 }
+
+.section-playingPlaylist .vert-align {
+	width: 100%;
+}
+
 // ================================== //
 // INPUT FIELD SHARE
 // ================================== //
@@ -518,7 +532,7 @@ hr.short{
 // VIDEO SUBTITLES
 // ================================== //
 
-.subtitles{
+.subtitles {
 	margin:0;
 	font-family:Georgia;
 	font-size:45px;
@@ -529,6 +543,35 @@ hr.short{
 .subtitles li{
 	display:none;
 }
+
+.subtitles.random li {
+	position: absolute;
+}
+
+.subtitles.random .lowerLeft {
+	left: 14%;
+	bottom: 21%;
+}
+
+.subtitles.random .lowerRight {
+	right: 14%;
+	bottom: 21%;
+}
+
+.subtitles.random .upperLeft {
+	left: 14%;
+	top: 21%;
+}
+
+.subtitles.random .upperRight {
+	left: 14%;
+	top: 21%;
+}
+
+.subtitles.random li:after {
+	display: none;
+}
+
 // ================================== //
 // CATEGORY LIST
 // ================================== //

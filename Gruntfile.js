@@ -75,7 +75,7 @@ module.exports = function(grunt) {
   //grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   // I need a server to run this ;-)
-  grunt.loadNpmTasks('grunt-contrib-connect');
+  // grunt.loadNpmTasks('grunt-contrib-connect');
   
   // Default task(s).
   grunt.registerTask('default', ['watch']);

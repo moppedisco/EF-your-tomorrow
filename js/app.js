@@ -103,7 +103,7 @@ YT.createVideoPage = (function(window){
 
 			e.preventDefault();
 		});
-		
+	
 		// Category buttons
 		$('.link-list a').click(function(e){
 			var target = $(this).attr("href"),
@@ -111,7 +111,8 @@ YT.createVideoPage = (function(window){
 				text_button = $.trim($(this).text()),
 				text = $(this).attr("data-text"),
 				ulElement = $(this).closest("ul"),
-				liElement = $(this).closest("li").index();
+				liElement = $(this).closest("li").index(),
+				textPosition = $(this).attr('data-position');
 
 			if($(this).hasClass("active")){
 				return false;
@@ -134,6 +135,7 @@ YT.createVideoPage = (function(window){
 			
 			// Create subtitle
 			$(".subtitles").append("<li>"+text+"</li>");
+			$(".subtitles li:last-child").addClass(textPosition);
 
 			// If language section, add the selected text to the next section byline
 			if(YT.app.active_section === 4){
@@ -527,10 +529,21 @@ YT.app = (function(window){
 				});						
 			});
 		})
-	}
 
-	function createShareURLs(){
+		$('#checkbox').click(function () { 
+			$('.subtitles').toggleClass('random');
+		});
 
+		$('.button--pause').click(function(e){
+			$(this).toggleClass("clicked");
+			if($(this).hasClass('clicked')){
+				myPlayer.pause();
+				myAudioPlayer[0].pause();				
+			} else {
+				myPlayer.play();
+				myAudioPlayer[0].play();				
+			}
+		});
 	}
 
 	function goToSection(steps, animate, callback){
@@ -687,8 +700,6 @@ YT.app = (function(window){
 		setTimeout(function(){
 			$(".subtitles li:eq("+index+")").hide();
 		},3000);		
-
-		//myPlayer.src(playlist[index]);
 		
 		var curVideoPlayer = videoPlayers[0],
 			preVideoPlayer = videoPlayers[1];
@@ -701,7 +712,7 @@ YT.app = (function(window){
 			// first video will have the horrible back screen of death
 			curVideoPlayer.setAttribute('src', playlist[index]);
 		}
-		
+		myPlayer = curVideoPlayer;
 		curVideoPlayer.play();
 		
 		if (playlist[index+1]) {
