@@ -1342,6 +1342,9 @@ font-family:'HelveticaNeueLTW20-Bold';
 
 
 */
+* {
+  -moz-osx-font-smoothing: grayscale;
+}
 html {
   overflow: hidden;
   font-family: Georgia;
@@ -1550,6 +1553,13 @@ hr.short {
   -o-animation: toLeftToRight 0.3s forwards;
   animation: toLeftToRight 0.3s forwards;
 }
+.noanim:hover:before {
+  -webkit-animation: none;
+  -moz-animation: none;
+  -ms-animation: none;
+  -o-animation: none;
+  animation: none;
+}
 .button--icon {
   text-decoration: none;
   display: inline-block;
@@ -1676,6 +1686,9 @@ hr.short {
 .article-loading {
   background: #000;
   z-index: 2;
+}
+.article-start {
+  z-index: 1;
 }
 .section-playingPlaylist .vert-align {
   width: 100%;

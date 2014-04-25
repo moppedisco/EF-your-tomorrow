@@ -9,22 +9,24 @@
 	<script src="js/plugins/mediaelementplayer.js"></script>
 	<script src="js/plugins/PxLoader.js"></script>
 	<script src="js/plugins/PxLoaderVideo.js"></script>
-	<!-- <link rel="stylesheet" href="css/plugins/mediaelementplayer.min.css"> -->
+	<link rel="stylesheet" href="css/plugins/mediaelementplayer.min.css">
 	<style>
 		.mejs-controls { display: none !important; }
+
 	</style>
 </head>
 <body>
 	<h1>Firefox test</h1>
 	<p>test motherfucker 2</p>
-	<video preload width="360" height="203" id="player1" src="http://pdl.vimeocdn.com/24490/315/234915623.mp4?aksessionid=3accabeda185b73d5c3896eea782fa70&token=1395161474_dc476f0c0afabf595d904957f57f7dae" type="video/mp4"></video>
-
+	<video preload width="360" height="203" id="player1" autoplay="false"></video>
+	<button id="play">Play</button>
 <script>
 $( document ).ready(function() {
 	var loader = new PxLoader(), 
-		vid1 = loader.addVideo('http://pdl.vimeocdn.com/24490/315/234915623.mp4?aksessionid=3accabeda185b73d5c3896eea782fa70&token=1395161474_dc476f0c0afabf595d904957f57f7dae'), 
-		vid2 = loader.addVideo('http://pdl.vimeocdn.com/57247/007/235878109.mp4?aksessionid=0a9f7b36afceebd5202aecd0671c498d&token=1395161499_ecc3b2382e82fbc71721b6e9f4029f57'), 
-		vid3 = loader.addVideo('http://pdl.vimeocdn.com/93363/689/234897937.mp4?aksessionid=fa84a3d64873ebcaa9f40e8735fa0211&token=1395161526_4ef5b340a1b1ee2414d639169cd352a1');
+		vid1 = loader.addVideo('http://player.vimeo.com/external/90037530.hd.mp4?s=5fa86e3a1cd5aef98369fef553643e58'), 
+		vid2 = loader.addVideo('http://player.vimeo.com/external/90037118.hd.mp4?s=d6848ef8b4d29410b59ec759cbb58270'), 
+		vid3 = loader.addVideo('http://player.vimeo.com/external/90037528.hd.mp4?s=0b1fd3ca94ea706721e861fbd052918d').
+		player;
 
 	loader.addProgressListener(function(e) {     
 	    console.log(e.completedCount + ' / ' + e.totalCount); 
@@ -32,23 +34,28 @@ $( document ).ready(function() {
 
 	loader.addCompletionListener(function() { 
 		console.log("LOADED");
-		loadplayer();
+		
 	});
 
 	loader.start();
 
+	$('#play').click(function(){
+		loadplayer();
+	})
+
 	function loadplayer(){
 		console.log("start playing");
 		var count = 0;
-		var playlist = ["http://pdl.vimeocdn.com/24490/315/234915623.mp4?aksessionid=3accabeda185b73d5c3896eea782fa70&token=1395161474_dc476f0c0afabf595d904957f57f7dae","http://pdl.vimeocdn.com/57247/007/235878109.mp4?aksessionid=0a9f7b36afceebd5202aecd0671c498d&token=1395161499_ecc3b2382e82fbc71721b6e9f4029f57","http://pdl.vimeocdn.com/93363/689/234897937.mp4?aksessionid=fa84a3d64873ebcaa9f40e8735fa0211&token=1395161526_4ef5b340a1b1ee2414d639169cd352a1"];
-		var player = $('#player1').mediaelementplayer({
+		var playlist = ["http://player.vimeo.com/external/90037530.hd.mp4?s=5fa86e3a1cd5aef98369fef553643e58",
+		"http://player.vimeo.com/external/90037118.hd.mp4?s=d6848ef8b4d29410b59ec759cbb58270",
+		"http://player.vimeo.com/external/90037528.hd.mp4?s=0b1fd3ca94ea706721e861fbd052918d"];
+		$('#player1').attr('src',playlist[0]);
+		player = $('#player1').mediaelementplayer({
 			features: [],
 			plugins: ['flash', 'silverlight'],
 		    success: function (mediaElement, domObject) { 
+				
 				mediaElement.play();
-		// 		mediaElement.addEventListener('timeupdate', function(e) {
-		// 			console.log(mediaElement.currentTime); 
-		//         }, false);
 
 				if(mediaElement.pluginType == 'flash') {
 					console.log(mediaElement.pluginType);

@@ -1,5 +1,8 @@
 <!doctype html>
-<html lang="en">
+<!--[if lt IE 7 ]> <html class="no-js lt-ie9 lt-ie8 lt-ie7 ie6" lang="en" > <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js lt-ie9 lt-ie8 ie7 gt-ie6" lang="en" > <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js lt-ie9 ie8 gt-ie6 gt-ie7" lang="en" > <![endif]-->
+<!--[if !IE]><!--><html lang="en"><!--<![endif]-->
 <head>
 	<meta charset="UTF-8">
 	<!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> -->
@@ -181,7 +184,7 @@ window.Settings.VideoPageUrl = '.com';
 		<img class="full-screen-image" src="img/cover_waterfall.jpg" />
 	</section>
 	<!-- // #five // -->	
-	<section id="two" data-video="http://player.vimeo.com/external/88978651.sd.mp4?s=56b8822d84c0bd82f39c8a801bef8580" class="full-screen-section section-three">
+	<section id="two" data-video="http://player.vimeo.com/external/88978651.sd.mp4?s=56b8822d84c0bd82f39c8a801bef8580" class="full-screen-section section-three language-category">
 		<div class="vert-align">
 			<div class="vert-align__inner">
 				<h2>THE WORLD’S A BIG PLACE.<br> WHAT NEW LANGUAGE WILL YOU SPEAK?</h2>
@@ -233,7 +236,7 @@ window.Settings.VideoPageUrl = '.com';
 	<section id="three" data-video="http://player.vimeo.com/external/89109553.sd.mp4?s=9d36a38b77440aff30313a7ab4bc37e6" class="full-screen-section section-three">
 		<div class="vert-align">
 			<div class="vert-align__inner">
-				<h2>EVERYONE’S DIFFERENT. <br> HOW WILL YOU LEARN <u>FRENCH?</u>?</h2>
+				<h2>EVERYONE’S DIFFERENT. <br> HOW WILL YOU LEARN $lang?</h2>
 				<div class="hr-progress__box"><hr class='hr-progress__bar hr-progress__bar--5of6'></div>
 				<ul class="link-list">
 					<li>
@@ -336,7 +339,6 @@ window.Settings.VideoPageUrl = '.com';
 					<span class="name-field__inputarea" contenteditable="true" data-text="YOUR">YOUR</span>
 					<span class="name-field__text">Tomorrow</span>
 				</h1>
-				<p><label for="yacine">Centered text</label> <input id="checkbox" name="yacine" type="checkbox" checked></p>
 				<a href="#playingPlaylist" class="button button--play">
 					<span class="text--loading">Loading</span>
 					<span class="text--playvideo">Play video</span>
@@ -354,7 +356,7 @@ window.Settings.VideoPageUrl = '.com';
 	<section id="playingPlaylist" class="full-screen-section section-playingPlaylist">
 		<div class="vert-align">
 			<div class="vert-align__inner txtC">
-				<ul class="subtitles">
+				<ul class="subtitles random">
 				</ul>
 				<!-- // .subtitles // -->
 			</div>
@@ -383,7 +385,7 @@ window.Settings.VideoPageUrl = '.com';
 					
 					<a href="#" class="button">
 						<span>Explore destinations</span>
-						<i class="icon--circle icon--right"></i>
+						<i class="icon--circle icon--right noanim"></i>
 					</a>
 					<div>
 						<br><span>Share your video</span><br>
@@ -413,12 +415,10 @@ window.Settings.VideoPageUrl = '.com';
 	<!-- // #last // -->
 </main>
 <video preload="auto" id="mainVideo" class="videoPlayer"></video>
-
 <audio id="mainAudio" preload data-playlist-music="music/EF_Make_your_own_tomorrow_86s.mp3" loop>
 	<source src="music/EF-MYOT-Background-V5_Single-Loop.ogv" />
 </audio>
 <!-- //wrapper -->
-
 <script src="build/ef_your_tomorrow.min.js"></script>
 <script>
 	YT.init();
