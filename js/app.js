@@ -162,10 +162,6 @@ YT.createVideoPage = (function(window){
 
 			e.preventDefault();
 		});
-
-		$('#two .link-list a').click(function(e){
-			$("#three h2 u").html($.trim($(this).text()));
-		});
 	}
 
 	function welcomeScreen(callback){
@@ -294,7 +290,7 @@ YT.sharePage = (function(window){
 		for(var i = 0; i < data.length; i++) {
 			var categoryPromise = $.Deferred();
 			YT.app.videoPromises.push(categoryPromise);
-			$(".subtitles").append("<li>"+data[i].Title+"</li>");
+			$(".subtitles").append("<li class='"+data[i].Position+"''>"+data[i].Title+"</li>");
 			YT.app.playlist.push(data[i].Url);
 			YT.app.resolveVideos(data[i].Url,i);
 		}
@@ -501,6 +497,7 @@ YT.app = (function(window){
 					ga('send','event', 'Name', 'click', 'Did enter name');
 				}
 			} else {
+				var input_name = $(".name-field__inputarea").attr('data-text');
 				// console.log('NO name');
 				if (typeof ga !== 'undefined') {	
 					ga('send','event', 'Name', 'click', 'Did NOT enter name');
