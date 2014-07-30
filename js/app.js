@@ -4,12 +4,12 @@
 	// Main app
 	function init(){
 		// CHECK IF MOBILE REDIRECT TO MOBILE LANDING PAGE
-		if(!Modernizr.touch){
+		// if(!Modernizr.touch){
 			YT.app.init();
 			YT.createVideoPage.init();
-		} else {
-			window.location.href = "http://www.ef.com";
-		}
+		// } else {
+			// window.location.href = "http://www.ef.com";
+		// }
 	}
 
 	// Share page
