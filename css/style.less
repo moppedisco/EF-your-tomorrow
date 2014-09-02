@@ -20,6 +20,11 @@ html{
 	overflow: hidden; 
 	font-family: Georgia; 
 	font-style: italic;
+
+	&.touch  {
+		font-size: 55px;
+	}
+
 }
 html, body, form{
 	height:100%;
@@ -29,6 +34,7 @@ html, body, form{
 }
 body{
 	overflow:hidden;
+
 }
 .wrapper{
 	height:100%;
@@ -53,26 +59,56 @@ body{
 	top:0;
 	left:0;
 }
-.vert-align{
+.vert-align {
 	display:table;
 	width:800px;
 	height:100%;
 	position:relative;
 	z-index:99999;
 	margin:0 auto;
+
+	.touch & {
+		width: 90%;
+		margin: 0 auto;
+	}
 }
-.vert-align__inner{
+.vert-align__inner {
 	display:table-cell;
 	vertical-align:middle;
 	text-align:center;
+
+	.touch & {
+		vertical-align: top;
+		padding-top: 40px;
+	}
 }
+
 .full-screen-section{
 	height:100%;
 	text-align:center;
 	position:relative;
 	overflow:hidden;
 	z-index:1;
+
+	
+
+	.touch & {
+		-webkit-transform: translate3d(0,0,0);
+		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;	
+		background-size: cover;
+		background-position: 0 50%;	
+	}
 }
+
+video {
+	z-index: 99999;
+}
+
+.full-screen-section.active {
+	transform-style: flat;	
+}
+
 .full-screen-section__inner{
 	position:absolute;
 	top:0;
@@ -100,10 +136,19 @@ body{
 
 h1{
 	font-style:normal;
+
+	.touch & {
+		font-size: 180%;
+	}
 }
 h2{
 	font-style:normal;
 	margin-bottom:@base-spacing-unit/2*1px;
+
+	.touch & { 
+		// margin-top: 35px;
+		font-size: 120%;
+	}
 }
 ul, 
 ol,
@@ -368,11 +413,11 @@ hr.short{
 }
 
 .article-start__title {
-	margin-bottom: 25px;
+	.mega;
+	line-height: 100%;
 }
 
 .article-start__line {
-	margin-bottom: 19px;
 }
 
 .article-start__title,
@@ -402,11 +447,19 @@ hr.short{
 }
 .article-outromessage{
 	background:#000;
+	.touch & {
+		display: none;
+	}
 }
 .article-loading{
 	background:#000;
 	z-index:2;
+
+	.touch & .vert-align__inner {
+		vertical-align: middle;
+	}
 }
+
 
 .article-start {
 	z-index: 1;
@@ -624,6 +677,9 @@ hr.short{
 	-moz-transition:all 400ms cubic-bezier(0.230, 1.000, 0.320, 1.000);
 	-o-transition:all 400ms cubic-bezier(0.230, 1.000, 0.320, 1.000);
 	transition:all 400ms cubic-bezier(0.230, 1.000, 0.320, 1.000);
+	.touch & {
+		margin: 15px 0;
+	}
 }
 .link-list a span::after,
 .link-list a span::before{

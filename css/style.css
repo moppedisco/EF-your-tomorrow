@@ -1350,6 +1350,9 @@ html {
   font-family: Georgia;
   font-style: italic;
 }
+html.touch {
+  font-size: 55px;
+}
 html,
 body,
 form {
@@ -1392,10 +1395,18 @@ body {
   z-index: 99999;
   margin: 0 auto;
 }
+.touch .vert-align {
+  width: 90%;
+  margin: 0 auto;
+}
 .vert-align__inner {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
+}
+.touch .vert-align__inner {
+  vertical-align: top;
+  padding-top: 40px;
 }
 .full-screen-section {
   height: 100%;
@@ -1403,6 +1414,19 @@ body {
   position: relative;
   overflow: hidden;
   z-index: 1;
+}
+.touch .full-screen-section {
+  -webkit-transform: translate3d(0, 0, 0);
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  background-size: cover;
+  background-position: 0 50%;
+}
+video {
+  z-index: 99999;
+}
+.full-screen-section.active {
+  transform-style: flat;
 }
 .full-screen-section__inner {
   position: absolute;
@@ -1417,9 +1441,15 @@ body {
 h1 {
   font-style: normal;
 }
+.touch h1 {
+  font-size: 180%;
+}
 h2 {
   font-style: normal;
   margin-bottom: 18px;
+}
+.touch h2 {
+  font-size: 120%;
 }
 ul,
 ol,
@@ -1650,10 +1680,10 @@ hr.short {
   display: none;
 }
 .article-start__title {
-  margin-bottom: 25px;
-}
-.article-start__line {
-  margin-bottom: 19px;
+  font-size: 60px;
+  font-size: 2.72727273rem;
+  line-height: 60px;
+  line-height: 100%;
 }
 .article-start__title,
 .article-start__line,
@@ -1683,9 +1713,15 @@ hr.short {
 .article-outromessage {
   background: #000;
 }
+.touch .article-outromessage {
+  display: none;
+}
 .article-loading {
   background: #000;
   z-index: 2;
+}
+.touch .article-loading .vert-align__inner {
+  vertical-align: middle;
 }
 .article-start {
   z-index: 1;
@@ -1855,6 +1891,9 @@ hr.short {
   -moz-transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
   -o-transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
   transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.touch .link-list a span {
+  margin: 15px 0;
 }
 .link-list a span::after,
 .link-list a span::before {

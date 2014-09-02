@@ -3,13 +3,8 @@
 
 	// Main app
 	function init(){
-		// CHECK IF MOBILE REDIRECT TO MOBILE LANDING PAGE
-		// if(!Modernizr.touch){
-			YT.app.init();
-			YT.createVideoPage.init();
-		// } else {
-			// window.location.href = "http://www.ef.com";
-		// }
+		YT.app.init();
+		YT.createVideoPage.init();
 	}
 
 	// Share page
@@ -28,52 +23,43 @@
 YT.createVideoPage = (function(window){
 	function init(){
 		
-		// Animate welcome screen
-		welcomeScreen(function(){
-			if(Modernizr.audio){
-				YT.app.myAudioPlayer()[0].play();
-				YT.app.myAudioPlayer().animate({volume: 0.5}, 1500);
-				$("#mep_0").fadeIn(500);
-			}
-		});
+		if(!Modernizr.touch){
+			// Animate welcome screen
+			welcomeScreen(function(){
+				if(Modernizr.audio){
+					YT.app.myAudioPlayer()[0].play();
+					YT.app.myAudioPlayer().animate({volume: 0.5}, 1500);
+					$("#mep_0").fadeIn(500);
+				}
+			});
 
-		// Init video and play video
-		YT.app.initVideo(function(){
-			YT.app.playVideo("#start");	
-		});
+			// Init video and play video
+			YT.app.initVideo(function(){
+				YT.app.playVideo("#start");	
+			});
 
-		// Start button and category buttons
-		bindActionButtons();
+			bindActionButtons(); // Start button and category buttons
+			
+			shareInput(); // Share field functionality
+			downloadVideos(6); // Create promises for all videos  // Nr of categories
 
-		// Enter name functionality
-		namePlaceholder();
+			// Show play button once all video promises resolved
+			$.when.apply(null, YT.app.videoPromises).done(function() {
+				setTimeout(function(){
+					$('.button--play').addClass('loaded');
+				},1500);
+			});
+		} else {
+			console.log("YT.createVideoPage mobile");
+			
+			welcomeScreen(function(){
+				console.log("welcome done");
+			});
 
-		// Share field functionality
-		shareInput();
+			bindMobileButtons();
+		}
 
-		// Create promises for all videos  // Nr of categories
-		downloadVideos(6);
 
-		// Show play button once all video promises resolved
-		$.when.apply(null, YT.app.videoPromises).done(function() {
-			setTimeout(function(){
-				$('.button--play').addClass('loaded');
-			},1500);
-		});
-
-	}
-
-	// Sets focus in the middle on enter name
-	function setCaret() {
-		var el = $(".name-field__inputarea").get(0);
-		var center_text = $(".name-field__inputarea").text().length/2;
-		var range = document.createRange();
-		var sel = window.getSelection();
-		range.setStart(el.childNodes[0], center_text);
-		range.collapse(true);
-		sel.removeAllRanges();
-		sel.addRange(range);
-		el.focus();
 	}
 
 	function downloadVideos(nrOfcategories){
@@ -81,6 +67,52 @@ YT.createVideoPage = (function(window){
 			var categoryPromise = $.Deferred();
 			YT.app.videoPromises.push(categoryPromise);				
 		}
+	}
+
+	function bindMobileButtons(){
+		$('.article-start__btn').click(function(e){	
+			var target = $(this).attr('href');
+
+			if($(this).hasClass("active")){
+				return false;
+			}
+
+			$(this).addClass("active");
+			
+			YT.app.goToSection(1,true);
+
+			e.preventDefault();
+		});
+
+		$('.link-list a').click(function(e){
+			var target = $(this).attr("href"),
+				ulElement = $(this).closest("ul"),
+				liElement = $(this).closest("li").index();
+
+			if($(this).hasClass("active")){
+				return false;
+			}
+
+			$(this).addClass("active");
+
+			// Creates unique url of playlist
+			YT.app.selectedCatogories[getNumberOfCategory(ulElement)] = getNumberOfOption($(this), ulElement);
+			console.log(YT.app.selectedCatogories);
+				
+			setTimeout(function(){
+
+				YT.app.goToSection(1,true);
+			},200);
+
+			if(YT.app.active_section === 4){
+				var mobileVideoUrl = YT.app.loadMobileVideo();
+				console.log(YT.app.mobileVideoPlayer);
+				YT.app.mobileVideoPlayer.src = mobileVideoUrl;
+				YT.app.initMobileVideo();
+			}
+
+			e.preventDefault();
+		});		
 	}
 
 	function bindActionButtons(){
@@ -98,9 +130,7 @@ YT.createVideoPage = (function(window){
 
 			$(this).addClass("active");
 			
-			if(!Modernizr.touch){
-				YT.app.moveBGvideo(1);
-			}
+			YT.app.moveBGvideo(1);
 
 			YT.app.goToSection(1,true);
 
@@ -132,10 +162,11 @@ YT.createVideoPage = (function(window){
 
 			// Creates unique url of playlist
 			YT.app.selectedCatogories[getNumberOfCategory(ulElement)] = getNumberOfOption($(this), ulElement);
+			console.log(YT.app.selectedCatogories);
 			
 			// Resolve download of video
 			YT.app.resolveVideos(videoUrl,YT.app.playlist.indexOf(videoUrl));
-			
+				
 			// Create subtitle
 			$(".subtitles").append("<li>"+text+"</li>");
 			$(".subtitles li:last-child").addClass(textPosition);
@@ -155,7 +186,7 @@ YT.createVideoPage = (function(window){
 
 				YT.app.goToSection(1,true,function(){
 					if(YT.app.active_section === (YT.app.pageSections.length-3)){
-						setCaret();
+						// setCaret();
 					}
 				});
 			},200);
@@ -323,30 +354,115 @@ YT.app = (function(window){
 		mediaAspect = 16/9,										// Video aspect ratio of videos
 		pageSections = [],
 		active_section = 0,
-		$window = $(window);									// cache window element
+		$window = $(window),									// cache window element
+		mobileVideoPlayer;
 
 	// $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
 	$.cssEase['custom-ease'] = 'cubic-bezier(1,0,0,1)';
 
 	function init(){
-
-			// Keep track of progress and active view
-			createPageSections();
-
-			// Download ambients
-			downloadAmbients();
-
-			// Init audio
-			initAudio();
-
-			// Bind all buttons
-			bindActionButtons();
-
-			// Bind window resize
-			bindWindowResize($fullScreenImage,el_fullScreenVideo);		
+		createPageSections(); // Keep track of progress and active view
 		
-			// Full screen image positioning
-			adjustImagePositioning($fullScreenImage);
+		if(!Modernizr.touch){
+			adjustImagePositioning($fullScreenImage); // Full screen image positioning
+			downloadAmbients();// Download ambients
+			initAudio(); // Init audio
+			bindActionButtons(); // Bind all buttons
+			bindWindowResize($fullScreenImage,el_fullScreenVideo); // Bind window resize			
+		} else {
+			// $(".button--play").hide();
+			console.log("YT.app mobile");
+			createMobileVideoPlayer();
+			mobileFullscreenBG();
+		}
+	}
+
+	function mobileFullscreenBG(){
+		$(".full-screen-image").each(function(){
+			var src = $(this).attr("src");
+			$(this).parents(".full-screen-section").css({"background-image":"url("+src+")"});
+			$(this).remove();
+		});		
+
+		$('.button--play').click(function(e){
+			
+			// playlistIntro(function(){
+						
+				goToSection(1,true,function(){
+					YT.app.mobileVideoPlayer.play();
+					$("#playingPlaylist video")[0].webkitEnterFullScreen();
+				});					
+			// });
+
+		e.preventDefault();
+
+		});
+	}
+
+	function createMobileVideoPlayer(){
+		YT.app.mobileVideoPlayer = document.createElement('video');
+		YT.app.mobileVideoPlayer.id = "mobilePlayer";
+		YT.app.mobileVideoPlayer.controls = true;
+		$("#playingPlaylist .vert-align__inner").append(YT.app.mobileVideoPlayer);
+
+		YT.app.mobileVideoPlayer.addEventListener('loadstart',function(){
+			console.log("loaded");
+			console.log($("#playPlaylist video"));
+			
+			// YT.app.mobileVideoPlayer.webkitEnterFullScreen();
+		},false);
+
+		YT.app.mobileVideoPlayer.addEventListener('ended',function(){
+			console.log("ended");
+			goToSection(1,true);
+		},false);
+
+		YT.app.mobileVideoPlayer.addEventListener('play',function(){
+			console.log("playing");
+		},false);	
+
+		YT.app.mobileVideoPlayer.addEventListener('webkitendfullscreen',function(){
+			console.log("window closed");
+			goToSection(1,false);
+		},false);
+
+		YT.app.mobileVideoPlayer.addEventListener('pause',function(){
+			console.log("paused");
+		},false);
+	}
+
+	function initMobileVideo(){
+		YT.app.mobileVideoPlayer.play(); //start loading, didn't used `vid.load()` since it causes problems with the `ended` event
+	 	
+		if(YT.app.mobileVideoPlayer.readyState !== 4){ //HAVE_ENOUGH_DATA
+			YT.app.mobileVideoPlayer.addEventListener('canplaythrough', onCanPlayMobileVideo, false);
+			YT.app.mobileVideoPlayer.addEventListener('load', onCanPlayMobileVideo, false); //add load event as well to avoid errors, sometimes 'canplaythrough' won't dispatch.
+			setTimeout(function(){
+				YT.app.mobileVideoPlayer.pause(); //block play so it buffers before playing
+			}, 1); //it needs to be after a delay otherwise it doesn't work properly.
+		}else{
+			//video is ready
+		}
+	}
+	 
+	function onCanPlayMobileVideo(){
+		YT.app.mobileVideoPlayer.removeEventListener('canplaythrough', onCanPlayMobileVideo, false);
+		YT.app.mobileVideoPlayer.removeEventListener('load', onCanPlayMobileVideo, false);
+		//video is ready
+		// YT.app.mobileVideoPlayer.play();
+	}
+
+	function loadMobileVideo(){
+		var string = "";
+		$.each(selectedCatogories,function(index,value){
+			// console.log(index+"-"+value);
+			category = String.fromCharCode(65 + index);
+			string += category+(value+1);
+		});
+
+		console.log(string);
+		console.log(mobileVideos[string]);
+		return mobileVideos[string]
 	}
 
 	function createPageSections(){
@@ -361,27 +477,34 @@ YT.app = (function(window){
 
 
 	function playlistIntro(callback){
-		$('.full-screen-section.active .button--play').fadeOut(2500);
-		var volume = YT.app.myAudioPlayer()[0].volume;
-			song = YT.app.myAudioPlayer().attr('data-playlist-music');
+		if(!Modernizr.touch){
+			$('.full-screen-section.active .button--play').fadeOut(2500);
+			var volume = YT.app.myAudioPlayer()[0].volume;
+				song = YT.app.myAudioPlayer().attr('data-playlist-music');
 
-		YT.app.myAudioPlayer().animate({volume: 0}, 2500);
-		
-		// IF NOT IE9 CHECK. Just animate different sections to black
-		if(Modernizr.cssanimations){
-			$("#mainVideo").fadeOut(2500,function(){
-				YT.app.myAudioPlayer()[0].setAttribute('src', song);
-				YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
-				YT.app.myAudioPlayer()[0].setAttribute('loop', false);
+			YT.app.myAudioPlayer().animate({volume: 0}, 2500);
+			
+			// IF NOT IE9 CHECK. Just animate different sections to black
+			if(Modernizr.cssanimations){
+				$("#mainVideo").fadeOut(2500,function(){
+					YT.app.myAudioPlayer()[0].setAttribute('src', song);
+					YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
+					YT.app.myAudioPlayer()[0].setAttribute('loop', false);
+					callback();
+				});
+			} else {
+				$(".full-screen-section.active .full-screen-image").fadeOut(2500,function(){
+					YT.app.myAudioPlayer()[0].setAttribute('src', song);
+					YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
+					YT.app.myAudioPlayer()[0].setAttribute('loop', false);
+					callback();
+				});			
+			}
+		} else {
+			$('.full-screen-section.active .button--play').fadeOut(2500);
+			$(".full-screen-section.active .full-screen-image").fadeOut(2500,function(){
 				callback();
 			});
-		} else {
-			$(".full-screen-section.active .full-screen-image").fadeOut(2500,function(){
-				YT.app.myAudioPlayer()[0].setAttribute('src', song);
-				YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
-				YT.app.myAudioPlayer()[0].setAttribute('loop', false);
-				callback();
-			});			
 		}
 	}
 
@@ -438,7 +561,7 @@ YT.app = (function(window){
 	function initVideo(callback){
 
 		// THIS CHECK IS FOR FIREFOX ON MAC SINCE IT ONLY SUPPORTS OGG VIDEO FORMAT
-		if(Modernizr.video.h264){
+		if(Modernizr.video.h264 && !Modernizr.touch){
 			myPlayer = $(el_fullScreenVideo)[0];
 			myPlayer.setAttribute('loop', 'true');
 
@@ -447,66 +570,44 @@ YT.app = (function(window){
 			callback();
 		} else {
 			// FALLBACK PLAYER GOES HERE
-
-			// jwplayer("jwplayer").setup({
-			// 	file: "http://player.vimeo.com/external/90037118.hd.mp4?s=d6848ef8b4d29410b59ec759cbb58270",
-			// 	width: 640,
-			// 	height: 360,
-			// 	events: {
-			// 		onComplete: function() {
-			// 			alert('ready');
-			// 		} 
-			// 	}
-			// });	
 		}
 	}
 
 	function playVideo(target){
-		var videoToPlay = $(target).attr("data-video"),
-			poster = $(target).find(".full-screen-image").attr("src");
+		if(!Modernizr.touch){
+			var videoToPlay = $(target).attr("data-video"),
+				poster = $(target).find(".full-screen-image").attr("src");
 
-		// We set html5 poster attribute incase video fails to load.
-		//$(el_fullScreenVideo).find("video").attr("poster",poster); 
-		myPlayer.setAttribute('poster', poster);
-		
-		// Set target video src
-		//myPlayer.src(videoToPlay); 
-		myPlayer.setAttribute('src', videoToPlay);
+			// We set html5 poster attribute incase video fails to load.
+			//$(el_fullScreenVideo).find("video").attr("poster",poster); 
+			myPlayer.setAttribute('poster', poster);
+			
+			// Set target video src
+			//myPlayer.src(videoToPlay); 
+			myPlayer.setAttribute('src', videoToPlay);
 
-		// Play new video src
-		myPlayer.play();
+			// Play new video src
+			myPlayer.play();
 
-		// Only fadeout images if browser supports video element
-		if(Modernizr.video && Modernizr.cssanimations){ 
-			$(target).find(".full-screen-image").fadeOut();				
+			// Only fadeout images if browser supports video element
+			if(Modernizr.video && Modernizr.cssanimations){ 
+				$(target).find(".full-screen-image").fadeOut();				
+			}
 		}
 	}
 
 	function bindActionButtons(){
 		// Play video button
 		$('.button--play').click(function(e){
-			if($(this).hasClass("active")){
-				return false;
-			}
 
-			// Analytics tracking of name
-			if($(".name-field__inputarea").hasClass('ready')){
-				var input_name = $(".name-field__inputarea");
-				// console.log('entered name');
-				if (typeof ga !== 'undefined') {	
-					ga('send','event', 'Name', 'click', 'Did enter name');
-				}
-			} else {
-				var input_name = $(".name-field__inputarea").attr('data-text');
-				// console.log('NO name');
-				if (typeof ga !== 'undefined') {	
-					ga('send','event', 'Name', 'click', 'Did NOT enter name');
-				}				
-			}
-			
 			// Analytics tracking of clicked button
 			if (typeof ga !== 'undefined') {	
 				ga('send','event', 'Button - Play', 'click', 'Clicked Play playlist');
+			}
+
+
+			if($(this).hasClass("active")){
+				return false;
 			}
 
 			$(this).addClass("active");
@@ -520,9 +621,10 @@ YT.app = (function(window){
 					playPlaylist();
 				});					
 			});
-			
+
+
 			// Create unique link for user
-			var uniqueURL = getShareLink(input_name,selectedCatogories);
+			var uniqueURL = getShareLink(selectedCatogories);
 				twitterURL = "https://twitter.com/home?status=This%20is%20my%20tomorrow%20"+uniqueURL+"%20%23EFyourtomorrow",
 				mailURL = "mailto:?subject=This is my tomorrow&body="+uniqueURL;
 
@@ -532,35 +634,6 @@ YT.app = (function(window){
 
 			e.preventDefault();
 		});	
-
-		$("#replay").on('click',function(){
-			replay(function(){
-				goToSection(-1,false,function(){
-					playPlaylist();
-					
-					if (typeof ga !== 'undefined') {
-						ga('send','event', 'Button - replay', 'click', 'Clicked replay button');
-					}
-
-					$(".subtitles").show();
-					$(".article-outromessage").show();
-					$(".section-last .full-screen-image").show();
-					$(".article-sharepage").show();
-				});						
-			});
-		})
-
-		// Pause play functionality, not yet implemented
-		$('.button--pause').click(function(e){
-			$(this).toggleClass("clicked");
-			if($(this).hasClass('clicked')){
-				myPlayer.pause();
-				myAudioPlayer[0].pause();				
-			} else {
-				myPlayer.play();
-				myAudioPlayer[0].play();				
-			}
-		});
 	}
 
 	function goToSection(steps, animate, callback){
@@ -826,9 +899,10 @@ YT.app = (function(window){
 		}
 	}
 
-	var getShareLink = function(userName, selectedCatogories) {
+	var getShareLink = function(selectedCatogories) {
 		selectedCatogories.sort();
-		var serializedString = selectedCatogories.join('_') + '_' + userName;
+		var serializedString = selectedCatogories.join('_');
+		console.log(serializedString);
 		if(Modernizr.csstransitions){
 			// console.log("base64");
 			return window.location.host + window.Settings.VideoPageUrl + "?id=" + window.btoa(escape(serializedString));
@@ -847,7 +921,10 @@ YT.app = (function(window){
 		videoPromises : videoPromises,
 		active_section : active_section,
 		pageSections : pageSections,
-		myAudioPlayer : audioPlayer
+		myAudioPlayer : audioPlayer,
+		loadMobileVideo : loadMobileVideo,
+		mobileVideoPlayer : mobileVideoPlayer,
+		initMobileVideo : initMobileVideo
 	};
 
 })(window);
@@ -878,4 +955,3 @@ if (!Array.prototype.indexOf){
     return -1;
   };
 }
-
