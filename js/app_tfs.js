@@ -417,7 +417,11 @@ YT.app = (function (window) {
 
         YT.app.mobileVideoPlayer.addEventListener('ended', function () {
             console.log("ended");
-            goToSection(2, true);
+            goToSection(1, false, function(){
+                setTimeout(function () {
+                    share();
+                }, 4000);                
+            });
         }, false);
 
         YT.app.mobileVideoPlayer.addEventListener('play', function () {
@@ -426,7 +430,11 @@ YT.app = (function (window) {
 
         YT.app.mobileVideoPlayer.addEventListener('webkitendfullscreen', function () {
             console.log("window closed");
-            goToSection(2, false);
+            goToSection(1, false, function(){
+                setTimeout(function () {
+                    share();
+                }, 4000);                
+            });
         }, false);
 
         YT.app.mobileVideoPlayer.addEventListener('pause', function () {
