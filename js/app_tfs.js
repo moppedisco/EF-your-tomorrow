@@ -1,7 +1,6 @@
 (function (window) {
 
 
-
     // Main app
     function init(omniture) {
         YT.app.init(omniture);
@@ -23,53 +22,44 @@
 
 YT.createVideoPage = (function (window) {
     function init() {
-        
-        // Animate welcome screen
-        welcomeScreen(function () {
-            if (Modernizr.audio) {
-                YT.app.myAudioPlayer()[0].play();
-                YT.app.myAudioPlayer().animate({ volume: 0.5 }, 1500);
-                $("#mep_0").fadeIn(500);
-            }
-        });
 
-        // Init video and play video
-        YT.app.initVideo(function () {
-            YT.app.playVideo("#start");
-        });
+        if (!Modernizr.touch) {
+            // Animate welcome screen
+            welcomeScreen(function () {
+                if (Modernizr.audio) {
+                    YT.app.myAudioPlayer()[0].play();
+                    YT.app.myAudioPlayer().animate({ volume: 0.5 }, 1500);
+                    $("#mep_0").fadeIn(500);
+                }
+            });
 
-        // Start button and category buttons
-        bindActionButtons();
+            // Init video and play video
+            YT.app.initVideo(function () {
+                YT.app.playVideo("#start");
+            });
 
-        // Enter name functionality
-        namePlaceholder();
+            bindActionButtons(); // Start button and category buttons
 
-        // Share field functionality
-        shareInput();
+            shareInput(); // Share field functionality
+            downloadVideos(6); // Create promises for all videos  // Nr of categories
 
-        // Create promises for all videos  // Nr of categories
-        downloadVideos(6);
+            // Show play button once all video promises resolved
+            $.when.apply(null, YT.app.videoPromises).done(function () {
+                setTimeout(function () {
+                    $('.button--play').addClass('loaded');
+                }, 1500);
+            });
+        } else {
+            console.log("YT.createVideoPage mobile");
 
-        // Show play button once all video promises resolved
-        $.when.apply(null, YT.app.videoPromises).done(function () {
-            setTimeout(function () {
-                $('.button--play').addClass('loaded');
-            }, 1500);
-        });
+            welcomeScreen(function () {
+                console.log("welcome done");
+            });
 
-    }
+            bindMobileButtons();
+        }
 
-    // Sets focus in the middle on enter name
-    function setCaret() {
-        var el = $(".name-field__inputarea").get(0);
-        var center_text = $(".name-field__inputarea").text().length / 2;
-        var range = document.createRange();
-        var sel = window.getSelection();
-        range.setStart(el.childNodes[0], center_text);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        el.focus();
+
     }
 
     function downloadVideos(nrOfcategories) {
@@ -77,6 +67,52 @@ YT.createVideoPage = (function (window) {
             var categoryPromise = $.Deferred();
             YT.app.videoPromises.push(categoryPromise);
         }
+    }
+
+    function bindMobileButtons() {
+        $('.article-start__btn').click(function (e) {
+            var target = $(this).attr('href');
+
+            if ($(this).hasClass("active")) {
+                return false;
+            }
+
+            $(this).addClass("active");
+
+            YT.app.goToSection(1, true);
+
+            e.preventDefault();
+        });
+
+        $('.link-list a').click(function (e) {
+            var target = $(this).attr("href"),
+                ulElement = $(this).closest("ul"),
+                liElement = $(this).closest("li").index();
+
+            if ($(this).hasClass("active")) {
+                return false;
+            }
+
+            $(this).addClass("active");
+
+            // Creates unique url of playlist
+            YT.app.selectedCatogories[getNumberOfCategory(ulElement)] = getNumberOfOption($(this), ulElement);
+            console.log(YT.app.selectedCatogories);
+
+            setTimeout(function () {
+
+                YT.app.goToSection(1, true);
+            }, 200);
+
+            if (YT.app.active_section === 4) {
+                var mobileVideoUrl = YT.app.loadMobileVideo();
+                console.log(YT.app.mobileVideoPlayer);
+                YT.app.mobileVideoPlayer.src = mobileVideoUrl;
+                YT.app.initMobileVideo();
+            }
+
+            e.preventDefault();
+        });
     }
 
     function bindActionButtons() {
@@ -94,9 +130,7 @@ YT.createVideoPage = (function (window) {
 
             $(this).addClass("active");
 
-            if (!Modernizr.touch) {
-                YT.app.moveBGvideo(1);
-            }
+            YT.app.moveBGvideo(1);
 
             YT.app.goToSection(1, true);
 
@@ -106,12 +140,12 @@ YT.createVideoPage = (function (window) {
         // Category buttons
         $('.link-list a').click(function (e) {
             var target = $(this).attr("href"),
-				videoUrl = $(this).attr("data-video"),
-				text_button = $.trim($(this).text()),
-				text = $(this).attr("data-text"),
-				ulElement = $(this).closest("ul"),
-				liElement = $(this).closest("li").index(),
-				textPosition = $(this).attr('data-position');
+                videoUrl = $(this).attr("data-video"),
+                text_button = $.trim($(this).text()),
+                text = $(this).attr("data-text"),
+                ulElement = $(this).closest("ul"),
+                liElement = $(this).closest("li").index(),
+                textPosition = $(this).attr('data-position');
 
             if ($(this).hasClass("active")) {
                 return false;
@@ -128,6 +162,7 @@ YT.createVideoPage = (function (window) {
 
             // Creates unique url of playlist
             YT.app.selectedCatogories[getNumberOfCategory(ulElement)] = getNumberOfOption($(this), ulElement);
+            console.log(YT.app.selectedCatogories);
 
             // Resolve download of video
             YT.app.resolveVideos(videoUrl, YT.app.playlist.indexOf(videoUrl));
@@ -151,7 +186,7 @@ YT.createVideoPage = (function (window) {
 
                 YT.app.goToSection(1, true, function () {
                     if (YT.app.active_section === (YT.app.pageSections.length - 3)) {
-                        setCaret();
+                        // setCaret();
                     }
                 });
             }, 200);
@@ -268,14 +303,12 @@ YT.sharePage = (function (window) {
 
     function init() {
         downloadVideos(data['Videos']);
-         
 
-        
         // Init video and play video
         YT.app.initVideo(function () {
             YT.app.playVideo("#playPlaylist");
         });
-        YT.app.setOneAudio(true);
+
         // Show play button once all video promises resolved
         $.when.apply(null, YT.app.videoPromises).done(function () {
             $('.button--play').addClass('loaded');
@@ -302,57 +335,137 @@ YT.sharePage = (function (window) {
 
 YT.app = (function (window) {
 
-    var $fullScreenImage = $(".full-screen-image"),				// Cover image element before the video is loaded 
-		$fullScreenSection = $(".full-screen-section"),			// Page sections
-		$sectionContainer = $(".wrapper"),						// Main element we animate
-		$mainAudio = $("#mainAudio"), 							// Main audio element
-		el_fullScreenVideo = "#mainVideo",						// Background video element
-		myAudioPlayer,											// Audio player instance
-		distanceScrolled = 0,									// The value is a multiple of 100, for example 100%, 200% etc
-		scrollDirection = 1, 									// 1 down, -1 is up
-		myPlayer,												// Video player object
-		prePlayer,												// For pre-loading
-		videoPlayers = [],										// The two video players for preloading
-		ambients = [],											// Ambient videos
-		videoPromises = [],										// Video download promises
-		selectedCatogories = [],
-		playlist = [],
-		playlistCount = 0,
-		mediaAspect = 16 / 9,										// Video aspect ratio of videos
-		pageSections = [],
-		active_section = 0,
-    isOneAudio = false,
-    $window = $(window),                         // cache window element
-    Omniture;
-                
+    var $fullScreenImage = $(".full-screen-image"),             // Cover image element before the video is loaded 
+        $fullScreenSection = $(".full-screen-section"),         // Page sections
+        $sectionContainer = $(".wrapper"),                      // Main element we animate
+        $mainAudio = $("#mainAudio"),                           // Main audio element
+        el_fullScreenVideo = "#mainVideo",                      // Background video element
+        myAudioPlayer,                                          // Audio player instance
+        distanceScrolled = 0,                                   // The value is a multiple of 100, for example 100%, 200% etc
+        scrollDirection = 1,                                    // 1 down, -1 is up
+        myPlayer,                                               // Video player object
+        prePlayer,                                              // For pre-loading
+        videoPlayers = [],                                      // The two video players for preloading
+        ambients = [],                                          // Ambient videos
+        videoPromises = [],                                     // Video download promises
+        selectedCatogories = [],
+        playlist = [],
+        playlistCount = 0,
+        mediaAspect = 16 / 9,                                       // Video aspect ratio of videos
+        pageSections = [],
+        active_section = 0,
+        $window = $(window),                                    // cache window element
+        Omniture,
+        mobileVideoPlayer;
 
     // $.cssEase['custom-ease'] = 'cubic-bezier(0.680,0,0.265,1)';
     $.cssEase['custom-ease'] = 'cubic-bezier(1,0,0,1)';
 
     function init(OmnitureRef) {
+        createPageSections(); // Keep track of progress and active view
 
-        // Keep track of progress and active view
-        createPageSections();
+        if (!Modernizr.touch) {
+            adjustImagePositioning($fullScreenImage); // Full screen image positioning
+            downloadAmbients();// Download ambients
+            initAudio(); // Init audio
+            bindActionButtons(); // Bind all buttons
+            bindWindowResize($fullScreenImage, el_fullScreenVideo); // Bind window resize           
+        } else {
+            // $(".button--play").hide();
+            console.log("YT.app mobile");
+            createMobileVideoPlayer();
+            mobileFullscreenBG();
+        }
 
-        // Download ambients
-        downloadAmbients();
-
-        // Init audio
-        initAudio();
-
-        // Bind all buttons
-        bindActionButtons();
-
-        // Bind window resize
-        bindWindowResize($fullScreenImage, el_fullScreenVideo);
-
-        // Full screen image positioning
-        adjustImagePositioning($fullScreenImage);
-
-        //omniture tracking module
         Omniture = OmnitureRef;
+    }
 
-        initializeSlider();
+    function mobileFullscreenBG() {
+        $(".full-screen-image").each(function () {
+            var src = $(this).attr("src");
+            $(this).parents(".full-screen-section").css({ "background-image": "url(" + src + ")" });
+            $(this).remove();
+        });
+
+        $('.button--play').click(function (e) {
+
+            // playlistIntro(function(){
+
+            goToSection(1, true, function () {
+                YT.app.mobileVideoPlayer.play();
+                $("#playingPlaylist video")[0].webkitEnterFullScreen();
+            });
+            // });
+
+            e.preventDefault();
+
+        });
+    }
+
+    function createMobileVideoPlayer() {
+        YT.app.mobileVideoPlayer = document.createElement('video');
+        YT.app.mobileVideoPlayer.id = "mobilePlayer";
+        YT.app.mobileVideoPlayer.controls = true;
+        $("#playingPlaylist .vert-align__inner").append(YT.app.mobileVideoPlayer);
+
+        YT.app.mobileVideoPlayer.addEventListener('loadstart', function () {
+            console.log("loaded");
+            console.log($("#playPlaylist video"));
+
+            // YT.app.mobileVideoPlayer.webkitEnterFullScreen();
+        }, false);
+
+        YT.app.mobileVideoPlayer.addEventListener('ended', function () {
+            console.log("ended");
+            goToSection(2, true);
+        }, false);
+
+        YT.app.mobileVideoPlayer.addEventListener('play', function () {
+            console.log("playing");
+        }, false);
+
+        YT.app.mobileVideoPlayer.addEventListener('webkitendfullscreen', function () {
+            console.log("window closed");
+            goToSection(2, false);
+        }, false);
+
+        YT.app.mobileVideoPlayer.addEventListener('pause', function () {
+            console.log("paused");
+        }, false);
+    }
+
+    function initMobileVideo() {
+        YT.app.mobileVideoPlayer.play(); //start loading, didn't used `vid.load()` since it causes problems with the `ended` event
+
+        if (YT.app.mobileVideoPlayer.readyState !== 4) { //HAVE_ENOUGH_DATA
+            YT.app.mobileVideoPlayer.addEventListener('canplaythrough', onCanPlayMobileVideo, false);
+            YT.app.mobileVideoPlayer.addEventListener('load', onCanPlayMobileVideo, false); //add load event as well to avoid errors, sometimes 'canplaythrough' won't dispatch.
+            setTimeout(function () {
+                YT.app.mobileVideoPlayer.pause(); //block play so it buffers before playing
+            }, 1); //it needs to be after a delay otherwise it doesn't work properly.
+        } else {
+            //video is ready
+        }
+    }
+
+    function onCanPlayMobileVideo() {
+        YT.app.mobileVideoPlayer.removeEventListener('canplaythrough', onCanPlayMobileVideo, false);
+        YT.app.mobileVideoPlayer.removeEventListener('load', onCanPlayMobileVideo, false);
+        //video is ready
+        // YT.app.mobileVideoPlayer.play();
+    }
+
+    function loadMobileVideo() {
+        var string = "";
+        $.each(selectedCatogories, function (index, value) {
+            // console.log(index+"-"+value);
+            category = String.fromCharCode(65 + index);
+            string += category + (value + 1);
+        });
+
+        console.log(string);
+        console.log(mobileVideos[string]);
+        return mobileVideos[string]
     }
 
     function createPageSections() {
@@ -365,50 +478,34 @@ YT.app = (function (window) {
         $(".article-outromessage").fadeOut();
     }
 
-    function initializeSlider() {
-       
-            var slider = $('.destinations-list').flexslider({
-                animation: "slide",
-                slideshow: false,
-                direction: "horizontal",
-                useCSS: false,
-                controlNav: false,
-                directionNav: false,
-                maxItems: 2//$('.flexslider li').length-1
-
-            });
-            $('.flex-next').click(function (event) {
-                event.preventDefault();
-                slider.flexslider("next");
-            });
-            $('.flex-prev').click(function (event) {
-                event.preventDefault();
-                slider.flexslider("prev");
-            });
-
-  
-    }
 
     function playlistIntro(callback) {
-        $('.full-screen-section.active .button--play').fadeOut(2500);
-        var volume = YT.app.myAudioPlayer()[0].volume;
-        var song = YT.app.myAudioPlayer().attr('data-playlist-music');
+        if (!Modernizr.touch) {
+            $('.full-screen-section.active .button--play').fadeOut(2500);
+            var volume = YT.app.myAudioPlayer()[0].volume;
+            song = YT.app.myAudioPlayer().attr('data-playlist-music');
 
-        YT.app.myAudioPlayer().animate({ volume: 0 }, 2500);
+            YT.app.myAudioPlayer().animate({ volume: 0 }, 2500);
 
-        // IF NOT IE9 CHECK. Just animate different sections to black
-        if (Modernizr.cssanimations) {
-            $("#mainVideo").fadeOut(2500, function () {
-                YT.app.myAudioPlayer()[0].setAttribute('src', song);
-                YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
-                YT.app.myAudioPlayer()[0].setAttribute('loop', false);
-                callback();
-            });
+            // IF NOT IE9 CHECK. Just animate different sections to black
+            if (Modernizr.cssanimations) {
+                $("#mainVideo").fadeOut(2500, function () {
+                    YT.app.myAudioPlayer()[0].setAttribute('src', song);
+                    YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
+                    YT.app.myAudioPlayer()[0].setAttribute('loop', false);
+                    callback();
+                });
+            } else {
+                $(".full-screen-section.active .full-screen-image").fadeOut(2500, function () {
+                    YT.app.myAudioPlayer()[0].setAttribute('src', song);
+                    YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
+                    YT.app.myAudioPlayer()[0].setAttribute('loop', false);
+                    callback();
+                });
+            }
         } else {
+            $('.full-screen-section.active .button--play').fadeOut(2500);
             $(".full-screen-section.active .full-screen-image").fadeOut(2500, function () {
-                YT.app.myAudioPlayer()[0].setAttribute('src', song);
-                YT.app.myAudioPlayer()[0].setAttribute('volume', volume);
-                YT.app.myAudioPlayer()[0].setAttribute('loop', false);
                 callback();
             });
         }
@@ -428,7 +525,7 @@ YT.app = (function (window) {
 
     function resolveAmbients(resolve) {
         var loader = new PxLoader(),
-			resource;
+            resource;
 
         $fullScreenSection.each(function (i) {
             var videoUrl = $(this).attr("data-video");
@@ -467,7 +564,7 @@ YT.app = (function (window) {
     function initVideo(callback) {
 
         // THIS CHECK IS FOR FIREFOX ON MAC SINCE IT ONLY SUPPORTS OGG VIDEO FORMAT
-        if (Modernizr.video.h264) {
+        if (Modernizr.video.h264 && !Modernizr.touch) {
             myPlayer = $(el_fullScreenVideo)[0];
             myPlayer.setAttribute('loop', 'true');
 
@@ -476,66 +573,44 @@ YT.app = (function (window) {
             callback();
         } else {
             // FALLBACK PLAYER GOES HERE
-
-            // jwplayer("jwplayer").setup({
-            // 	file: "http://player.vimeo.com/external/90037118.hd.mp4?s=d6848ef8b4d29410b59ec759cbb58270",
-            // 	width: 640,
-            // 	height: 360,
-            // 	events: {
-            // 		onComplete: function() {
-            // 			alert('ready');
-            // 		} 
-            // 	}
-            // });	
         }
     }
 
     function playVideo(target) {
-        var videoToPlay = $(target).attr("data-video"),
-			poster = $(target).find(".full-screen-image").attr("src");
+        if (!Modernizr.touch) {
+            var videoToPlay = $(target).attr("data-video"),
+                poster = $(target).find(".full-screen-image").attr("src");
 
-        // We set html5 poster attribute incase video fails to load.
-        //$(el_fullScreenVideo).find("video").attr("poster",poster); 
-        myPlayer.setAttribute('poster', poster);
+            // We set html5 poster attribute incase video fails to load.
+            //$(el_fullScreenVideo).find("video").attr("poster",poster); 
+            myPlayer.setAttribute('poster', poster);
 
-        // Set target video src
-        //myPlayer.src(videoToPlay); 
-        myPlayer.setAttribute('src', videoToPlay);
+            // Set target video src
+            //myPlayer.src(videoToPlay); 
+            myPlayer.setAttribute('src', videoToPlay);
 
-        // Play new video src
-        myPlayer.play();
+            // Play new video src
+            myPlayer.play();
 
-        // Only fadeout images if browser supports video element
-        if (Modernizr.video && Modernizr.cssanimations) {
-            $(target).find(".full-screen-image").fadeOut();
+            // Only fadeout images if browser supports video element
+            if (Modernizr.video && Modernizr.cssanimations) {
+                $(target).find(".full-screen-image").fadeOut();
+            }
         }
     }
 
     function bindActionButtons() {
         // Play video button
         $('.button--play').click(function (e) {
-            if ($(this).hasClass("active")) {
-                return false;
-            }
-
-            // Analytics tracking of name
-            if ($(".name-field__inputarea").hasClass('ready')) {
-                var input_name = $(".name-field__inputarea").text();
-                // console.log('entered name');
-                if (typeof ga !== 'undefined') {
-                    ga('send', 'event', 'Name', 'click', 'Did enter name');
-                }
-            } else {
-                var input_name = $(".name-field__inputarea").text();
-                // console.log('NO name');
-                if (typeof ga !== 'undefined') {
-                    ga('send', 'event', 'Name', 'click', 'Did NOT enter name');
-                }
-            }
 
             // Analytics tracking of clicked button
             if (typeof ga !== 'undefined') {
                 ga('send', 'event', 'Button - Play', 'click', 'Clicked Play playlist');
+            }
+
+
+            if ($(this).hasClass("active")) {
+                return false;
             }
 
             $(this).addClass("active");
@@ -550,96 +625,28 @@ YT.app = (function (window) {
                 });
             });
 
-            // Create unique link for user
-            var uniqueURL = getShareLink(input_name, selectedCatogories);
-            var facebookURL = "http://www.facebook.com/sharer/sharer.php?u=" + uniqueURL;
-            twitterURL = "https://twitter.com/home?status=" + window.Settings.ShareHeader + "%20" + window.Settings.ShareMessage + "%20" + uniqueURL + "%20%23EFyourtomorrow",
-            mailURL = "mailto:?subject=" + window.Settings.ShareHeader + "&body=" + window.Settings.ShareMessage + " " + uniqueURL;
-            
 
+            // Create unique link for user
+            var uniqueURL = getShareLink(selectedCatogories);
+            twitterURL = "https://twitter.com/home?status=This%20is%20my%20tomorrow%20" + uniqueURL + "%20%23EFyourtomorrow",
+            mailURL = "mailto:?subject=This is my tomorrow&body=" + uniqueURL;
 
             $(".input-share[type='text']").attr("value", uniqueURL);
-            $(".icon--facebook").attr("href", facebookURL);
-            $(".icon--facebook").click(function (event) {
-               
-                event.preventDefault();
-                //window.open($(this).attr('href'), 'Facebook', 'width=640,height=300');
-           
-                FB.ui(
-              {
-                  method: 'feed',
-                  name: window.Settings.ShareHeader,
-                  caption: 'WWW.YOURTOMORROW.COM',
-                  description: window.Settings.ShareMessage,
-                  link: uniqueURL.replace('%26','&'),
-                  picture: $("meta[property='og:image']").attr("content")
-              },
-              function(response) {}
-            );
-
-
-
-                return false;
-
-            });
             $(".icon--twitter").attr("href", twitterURL);
-            $(".icon--twitter").click(function (event) {
-
-                event.preventDefault();
-                window.open($(this).attr('href'), 'Twitter', 'width=640,height=300');
-                return false;
-
-            });
-
-
             $(".icon--mail").attr("href", mailURL);
-            
 
             e.preventDefault();
         });
-
-        $("#replay").on('click', function (event) {
-            event.preventDefault();
-            replay(function () {
-                goToSection(-1, false, function () {
-                    playPlaylist();
-                    
-                    if (typeof ga !== 'undefined') {
-                        ga('send', 'event', 'Button - replay', 'click', 'Clicked replay button');
-                    }
-
-                    $(".subtitles").show();
-                    $(".article-outromessage").show();
-                    $(".section-last .full-screen-image").show();
-                    $(".article-sharepage").show();
-                });
-            });
-        })
-
-        // Pause play functionality, not yet implemented
-        $('.button--pause').click(function (e) {
-            $(this).toggleClass("clicked");
-            if ($(this).hasClass('clicked')) {
-                myPlayer.pause();
-                myAudioPlayer[0].pause();
-            } else {
-                myPlayer.play();
-                myAudioPlayer[0].play();
-            }
-        });
     }
-
-    
 
     function goToSection(steps, animate, callback) {
         distanceScrolled = distanceScrolled - 100 * steps;
 
-
         var current = pageSections[YT.app.active_section].id,
-			target = pageSections[YT.app.active_section + steps].id;
-        
+            target = pageSections[YT.app.active_section + steps].id;
+
         YT.app.active_section = YT.app.active_section + steps;
-        
+
         //Omniture tracking
         Omniture.trackSection(target, YT.app.active_section);
 
@@ -697,8 +704,7 @@ YT.app = (function (window) {
         myAudioPlayer = $('audio').mediaelementplayer({
             audioWidth: "26",
             features: ['playpause', 'volume'],
-            audioVolume: 'vertical',
-            loop: true
+            audioVolume: 'vertical'
         });
         myAudioPlayer[0].volume = 0;
     }
@@ -745,36 +751,18 @@ YT.app = (function (window) {
         $myVideo.show();
     }
 
-    var firstTime = true;
     function playPlaylist() {
         playlistCount = 0;
 
-        if (firstTime) {
-            preparePlayListPlayer();
-        } else {
-            $('.videoPlayer').css('display', 'inline-block');
-        }
+        preparePlayListPlayer();
 
         playPlaylistIndex(playlistCount);
 
-        if (!isOneAudio) {
-            //IF ITS NOT SHARE PAGE -> CREATE AND SWAP THE AUDIO PLAYER TO MAKE IT WORK IN IE9
-            var volume = myAudioPlayer[0].volume;
-            $("#mainAudio source").attr('src',$("#mainAudio").attr("data-playlist-music"));
-            $("#mainAudio").clone().attr('id','playlistAudio').appendTo($("#mainAudio").parent());
-            myAudioPlayer = $('#playlistAudio').mediaelementplayer({
-                audioWidth: "26",
-                features: ['playpause', 'volume'],
-                audioVolume: 'vertical'
-            });
-            myAudioPlayer[0].src = $("#mainAudio").attr("data-playlist-music");
-            $mainAudio = $('#playlistAudio');
-          
-        } 
-        myAudioPlayer[0].volume = 0.5;
+        myAudioPlayer[0].volume = myAudioPlayer[0].volume + 0.1; // BUG, you dont hear the sound unless you change the volume
         myAudioPlayer[0].play();
 
         $(".videoPlayer").bind("ended", function () {
+
             // Play each selected video
             if (playlistCount < playlist.length) {
                 playPlaylistIndex(playlistCount);
@@ -786,7 +774,7 @@ YT.app = (function (window) {
                     myAudioPlayer[0].currentTime = 0;
                 });
 
-                $(".subtitles,#mainVideo,#preVideo").hide()
+                $(".subtitles,#mainVideo").hide()
                 goToSection(1, false, function () {
                     setTimeout(function () {
                         share();
@@ -794,10 +782,9 @@ YT.app = (function (window) {
                 });
 
                 $(".videoPlayer").unbind(); // Reset video
-                firstTime = false;
-                videoPlayers[0].setAttribute('src', '');
+
                 // we no longer need this element
-                //$(prePlayer).remove();
+                $(prePlayer).remove();
             }
         });
     }
@@ -810,30 +797,18 @@ YT.app = (function (window) {
     }
 
     function playPlaylistIndex(index) {
-
         $(".subtitles li").hide();
+        $(".subtitles li:eq(" + index + ")").show();
 
-        if (index === 0) {
-            setTimeout(function () {
-                $(".subtitles li:eq(" + index + ")").show();
-            }, 2000);
-
-            setTimeout(function () {
-                $(".subtitles li:eq(" + index + ")").hide();
-            }, 5000);
-        } else {
-            $(".subtitles li:eq(" + index + ")").show();
-            setTimeout(function () {
-                $(".subtitles li:eq(" + index + ")").hide();
-            }, 3000);
-        }
+        setTimeout(function () {
+            $(".subtitles li:eq(" + index + ")").hide();
+        }, 3000);
 
         var curVideoPlayer = videoPlayers[0],
-			preVideoPlayer = videoPlayers[1];
+            preVideoPlayer = videoPlayers[1];
 
         // makes current one visible by placing in on top
-        //curVideoPlayer.style.zIndex = 1;
-        curVideoPlayer.style.left = 0;
+        curVideoPlayer.style.zIndex = 1;
 
         if (!curVideoPlayer.getAttribute('src')) {
             // only sets the attribute if there is no video set.
@@ -842,12 +817,10 @@ YT.app = (function (window) {
         }
         myPlayer = curVideoPlayer;
         curVideoPlayer.play();
-        
-        preVideoPlayer.style.left = '-99999px';
+
         if (playlist[index + 1]) {
             // the magic happens in here, preloading next video
-            //preVideoPlayer.style.zIndex = 0;
-            
+            preVideoPlayer.style.zIndex = 0;
             preVideoPlayer.setAttribute('src', playlist[index + 1]);
         }
 
@@ -868,17 +841,17 @@ YT.app = (function (window) {
 
         element.each(function () {
             var $img = $(this),
-				img = new Image();
+                img = new Image();
 
             img.src = $img.attr('src');
 
             var windowWidth = $window.width(),
-				windowHeight = $window.height(),
-				r_w = windowHeight / windowWidth,
-				i_w = img.width,
-				i_h = img.height,
-				r_i = i_h / i_w,
-				new_w, new_h, new_left, new_top;
+                windowHeight = $window.height(),
+                r_w = windowHeight / windowWidth,
+                i_w = img.width,
+                i_h = img.height,
+                r_i = i_h / i_w,
+                new_w, new_h, new_left, new_top;
 
             if (r_w > r_i) {
                 new_h = windowHeight;
@@ -894,7 +867,7 @@ YT.app = (function (window) {
                 height: new_h,
                 left: (windowWidth - new_w) / 2,
                 top: (windowHeight - new_h) / 2
-            });
+            })
 
         });
     }
@@ -906,39 +879,41 @@ YT.app = (function (window) {
         if (windowAspect < mediaAspect) {
             // taller
             $(element).find("video")
-				.width(windowH * mediaAspect)
-				.height(windowH);
+                .width(windowH * mediaAspect)
+                .height(windowH);
             $(element)
-				.css('top', 0)
-				.css('left', -(windowH * mediaAspect - windowW) / 2)
-				.css('height', windowH);
+                .css('top', 0)
+                .css('left', -(windowH * mediaAspect - windowW) / 2)
+                .css('height', windowH);
             $(element + '_html5_api').css('width', windowH * mediaAspect);
             $(element + '_flash_api')
-				.css('width', windowH * mediaAspect)
-				.css('height', windowH);
+                .css('width', windowH * mediaAspect)
+                .css('height', windowH);
         } else {
             // wider
             $(element).find("video")
-				.width(windowW)
-				.height(windowW / mediaAspect);
+                .width(windowW)
+                .height(windowW / mediaAspect);
             $(element)
-				.css('top', -(windowW / mediaAspect - windowH) / 2)
-				.css('left', 0)
-				.css('height', windowW / mediaAspect);
+                .css('top', -(windowW / mediaAspect - windowH) / 2)
+                .css('left', 0)
+                .css('height', windowW / mediaAspect);
             $(element + '_html5_api').css('width', '100%');
             $(element + '_flash_api')
-				.css('width', windowW)
-				.css('height', windowW / mediaAspect);
+                .css('width', windowW)
+                .css('height', windowW / mediaAspect);
         }
     }
 
-    var getShareLink = function (userName, selectedCatogories) {
-        var serializedString = selectedCatogories.join('_') + '_' + userName;
-        return window.Settings.BaseUrl + "/video/?mc=" + $campaign.market + "%26id=" + window.btoa(escape(serializedString));
-        
+    var getShareLink = function (selectedCatogories) {
+        selectedCatogories.sort();
+        var serializedString = selectedCatogories.join('_');
+        console.log(serializedString);
+        if (Modernizr.csstransitions) {
+            // console.log("base64");
+            return window.location.host + window.Settings.VideoPageUrl + "?id=" + window.btoa(escape(serializedString));
+        }
     };
-
-
 
     return {
         init: init,
@@ -953,7 +928,9 @@ YT.app = (function (window) {
         active_section: active_section,
         pageSections: pageSections,
         myAudioPlayer: audioPlayer,
-        setOneAudio: function(value) {isOneAudio = value}
+        loadMobileVideo: loadMobileVideo,
+        mobileVideoPlayer: mobileVideoPlayer,
+        initMobileVideo: initMobileVideo
     };
 
 })(window);
