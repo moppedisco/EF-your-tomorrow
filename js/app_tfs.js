@@ -50,16 +50,32 @@ YT.createVideoPage = (function (window) {
                 }, 1500);
             });
         } else {
-            console.log("YT.createVideoPage mobile");
-
-            welcomeScreen(function () {
-                console.log("welcome done");
-            });
-
+            welcomeScreen(function () { });
             bindMobileButtons();
         }
 
+        createDestinationSlider();
+    }
 
+    function createDestinationSlider() {
+       var destSlider = $('.destinations-list').flexslider({
+            animation: "slide",
+            slideshow: false,
+            direction: "horizontal",
+            useCSS: false,
+            controlNav: false,
+            directionNav: false,
+            maxItems: 2//$('.flexslider li').length-1
+
+        });
+        $('.flex-next').click(function (event) {
+            event.preventDefault();
+            destSlider.flexslider("next");
+        });
+        $('.flex-prev').click(function (event) {
+            event.preventDefault();
+            destSlider.flexslider("prev");
+        });
     }
 
     function downloadVideos(nrOfcategories) {
@@ -84,7 +100,25 @@ YT.createVideoPage = (function (window) {
             e.preventDefault();
         });
 
+        $('.button--next-category').click(function (e) {
+            var ul = $(this).prev('.link-list');
+
+            if ($(this).prev('.link-list').find("a ").hasClass("active")) {
+                console.log("has clicked category");
+                setTimeout(function () {
+                    YT.app.goToSection(1, true);
+                }, 200);
+            } else {
+                console.log("not clicked category");
+            }
+
+            e.preventDefault();
+        });
+
         $('.link-list a').click(function (e) {
+            if ($('.link-list a').hasClass("active")) {
+                $('.link-list a').removeClass("active");
+            }
             var target = $(this).attr("href"),
                 ulElement = $(this).closest("ul"),
                 liElement = $(this).closest("li").index();
@@ -98,15 +132,8 @@ YT.createVideoPage = (function (window) {
             // Creates unique url of playlist
             YT.app.selectedCatogories[getNumberOfCategory(ulElement)] = getNumberOfOption($(this), ulElement);
             console.log(YT.app.selectedCatogories);
-
-            setTimeout(function () {
-
-                YT.app.goToSection(1, true);
-            }, 200);
-
             if (YT.app.active_section === 4) {
                 var mobileVideoUrl = YT.app.loadMobileVideo();
-                console.log(YT.app.mobileVideoPlayer);
                 YT.app.mobileVideoPlayer.src = mobileVideoUrl;
                 YT.app.initMobileVideo();
             }
@@ -198,11 +225,13 @@ YT.createVideoPage = (function (window) {
     function welcomeScreen(callback) {
         $("#intromessage li:eq(0)").fadeIn(800);
         setTimeout(function () {
-            $("#intromessage li:eq(1)").fadeIn(function () {
-                setTimeout(function () {
-                    showFirstScreen();
-                    callback();
-                }, 2000);
+            $("#intromessage li:eq(0)").fadeOut(function () {
+                $("#intromessage li:eq(1)").fadeIn(function () {
+                    setTimeout(function () {
+                        showFirstScreen();
+                        callback();
+                    }, 2000);
+                });
             });
         }, 3000);
     }
@@ -371,8 +400,6 @@ YT.app = (function (window) {
             bindActionButtons(); // Bind all buttons
             bindWindowResize($fullScreenImage, el_fullScreenVideo); // Bind window resize           
         } else {
-            // $(".button--play").hide();
-            console.log("YT.app mobile");
             createMobileVideoPlayer();
             mobileFullscreenBG();
         }
@@ -409,36 +436,25 @@ YT.app = (function (window) {
         $("#playingPlaylist .vert-align__inner").append(YT.app.mobileVideoPlayer);
 
         YT.app.mobileVideoPlayer.addEventListener('loadstart', function () {
-            console.log("loaded");
-            console.log($("#playPlaylist video"));
-
-            // YT.app.mobileVideoPlayer.webkitEnterFullScreen();
+            $('.button--play').addClass("loaded");
         }, false);
 
         YT.app.mobileVideoPlayer.addEventListener('ended', function () {
-            console.log("ended");
-            goToSection(1, false, function(){
+
+            $("#playingPlaylist video")[0].webkitExitFullscreen();
+            goToSection(1, false, function () {
                 setTimeout(function () {
                     share();
-                }, 4000);                
+                }, 4000);
             });
-        }, false);
-
-        YT.app.mobileVideoPlayer.addEventListener('play', function () {
-            console.log("playing");
         }, false);
 
         YT.app.mobileVideoPlayer.addEventListener('webkitendfullscreen', function () {
-            console.log("window closed");
-            goToSection(1, false, function(){
+            goToSection(1, false, function () {
                 setTimeout(function () {
                     share();
-                }, 4000);                
+                }, 4000);
             });
-        }, false);
-
-        YT.app.mobileVideoPlayer.addEventListener('pause', function () {
-            console.log("paused");
         }, false);
     }
 
@@ -459,14 +475,11 @@ YT.app = (function (window) {
     function onCanPlayMobileVideo() {
         YT.app.mobileVideoPlayer.removeEventListener('canplaythrough', onCanPlayMobileVideo, false);
         YT.app.mobileVideoPlayer.removeEventListener('load', onCanPlayMobileVideo, false);
-        //video is ready
-        // YT.app.mobileVideoPlayer.play();
     }
 
     function loadMobileVideo() {
         var string = "";
         $.each(selectedCatogories, function (index, value) {
-            // console.log(index+"-"+value);
             category = String.fromCharCode(65 + index);
             string += category + (value + 1);
         });
