@@ -485,7 +485,7 @@ YT.app = (function (window) {
         });
 
         console.log(string);
-        console.log(mobileVideos[string]);
+        // console.log(mobileVideos[string]);
         return mobileVideos[string]
     }
 
