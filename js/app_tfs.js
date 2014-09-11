@@ -40,7 +40,6 @@ YT.createVideoPage = (function (window) {
 
             bindActionButtons(); // Start button and category buttons
 
-            shareInput(); // Share field functionality
             downloadVideos(6); // Create promises for all videos  // Nr of categories
 
             // Show play button once all video promises resolved
@@ -245,52 +244,6 @@ YT.createVideoPage = (function (window) {
         });
     }
 
-    function shareInput() {
-        $(".input-share").on({
-            click: function () {
-                $(this).select();
-                if (typeof ga !== 'undefined') {
-                    ga('send', 'event', 'Button - URL field', 'click', 'Clicked share your video field');
-                }
-            },
-            copy: function () {
-                if (typeof ga !== 'undefined') {
-                    ga('send', 'event', 'Button - URL field', 'click', 'Copyied URL field');
-                }
-            }
-        });
-    }
-
-    function namePlaceholder() {
-        var isPlaceholder = true;
-        // $('.name-field__inputarea'),focuson();
-        $('.name-field__inputarea').on('keypress', function (event) {
-            if (isPlaceholder) {
-                $(this).empty();
-                isPlaceholder = false;
-            }
-
-            if (event.which == 13) {
-                return false;
-            }
-        }).on('focusout', function () {
-            var currentName = $(this).html();
-            placeholderText = $(this).attr('data-text');
-            if (currentName.length === 0 || isPlaceholder) {
-                $(this).text(placeholderText);
-                isPlaceholder = true;
-                $(this).removeClass("ready");
-                $('.button--play').removeClass('ready');
-            } else {
-                $(this).addClass("ready");
-                $('.button--play').addClass('ready');
-            }
-        }).on('focuson', function () {
-            $(this).removeClass("ready");
-            $('.button--play').removeClass('ready');
-        });
-    }
-
     function getUrlVars() {
         var vars = [], hash;
         var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
@@ -416,13 +369,14 @@ YT.app = (function (window) {
 
         $('.button--play').click(function (e) {
 
-            // playlistIntro(function(){
-
             goToSection(1, true, function () {
                 YT.app.mobileVideoPlayer.play();
                 $("#playingPlaylist video")[0].webkitEnterFullScreen();
             });
-            // });
+    
+            // Create unique link for user
+            var uniqueURL = getShareLink(selectedCatogories);
+            createShareLinks(uniqueURL);
 
             e.preventDefault();
 
@@ -485,7 +439,7 @@ YT.app = (function (window) {
         });
 
         console.log(string);
-        // console.log(mobileVideos[string]);
+        console.log(mobileVideos[string]);
         return mobileVideos[string]
     }
 
@@ -649,15 +603,21 @@ YT.app = (function (window) {
 
             // Create unique link for user
             var uniqueURL = getShareLink(selectedCatogories);
-            twitterURL = "https://twitter.com/home?status=This%20is%20my%20tomorrow%20" + uniqueURL + "%20%23EFyourtomorrow",
-            mailURL = "mailto:?subject=This is my tomorrow&body=" + uniqueURL;
-
-            $(".input-share[type='text']").attr("value", uniqueURL);
-            $(".icon--twitter").attr("href", twitterURL);
-            $(".icon--mail").attr("href", mailURL);
+            createShareLinks(uniqueURL);
 
             e.preventDefault();
         });
+    }
+
+    function createShareLinks(uniqueURL) {
+        twitterURL = "https://twitter.com/home?status=This%20is%20my%20tomorrow%20" + uniqueURL + "%20%23EFyourtomorrow",
+        mailURL = "mailto:?subject=This is my tomorrow&body=" + uniqueURL;
+        facebookURL = "https://www.facebook.com/sharer/sharer.php?u=" + uniqueURL;
+
+        $(".input-share[type='text']").attr("value", uniqueURL);
+        $(".icon--twitter").attr("href", twitterURL);
+        $(".icon--mail").attr("href", mailURL);
+        $(".icon--facebook").attr("href", facebookURL);
     }
 
     function goToSection(steps, animate, callback) {
