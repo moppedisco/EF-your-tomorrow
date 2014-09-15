@@ -612,12 +612,21 @@ YT.app = (function (window) {
     function createShareLinks(uniqueURL) {
         twitterURL = "https://twitter.com/home?status=This%20is%20my%20tomorrow%20" + uniqueURL + "%20%23EFyourtomorrow",
         mailURL = "mailto:?subject=This is my tomorrow&body=" + uniqueURL;
-        facebookURL = "https://www.facebook.com/sharer/sharer.php?u=" + uniqueURL;
+        // facebookURL = "https://www.facebook.com/sharer/sharer.php?u=" + uniqueURL;
 
         $(".input-share[type='text']").attr("value", uniqueURL);
         $(".icon--twitter").attr("href", twitterURL);
         $(".icon--mail").attr("href", mailURL);
-        $(".icon--facebook").attr("href", facebookURL);
+        // $(".icon--facebook").attr("href", facebookURL);
+
+        $(".icon--social.icon--facebook").on('click',function(){
+            console.log(uniqueURL);
+            FB.ui({
+              method: 'feed',
+              link: uniqueURL,
+            }, function(response){});
+            return false
+        })
     }
 
     function goToSection(steps, animate, callback) {
